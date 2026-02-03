@@ -22,6 +22,50 @@ Rules:
 
 ---
 
+## index_entry_begin
+[id:TASK-20260203-001]  
+type: maintenance  
+priority: medium  
+component: tooling  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-03  
+title: Type-check root config files  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260203-002]  
+type: maintenance  
+priority: medium  
+component: css  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-03  
+title: Stop suppressing the PostCSS warning in Vite  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260203-003]  
+type: maintenance  
+priority: medium  
+component: css  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-03  
+title: Make PostCSS config compatible across tooling  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260203-004]  
+type: maintenance  
+priority: low  
+component: tooling  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-03  
+title: Declare supported Node.js versions  
+## index_entry_end
+
 ## Template for New Index Entries
 
 ## index_entry_begin
