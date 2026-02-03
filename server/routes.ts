@@ -1,18 +1,51 @@
-import type { Express, Request, Response } from "express";
+import type { Express, Request, Response, RequestHandler } from "express";
 import type { Server } from "http";
-import { isAuthenticated, setupAuth, registerAuthRoutes } from "./replit_integrations/auth";
+import { randomUUID } from "crypto";
 import { storage } from "./storage";
+
+const USER_ID_COOKIE_NAME = "ubos_user_id";
 
 interface AuthenticatedRequest extends Request {
   user?: {
     claims: {
       sub: string;
-      email?: string;
-      first_name?: string;
-      last_name?: string;
     };
   };
 }
+
+function parseCookies(header: string | undefined): Record<string, string> {
+  if (!header) return {};
+  const result: Record<string, string> = {};
+
+  for (const part of header.split(";")) {
+    const [rawKey, ...rawValueParts] = part.trim().split("=");
+    if (!rawKey) continue;
+    result[rawKey] = decodeURIComponent(rawValueParts.join("=") ?? "");
+  }
+
+  return result;
+}
+
+function getUserIdFromRequest(req: Request): string | undefined {
+  const headerUserId = req.header("x-user-id") || req.header("x-user");
+  if (headerUserId) return headerUserId;
+
+  const cookies = parseCookies(req.header("cookie"));
+  return cookies[USER_ID_COOKIE_NAME];
+}
+
+const requireAuth: RequestHandler = (req, res, next) => {
+  const userId = getUserIdFromRequest(req);
+  if (!userId) {
+    res.status(401).json({ message: "Unauthorized" });
+    return;
+  }
+  (req as AuthenticatedRequest).user = { claims: { sub: userId } };
+  next();
+};
+
+// Back-compat for existing route handlers
+const isAuthenticated = requireAuth;
 
 async function getOrCreateOrg(userId: string): Promise<string> {
   let org = await storage.getUserOrganization(userId);
@@ -26,12 +59,41 @@ async function getOrCreateOrg(userId: string): Promise<string> {
 }
 
 export async function registerRoutes(server: Server, app: Express): Promise<void> {
-  await setupAuth(app);
-  registerAuthRoutes(app);
-  
-  app.get("/api/dashboard/stats", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
+  // Minimal local auth endpoints (no external provider)
+  app.get("/api/login", async (_req, res) => {
+    const userId = randomUUID();
+    res.setHeader(
+      "Set-Cookie",
+      `${USER_ID_COOKIE_NAME}=${encodeURIComponent(userId)}; Path=/; HttpOnly; SameSite=Lax`,
+    );
+    res.redirect("/");
+  });
+
+  app.get("/api/logout", (_req, res) => {
+    res.setHeader(
+      "Set-Cookie",
+      `${USER_ID_COOKIE_NAME}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`,
+    );
+    res.redirect("/");
+  });
+
+  app.get("/api/auth/user", requireAuth, async (req, res) => {
     try {
-      const userId = req.user!.claims.sub;
+      const userId = getUserIdFromRequest(req)!;
+      let user = await storage.getUser(userId);
+      if (!user) {
+        user = await storage.upsertUser({ id: userId });
+      }
+      res.json(user);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      res.status(500).json({ message: "Failed to fetch user" });
+    }
+  });
+  
+  app.get("/api/dashboard/stats", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const userId = getUserIdFromRequest(req)!;
       const orgId = await getOrCreateOrg(userId);
       
       const [clients, deals, engagements, invoices] = await Promise.all([
@@ -57,9 +119,9 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
     }
   });
 
-  app.get("/api/clients", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
+  app.get("/api/clients", requireAuth, async (req: Request, res: Response) => {
     try {
-      const userId = req.user!.claims.sub;
+      const userId = getUserIdFromRequest(req)!;
       const orgId = await getOrCreateOrg(userId);
       const clients = await storage.getClientCompanies(orgId);
       res.json(clients);
@@ -69,9 +131,9 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
     }
   });
 
-  app.post("/api/clients", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
+  app.post("/api/clients", requireAuth, async (req: Request, res: Response) => {
     try {
-      const userId = req.user!.claims.sub;
+      const userId = getUserIdFromRequest(req)!;
       const orgId = await getOrCreateOrg(userId);
       const client = await storage.createClientCompany({ ...req.body, organizationId: orgId });
       res.status(201).json(client);
