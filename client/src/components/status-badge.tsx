@@ -8,7 +8,8 @@ type StatusType =
   | "not_started" | "in_progress" | "review"
   | "todo"
   | "paid" | "overdue"
-  | "pending" | "approved";
+  | "pending" | "approved"
+  | "low" | "medium" | "high" | "urgent";
 
 const statusConfig: Record<StatusType, { label: string; className: string }> = {
   lead: { label: "Lead", className: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300" },
@@ -36,6 +37,10 @@ const statusConfig: Record<StatusType, { label: string; className: string }> = {
   overdue: { label: "Overdue", className: "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300" },
   pending: { label: "Pending", className: "bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300" },
   approved: { label: "Approved", className: "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300" },
+  low: { label: "Low", className: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300" },
+  medium: { label: "Medium", className: "bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300" },
+  high: { label: "High", className: "bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300" },
+  urgent: { label: "Urgent", className: "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300" },
 };
 
 interface StatusBadgeProps {

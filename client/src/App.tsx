@@ -1,4 +1,5 @@
 import { Switch, Route } from "wouter";
+import { lazy, Suspense } from "react";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -10,20 +11,20 @@ import { AppHeader } from "@/components/app-header";
 import { useAuth } from "@/hooks/use-auth";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import LandingPage from "@/pages/landing";
-import DashboardPage from "@/pages/dashboard";
-import ClientsPage from "@/pages/clients";
-import ContactsPage from "@/pages/contacts";
-import DealsPage from "@/pages/deals";
-import ProposalsPage from "@/pages/proposals";
-import ContractsPage from "@/pages/contracts";
-import EngagementsPage from "@/pages/engagements";
-import ProjectsPage from "@/pages/projects";
-import MessagesPage from "@/pages/messages";
-import InvoicesPage from "@/pages/invoices";
-import BillsPage from "@/pages/bills";
-import SettingsPage from "@/pages/settings";
-import NotFound from "@/pages/not-found";
+const LandingPage = lazy(() => import("@/pages/landing"));
+const DashboardPage = lazy(() => import("@/pages/dashboard"));
+const ClientsPage = lazy(() => import("@/pages/clients"));
+const ContactsPage = lazy(() => import("@/pages/contacts"));
+const DealsPage = lazy(() => import("@/pages/deals"));
+const ProposalsPage = lazy(() => import("@/pages/proposals"));
+const ContractsPage = lazy(() => import("@/pages/contracts"));
+const EngagementsPage = lazy(() => import("@/pages/engagements"));
+const ProjectsPage = lazy(() => import("@/pages/projects"));
+const MessagesPage = lazy(() => import("@/pages/messages"));
+const InvoicesPage = lazy(() => import("@/pages/invoices"));
+const BillsPage = lazy(() => import("@/pages/bills"));
+const SettingsPage = lazy(() => import("@/pages/settings"));
+const NotFound = lazy(() => import("@/pages/not-found"));
 
 function AppLayout({ children }: { children: React.ReactNode }) {
   const sidebarStyle = {
@@ -46,23 +47,117 @@ function AppLayout({ children }: { children: React.ReactNode }) {
   );
 }
 
+function PageLoading() {
+  return (
+    <div className="p-6 space-y-4">
+      <div className="space-y-2">
+        <Skeleton className="h-6 w-40" />
+        <Skeleton className="h-4 w-64" />
+      </div>
+      <div className="space-y-3">
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+      </div>
+    </div>
+  );
+}
+
+const DashboardRoute = () => (
+  <Suspense fallback={<PageLoading />}>
+    <DashboardPage />
+  </Suspense>
+);
+
+const ClientsRoute = () => (
+  <Suspense fallback={<PageLoading />}>
+    <ClientsPage />
+  </Suspense>
+);
+
+const ContactsRoute = () => (
+  <Suspense fallback={<PageLoading />}>
+    <ContactsPage />
+  </Suspense>
+);
+
+const DealsRoute = () => (
+  <Suspense fallback={<PageLoading />}>
+    <DealsPage />
+  </Suspense>
+);
+
+const ProposalsRoute = () => (
+  <Suspense fallback={<PageLoading />}>
+    <ProposalsPage />
+  </Suspense>
+);
+
+const ContractsRoute = () => (
+  <Suspense fallback={<PageLoading />}>
+    <ContractsPage />
+  </Suspense>
+);
+
+const EngagementsRoute = () => (
+  <Suspense fallback={<PageLoading />}>
+    <EngagementsPage />
+  </Suspense>
+);
+
+const ProjectsRoute = () => (
+  <Suspense fallback={<PageLoading />}>
+    <ProjectsPage />
+  </Suspense>
+);
+
+const MessagesRoute = () => (
+  <Suspense fallback={<PageLoading />}>
+    <MessagesPage />
+  </Suspense>
+);
+
+const InvoicesRoute = () => (
+  <Suspense fallback={<PageLoading />}>
+    <InvoicesPage />
+  </Suspense>
+);
+
+const BillsRoute = () => (
+  <Suspense fallback={<PageLoading />}>
+    <BillsPage />
+  </Suspense>
+);
+
+const SettingsRoute = () => (
+  <Suspense fallback={<PageLoading />}>
+    <SettingsPage />
+  </Suspense>
+);
+
+const NotFoundRoute = () => (
+  <Suspense fallback={<PageLoading />}>
+    <NotFound />
+  </Suspense>
+);
+
 function AuthenticatedRouter() {
   return (
     <AppLayout>
       <Switch>
-        <Route path="/" component={DashboardPage} />
-        <Route path="/clients" component={ClientsPage} />
-        <Route path="/contacts" component={ContactsPage} />
-        <Route path="/deals" component={DealsPage} />
-        <Route path="/proposals" component={ProposalsPage} />
-        <Route path="/contracts" component={ContractsPage} />
-        <Route path="/engagements" component={EngagementsPage} />
-        <Route path="/projects" component={ProjectsPage} />
-        <Route path="/messages" component={MessagesPage} />
-        <Route path="/invoices" component={InvoicesPage} />
-        <Route path="/bills" component={BillsPage} />
-        <Route path="/settings" component={SettingsPage} />
-        <Route component={NotFound} />
+        <Route path="/" component={DashboardRoute} />
+        <Route path="/clients" component={ClientsRoute} />
+        <Route path="/contacts" component={ContactsRoute} />
+        <Route path="/deals" component={DealsRoute} />
+        <Route path="/proposals" component={ProposalsRoute} />
+        <Route path="/contracts" component={ContractsRoute} />
+        <Route path="/engagements" component={EngagementsRoute} />
+        <Route path="/projects" component={ProjectsRoute} />
+        <Route path="/messages" component={MessagesRoute} />
+        <Route path="/invoices" component={InvoicesRoute} />
+        <Route path="/bills" component={BillsRoute} />
+        <Route path="/settings" component={SettingsRoute} />
+        <Route component={NotFoundRoute} />
       </Switch>
     </AppLayout>
   );
@@ -95,7 +190,11 @@ function Router() {
 
   if (!isAuthenticated) {
     console.log("[Router] Not authenticated, showing landing page");
-    return <LandingPage />;
+    return (
+      <Suspense fallback={<LoadingScreen />}>
+        <LandingPage />
+      </Suspense>
+    );
   }
 
   console.log("[Router] Authenticated, showing app layout");
