@@ -1,3 +1,10 @@
+/**
+ * Standard page header.
+ *
+ * Use this to keep spacing and layout consistent across pages.
+ * - `actions` renders on the right on larger screens, below on small screens.
+ */
+
 import { ReactNode } from "react";
 
 interface PageHeaderProps {

@@ -1,3 +1,10 @@
+/**
+ * Production static file server.
+ *
+ * In production we serve the built client from `server/public`.
+ * Any unknown route falls through to `index.html` to support client-side routing.
+ */
+
 import express, { type Express } from "express";
 import fs from "fs";
 import path from "path";

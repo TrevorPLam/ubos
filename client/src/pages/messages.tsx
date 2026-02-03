@@ -1,3 +1,16 @@
+/**
+ * Messages page.
+ *
+ * Routing/data patterns:
+ * - Thread list uses `queryKey: ["/api/threads"]`.
+ * - Messages are fetched with a segmented key:
+ *   `["/api/threads", threadId, "messages"]` → "/api/threads/<id>/messages"
+ * - `enabled: !!selectedThread` prevents firing the messages query before selection.
+ *
+ * AI iteration notes:
+ * - If you add realtime updates later, this is the place to bridge WS/SSE → query cache.
+ */
+
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Plus, MessageSquare, Search, Send, Users, Lock } from "lucide-react";
@@ -74,6 +87,7 @@ export default function MessagesPage() {
 
   const { data: messages, isLoading: messagesLoading } = useQuery<Message[]>({
     queryKey: ["/api/threads", selectedThread?.id, "messages"],
+    // Avoid requests like `/api/threads/undefined/messages`.
     enabled: !!selectedThread,
   });
 
@@ -97,6 +111,7 @@ export default function MessagesPage() {
       return apiRequest("POST", `/api/threads/${threadId}/messages`, { content });
     },
     onSuccess: () => {
+      // Keep both the open thread and the thread list (lastMessageAt) up to date.
       queryClient.invalidateQueries({ queryKey: ["/api/threads", selectedThread?.id, "messages"] });
       queryClient.invalidateQueries({ queryKey: ["/api/threads"] });
       setNewMessage("");

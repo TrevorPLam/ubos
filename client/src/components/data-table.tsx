@@ -1,3 +1,16 @@
+/**
+ * Generic data table.
+ *
+ * Designed for fast iteration:
+ * - Column definitions are simple (header + accessor)
+ * - Supports a loading skeleton state that matches the eventual table layout
+ * - Emits `data-testid` hooks for rows using `getRowKey`
+ *
+ * AI iteration notes:
+ * - Use `accessor: (item) => <CustomCell />` for rich cells.
+ * - Keep `getRowKey` stable (prefer a DB id) to avoid React re-mount churn.
+ */
+
 import {
   Table,
   TableBody,

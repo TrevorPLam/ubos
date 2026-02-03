@@ -1,3 +1,11 @@
+/**
+ * Contracts page.
+ *
+ * Domain notes:
+ * - Signing a contract triggers server-side side effects: it also creates an engagement.
+ *   That’s why we invalidate both `/api/contracts` and `/api/engagements` on success.
+ */
+
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
@@ -178,6 +186,7 @@ export default function ContractsPage() {
       return apiRequest("POST", `/api/contracts/${id}/sign`, { signedByName });
     },
     onSuccess: () => {
+      // Server returns `{ contract, engagement }`; we still invalidate to keep lists coherent.
       queryClient.invalidateQueries({ queryKey: ["/api/contracts"] });
       queryClient.invalidateQueries({ queryKey: ["/api/engagements"] });
       setIsSignDialogOpen(false);

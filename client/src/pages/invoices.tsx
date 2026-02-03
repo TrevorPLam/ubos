@@ -1,3 +1,12 @@
+/**
+ * Invoices page (accounts receivable).
+ *
+ * Domain notes:
+ * - `amount` and `tax` are strings in the form, coerced to numbers for the API.
+ * - `totalAmount` is computed client-side for convenience; server stores the values.
+ * - Status transitions use dedicated endpoints (send / mark-paid) to keep audit fields consistent.
+ */
+
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
@@ -49,6 +58,7 @@ const invoiceFormSchema = z.object({
   engagementId: z.string().min(1, "Engagement is required"),
   clientCompanyId: z.string().optional(),
   amount: z.string().min(1, "Amount is required"),
+  // Optional UI field; treated as 0 when empty.
   tax: z.string().optional(),
   status: z.enum(["draft", "sent", "viewed", "paid", "overdue", "cancelled"]),
   notes: z.string().optional(),
@@ -105,6 +115,7 @@ export default function InvoicesPage() {
         ...data,
         amount,
         tax,
+        // Kept in sync with server expectations; see `/api/invoices/:id/mark-paid`.
         totalAmount: amount + tax,
         clientCompanyId: data.clientCompanyId || null,
       });
@@ -159,6 +170,7 @@ export default function InvoicesPage() {
 
   const sendMutation = useMutation({
     mutationFn: async (id: string) => {
+      // Separate endpoint so the server can set `sentAt` consistently.
       return apiRequest("POST", `/api/invoices/${id}/send`);
     },
     onSuccess: () => {
@@ -172,6 +184,7 @@ export default function InvoicesPage() {
 
   const markPaidMutation = useMutation({
     mutationFn: async (id: string) => {
+      // Separate endpoint so the server can set `paidAt` + `paidAmount` consistently.
       return apiRequest("POST", `/api/invoices/${id}/mark-paid`);
     },
     onSuccess: () => {

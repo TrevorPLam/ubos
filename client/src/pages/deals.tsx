@@ -1,3 +1,15 @@
+/**
+ * Deals page (pipeline CRUD).
+ *
+ * Data/model notes:
+ * - The form models `value` as a string for input ergonomics, then we coerce to number/null.
+ * - Clients are fetched separately to populate the “Client” select.
+ *
+ * AI iteration notes:
+ * - If you add new deal fields: update `dealFormSchema`, defaultValues, and the submit coercion.
+ * - Keep `stage` options aligned with the enum in `shared/schema.ts`.
+ */
+
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
@@ -97,11 +109,13 @@ export default function DealsPage() {
     mutationFn: async (data: DealFormValues) => {
       return apiRequest("POST", "/api/deals", {
         ...data,
+        // Convert string inputs to the shapes the API/database expects.
         value: data.value ? parseFloat(data.value) : null,
         clientCompanyId: data.clientCompanyId || null,
       });
     },
     onSuccess: () => {
+      // Refresh deal list; a fine default until we need optimistic updates.
       queryClient.invalidateQueries({ queryKey: ["/api/deals"] });
       setIsDialogOpen(false);
       form.reset();

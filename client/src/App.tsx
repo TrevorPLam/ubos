@@ -1,3 +1,16 @@
+/**
+ * Top-level app composition.
+ *
+ * Responsibilities:
+ * - Global providers (theme, React Query, tooltips, toasts)
+ * - Auth gate (show landing vs authenticated app shell)
+ * - Client-side routing (wouter) with code-splitting via React.lazy
+ *
+ * AI iteration notes:
+ * - New pages usually mean: add a `lazy()` import + a route in `AuthenticatedRouter`.
+ * - Any API call should go through React Query (`queryClient`) to centralize caching/errors.
+ */
+
 import { Switch, Route } from "wouter";
 import { lazy, Suspense } from "react";
 import { queryClient } from "./lib/queryClient";
@@ -11,6 +24,7 @@ import { AppHeader } from "@/components/app-header";
 import { useAuth } from "@/hooks/use-auth";
 import { Skeleton } from "@/components/ui/skeleton";
 
+// Route-level code splitting: keep initial bundle small.
 const LandingPage = lazy(() => import("@/pages/landing"));
 const DashboardPage = lazy(() => import("@/pages/dashboard"));
 const ClientsPage = lazy(() => import("@/pages/clients"));
@@ -182,6 +196,7 @@ function LoadingScreen() {
 function Router() {
   const { user, isLoading, isAuthenticated } = useAuth();
 
+  // Debug logs are intentionally noisy during early iteration; remove/quiet once stable.
   console.log("[Router] Auth state:", { user, isLoading, isAuthenticated });
 
   if (isLoading) {

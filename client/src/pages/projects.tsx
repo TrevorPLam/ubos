@@ -1,3 +1,14 @@
+/**
+ * Projects page.
+ *
+ * Model notes:
+ * - Projects belong to an engagement (`engagementId`).
+ * - `progress` is displayed here; updates to progress typically come from tasks/milestones.
+ *
+ * AI iteration notes:
+ * - If you add tasks/milestone editing, consider invalidating `/api/projects` after task updates.
+ */
+
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";

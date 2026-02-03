@@ -1,3 +1,19 @@
+/**
+ * Server entrypoint.
+ *
+ * Responsibilities:
+ * - Create the Express app + HTTP server
+ * - Install request body parsers (including `rawBody` capture for signature/webhook use cases)
+ * - Install API routes via `registerRoutes()`
+ * - Install the client handler:
+ *   - production: serve built static assets
+ *   - development: proxy through Vite middleware + HMR
+ *
+ * AI iteration notes:
+ * - Add new API endpoints in `server/routes.ts` (keep auth + org scoping consistent).
+ * - Anything that must run before the Vite/static catch-all should be mounted before that block.
+ */
+
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
@@ -15,6 +31,8 @@ declare module "http" {
 app.use(
   express.json({
     verify: (req, _res, buf) => {
+      // Keep the exact bytes around for webhook signature verification.
+      // This is intentionally set before JSON parsing mutates the payload.
       req.rawBody = buf;
     },
   }),

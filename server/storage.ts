@@ -1,3 +1,19 @@
+/**
+ * Storage/data-access layer.
+ *
+ * This is the only place that should “know” about the database.
+ * Route handlers call `storage.*` methods; those methods:
+ * - apply multi-tenant scoping via `organizationId`
+ * - perform CRUD using Drizzle
+ * - return typed entities from `@shared/schema`
+ *
+ * AI iteration notes:
+ * - When adding a new entity:
+ *   1) add the table + types in `shared/schema.ts`
+ *   2) add storage methods here that always take `orgId` for reads/updates/deletes
+ *   3) call those methods from `server/routes.ts`
+ */
+
 import { eq, and, desc } from "drizzle-orm";
 import { db } from "./db";
 import {
@@ -137,6 +153,7 @@ export interface IStorage {
 
 export class DatabaseStorage implements IStorage {
   async getUser(id: string): Promise<User | undefined> {
+    // Users are not org-scoped; they represent identities.
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user || undefined;
   }
@@ -160,6 +177,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUserOrganization(userId: string): Promise<Organization | undefined> {
+    // Membership drives tenancy: a user can belong to 0..n organizations.
+    // Today we pick the first match; upgrade later if you add org switching.
     const result = await db
       .select({ organization: organizations })
       .from(organizationMembers)
@@ -171,6 +190,8 @@ export class DatabaseStorage implements IStorage {
 
   async createOrganization(org: InsertOrganization, ownerId: string): Promise<Organization> {
     const [newOrg] = await db.insert(organizations).values(org).returning();
+
+    // Ensure the creator can immediately access the org’s data.
     await db.insert(organizationMembers).values({
       organizationId: newOrg.id,
       userId: ownerId,
@@ -194,6 +215,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateClientCompany(id: string, orgId: string, data: Partial<InsertClientCompany>): Promise<ClientCompany | undefined> {
+    // Always bump `updatedAt` so lists and caches can rely on it.
     const [client] = await db.update(clientCompanies).set({ ...data, updatedAt: new Date() }).where(and(eq(clientCompanies.id, id), eq(clientCompanies.organizationId, orgId))).returning();
     return client;
   }

@@ -1,3 +1,14 @@
+/**
+ * Dashboard page.
+ *
+ * Data flow:
+ * - Uses React Query with URL-shaped `queryKey`s (see `client/src/lib/queryClient.ts`).
+ * - Queries here intentionally use `staleTime: 0` + refetch-on-mount for fresh “today” data.
+ *
+ * AI iteration notes:
+ * - Add a new widget by adding an endpoint in `server/routes.ts`, then a `useQuery` here.
+ */
+
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import {
@@ -23,6 +34,7 @@ import type { Deal, Engagement, Invoice, Task } from "@shared/schema";
 export default function DashboardPage() {
   const { user } = useAuth();
 
+  // `queryKey` is the URL. Our shared query function joins segments into a path.
   const { data: stats, isLoading: statsLoading } = useQuery<{
     clients: number;
     deals: number;

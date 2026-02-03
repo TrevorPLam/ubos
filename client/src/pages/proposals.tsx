@@ -1,3 +1,11 @@
+/**
+ * Proposals page.
+ *
+ * Domain notes:
+ * - Proposal status transitions use a dedicated endpoint (`/send`) so the server can stamp `sentAt`.
+ * - Keep `statusOptions` aligned with `proposalStatusEnum` in `shared/schema.ts`.
+ */
+
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";

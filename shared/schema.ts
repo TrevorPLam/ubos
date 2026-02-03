@@ -1,3 +1,22 @@
+/**
+ * Shared database schema + types.
+ *
+ * This file defines:
+ * - Drizzle table schemas (Postgres)
+ * - Enums used by tables
+ * - Zod insert schemas (via drizzle-zod)
+ * - Exported TS types consumed by both server and client
+ *
+ * Multi-tenancy:
+ * - Most tables include `organizationId` and should always be queried/updated with that scope.
+ * - Storage methods in `server/storage.ts` are the enforcement point for org scoping.
+ *
+ * AI iteration notes:
+ * - When adding a table: include `organizationId` if it represents tenant-owned data.
+ * - Keep naming consistent: `created_at`/`updated_at` columns map to `createdAt`/`updatedAt`.
+ * - Prefer enums for finite state (status/stage) so UI and API stay in sync.
+ */
+
 import { sql, relations } from "drizzle-orm";
 import { pgTable, text, varchar, timestamp, boolean, integer, decimal, jsonb, index, pgEnum } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";

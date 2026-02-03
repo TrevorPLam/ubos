@@ -1,3 +1,11 @@
+/**
+ * Small KPI card used on dashboards and summary rows.
+ *
+ * AI iteration notes:
+ * - Prefer passing pre-formatted values (e.g. currency) from the page.
+ * - Add new visuals (sparklines, comparisons) here so all dashboards stay consistent.
+ */
+
 import { LucideIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 

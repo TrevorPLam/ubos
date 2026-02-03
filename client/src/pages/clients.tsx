@@ -1,3 +1,18 @@
+/**
+ * Clients page.
+ *
+ * Patterns used here (copy/paste-friendly for other CRUD pages):
+ * - List query: `useQuery({ queryKey: ["/api/clients"] })`
+ * - Mutations via `apiRequest` + `queryClient.invalidateQueries` to refresh the list
+ * - Form validation with Zod + react-hook-form
+ *
+ * AI iteration notes:
+ * - Add new client fields by updating:
+ *   1) `clientFormSchema`
+ *   2) form defaults + `handleEdit` mapping
+ *   3) server schema/storage/routes if persisted
+ */
+
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
@@ -38,6 +53,7 @@ import type { ClientCompany } from "@shared/schema";
 const clientFormSchema = z.object({
   name: z.string().min(1, "Name is required"),
   website: z.string().url().optional().or(z.literal("")),
+  // Keep `website` optional but validate format when present.
   industry: z.string().optional(),
   address: z.string().optional(),
   city: z.string().optional(),
@@ -80,6 +96,7 @@ export default function ClientsPage() {
       return apiRequest("POST", "/api/clients", data);
     },
     onSuccess: () => {
+      // Refresh the list; simplest approach while iteration is fast.
       queryClient.invalidateQueries({ queryKey: ["/api/clients"] });
       setIsDialogOpen(false);
       form.reset();
@@ -95,6 +112,7 @@ export default function ClientsPage() {
       return apiRequest("PATCH", `/api/clients/${data.id}`, data);
     },
     onSuccess: () => {
+      // Invalidate the list to reflect updates; consider optimistic updates later.
       queryClient.invalidateQueries({ queryKey: ["/api/clients"] });
       setIsDialogOpen(false);
       setEditingClient(null);

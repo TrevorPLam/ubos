@@ -1,3 +1,33 @@
+/**
+ * API routes.
+ *
+ * This file intentionally keeps “auth” very lightweight for local/dev usage:
+ * - `GET /api/login` mints a random user id and stores it in an HttpOnly cookie
+ * - API requests authenticate by either:
+ *   - `x-user-id` / `x-user` header (handy for scripts/tests)
+ *   - `ubos_user_id` cookie (browser)
+ *
+ * Multi-tenancy model:
+ * - All business data is scoped to an `organizationId`.
+ * - Handlers should resolve the caller’s org once (`getOrCreateOrg`) then pass `orgId`
+ *   to storage methods.
+ *
+ * AI iteration notes:
+ * - When adding a new route:
+ *   1) add `requireAuth` (or `isAuthenticated` for back-compat)
+ *   2) resolve `orgId`
+ *   3) call `storage.*` methods that enforce `orgId` filters
+ *
+ * Endpoint index (by prefix):
+ * - /api/login, /api/logout, /api/auth/*
+ * - /api/dashboard/*
+ * - /api/clients, /api/contacts
+ * - /api/deals, /api/proposals, /api/contracts
+ * - /api/engagements, /api/projects, /api/tasks
+ * - /api/threads, /api/threads/:id/messages
+ * - /api/invoices, /api/bills, /api/vendors
+ */
+
 import type { Express, Request, Response, RequestHandler } from "express";
 import type { Server } from "http";
 import { randomUUID } from "crypto";
@@ -27,9 +57,12 @@ function parseCookies(header: string | undefined): Record<string, string> {
 }
 
 function getUserIdFromRequest(req: Request): string | undefined {
+  // Allow non-browser callers to impersonate a user via header.
+  // This keeps development + automation simple without an external auth provider.
   const headerUserId = req.header("x-user-id") || req.header("x-user");
   if (headerUserId) return headerUserId;
 
+  // Browser path: our `/api/login` endpoint stores the user id in an HttpOnly cookie.
   const cookies = parseCookies(req.header("cookie"));
   return cookies[USER_ID_COOKIE_NAME];
 }
@@ -40,6 +73,9 @@ const requireAuth: RequestHandler = (req, res, next) => {
     res.status(401).json({ message: "Unauthorized" });
     return;
   }
+
+  // Standardize where handlers read the authenticated user.
+  // We mimic a minimal “claims.sub” shape to ease upgrades to a real auth provider later.
   (req as AuthenticatedRequest).user = { claims: { sub: userId } };
   next();
 };
@@ -48,6 +84,8 @@ const requireAuth: RequestHandler = (req, res, next) => {
 const isAuthenticated = requireAuth;
 
 async function getOrCreateOrg(userId: string): Promise<string> {
+  // Ensure every user has an organization; most API handlers assume `orgId` exists.
+  // This keeps first-run UX simple: sign in once → data is immediately writable.
   let org = await storage.getUserOrganization(userId);
   if (!org) {
     org = await storage.createOrganization(
@@ -59,11 +97,17 @@ async function getOrCreateOrg(userId: string): Promise<string> {
 }
 
 export async function registerRoutes(server: Server, app: Express): Promise<void> {
+  // `server` is reserved for real-time features (SSE/WebSocket) where we need the HTTP server.
+  // Keeping it in the signature avoids a future breaking change.
+  void server;
+
+  // ==================== AUTH ====================
   // Minimal local auth endpoints (no external provider)
   app.get("/api/login", async (_req, res) => {
     const userId = randomUUID();
     res.setHeader(
       "Set-Cookie",
+      // `Secure` is intentionally omitted for local HTTP dev; add it when you enforce HTTPS.
       `${USER_ID_COOKIE_NAME}=${encodeURIComponent(userId)}; Path=/; HttpOnly; SameSite=Lax`,
     );
     res.redirect("/");
@@ -90,7 +134,8 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
       res.status(500).json({ message: "Failed to fetch user" });
     }
   });
-  
+
+  // ==================== DASHBOARD ====================
   app.get("/api/dashboard/stats", requireAuth, async (req: Request, res: Response) => {
     try {
       const userId = getUserIdFromRequest(req)!;
@@ -118,6 +163,8 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
       res.status(500).json({ error: "Failed to fetch dashboard stats" });
     }
   });
+
+  // ==================== CLIENTS ====================
 
   app.get("/api/clients", requireAuth, async (req: Request, res: Response) => {
     try {
@@ -169,6 +216,8 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
     }
   });
 
+  // ==================== CONTACTS ====================
+
   app.get("/api/contacts", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
       const userId = req.user!.claims.sub;
@@ -219,6 +268,8 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
     }
   });
 
+  // ==================== DEALS ====================
+
   app.get("/api/deals", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
       const userId = req.user!.claims.sub;
@@ -268,6 +319,8 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
       res.status(500).json({ error: "Failed to delete deal" });
     }
   });
+
+  // ==================== PROPOSALS ====================
 
   app.get("/api/proposals", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
@@ -331,6 +384,8 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
       res.status(500).json({ error: "Failed to delete proposal" });
     }
   });
+
+  // ==================== CONTRACTS ====================
 
   app.get("/api/contracts", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
@@ -429,6 +484,8 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
     }
   });
 
+  // ==================== ENGAGEMENTS ====================
+
   app.get("/api/engagements", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
       const userId = req.user!.claims.sub;
@@ -478,6 +535,8 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
       res.status(500).json({ error: "Failed to delete engagement" });
     }
   });
+
+  // ==================== PROJECTS ====================
 
   app.get("/api/projects", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
@@ -529,6 +588,8 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
     }
   });
 
+  // ==================== TASKS ====================
+
   app.get("/api/tasks", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
       const userId = req.user!.claims.sub;
@@ -553,6 +614,8 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
       res.status(500).json({ error: "Failed to create task" });
     }
   });
+
+  // ==================== THREADS / MESSAGES ====================
 
   app.get("/api/threads", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
@@ -611,6 +674,8 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
       res.status(500).json({ error: "Failed to create message" });
     }
   });
+
+  // ==================== INVOICES ====================
 
   app.get("/api/invoices", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
@@ -692,6 +757,8 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
       res.status(500).json({ error: "Failed to delete invoice" });
     }
   });
+
+  // ==================== BILLS ====================
 
   app.get("/api/bills", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
@@ -785,6 +852,8 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
       res.status(500).json({ error: "Failed to delete bill" });
     }
   });
+
+  // ==================== VENDORS ====================
 
   app.get("/api/vendors", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {

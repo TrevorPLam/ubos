@@ -1,3 +1,12 @@
+/**
+ * Shared API client utilities + React Query configuration.
+ *
+ * Key decisions:
+ * - All requests include `credentials: "include"` so the HttpOnly auth cookie is sent.
+ * - `getQueryFn()` uses the query key as a URL (e.g. ["/api/clients"] → "/api/clients").
+ * - Default query behavior avoids background refetching to keep UI predictable during dev.
+ */
+
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
 async function throwIfResNotOk(res: Response) {
@@ -12,6 +21,7 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
+  // Mutations (POST/PATCH/DELETE) go through this helper so error handling is consistent.
   const res = await fetch(url, {
     method,
     headers: data ? { "Content-Type": "application/json" } : {},
@@ -29,6 +39,8 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
+    // Convention: query keys are URL segments.
+    // Example: queryKey ["/api", "clients"] becomes "/api/clients".
     const res = await fetch(queryKey.join("/") as string, {
       credentials: "include",
     });

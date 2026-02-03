@@ -1,3 +1,10 @@
+/**
+ * Status badge.
+ *
+ * Maps enum-like status strings to human labels + color tokens.
+ * Keep this aligned with the enums in `shared/schema.ts` (deal stage, invoice status, etc.).
+ */
+
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -49,6 +56,7 @@ interface StatusBadgeProps {
 }
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {
+  // Fallback prevents runtime crashes if a new status is introduced before the mapping is updated.
   const config = statusConfig[status] || { label: status, className: "" };
   
   return (

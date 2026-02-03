@@ -1,3 +1,15 @@
+/**
+ * Application sidebar (primary navigation).
+ *
+ * Extension points:
+ * - Add new sections by extending the `*Items` arrays.
+ * - Active state is computed from the current location (wouter).
+ *
+ * Auth:
+ * - User identity is read from `useAuth()`.
+ * - Logout triggers a server redirect that clears the auth cookie.
+ */
+
 import { Link, useLocation } from "wouter";
 import {
   LayoutDashboard,
@@ -61,6 +73,7 @@ export function AppSidebar() {
   const { user, logout } = useAuth();
 
   const isActive = (url: string) => {
+    // Keep dashboard exact-match; everything else treats sub-routes as active.
     if (url === "/") return location === "/";
     return location.startsWith(url);
   };

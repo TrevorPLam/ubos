@@ -1,3 +1,17 @@
+/**
+ * Application header (top bar).
+ *
+ * Responsibilities:
+ * - Sidebar toggle (mobile + collapsed modes)
+ * - Placeholder global search UI (not yet wired)
+ * - Notifications affordance (currently empty)
+ * - Theme toggle
+ *
+ * AI iteration notes:
+ * - When wiring search: debounce input + drive navigation or query cache.
+ * - When wiring notifications: fetch from an `/api/...` endpoint and render items.
+ */
+
 import { Search, Bell } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { ThemeToggle } from "@/components/theme-toggle";

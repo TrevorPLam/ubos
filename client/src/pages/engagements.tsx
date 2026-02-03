@@ -1,3 +1,12 @@
+/**
+ * Engagements page (delivery hub).
+ *
+ * Pattern:
+ * - List: `useQuery({ queryKey: ["/api/engagements"] })`
+ * - Mutations: `apiRequest` + invalidate the list query
+ * - Form values keep currency/number fields as strings for input, then coerce on submit.
+ */
+
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
@@ -91,6 +100,7 @@ export default function EngagementsPage() {
     mutationFn: async (data: EngagementFormValues) => {
       return apiRequest("POST", "/api/engagements", {
         ...data,
+        // Convert input strings to API-friendly shapes.
         totalValue: data.totalValue ? parseFloat(data.totalValue) : null,
         clientCompanyId: data.clientCompanyId || null,
       });
