@@ -31,57 +31,10 @@ Global Rules:
 ## group_begin [type:docs][priority:high]
 ## 📚 Documentation (Unscheduled) — High
 
-## task_begin
-### # [id:TASK-20260203-005][type:docs][priority:high][component:onboarding] Add a production-quality README
-**Status:** todo  
-**Description:** Add a root README that explains what UBOS is, how to run it locally, how to build, and common workflows.
-**Acceptance Criteria:**  
-- [ ] README includes: prerequisites (Node/Postgres), install, dev, build, start
-- [ ] README includes troubleshooting for common issues (PORT, DATABASE_URL, build output)
-- [ ] README includes a brief architecture overview (client/server/shared)
-**Relevant Files:** `README.md`, `package.json`, `server/index.ts`, `script/build.ts`
-## task_end
-
----
-
-## task_begin
-### # [id:TASK-20260203-006][type:docs][priority:high][component:config] Add .env.example and document required env vars
-**Status:** todo  
-**Description:** Create a checked-in `.env.example` that documents required and optional environment variables for local dev and production.
-**Acceptance Criteria:**  
-- [ ] `.env.example` exists and includes `DATABASE_URL` and `PORT` defaults/notes
-- [ ] README references `.env.example` and explains setup
-**Relevant Files:** `.env.example`, `server/db.ts`, `server/index.ts`
-## task_end
-
 ## group_end
 
 ## group_begin [type:quality][priority:high]
 ## ✅ Code Quality (Unscheduled) — High
-
-## task_begin
-### # [id:TASK-20260203-007][type:quality][priority:high][component:tooling] Add ESLint configuration for TS + React
-**Status:** todo  
-**Description:** Add ESLint with an industry-standard baseline for TypeScript/React and wire it into package scripts.
-**Acceptance Criteria:**  
-- [ ] `npm run lint` exists and reports issues
-- [ ] Lint config covers `client/src`, `server`, and `shared`
-- [ ] Lint results are stable (no noisy false positives)
-**Relevant Files:** `package.json`, `client/src/**/*`, `server/**/*`, `shared/**/*`
-## task_end
-
----
-
-## task_begin
-### # [id:TASK-20260203-008][type:quality][priority:high][component:tooling] Add Prettier formatting + CI format check
-**Status:** todo  
-**Description:** Add Prettier and scripts for formatting and format verification to keep diffs consistent.
-**Acceptance Criteria:**  
-- [ ] `npm run format` formats the repo
-- [ ] `npm run format:check` fails on unformatted code
-- [ ] Prettier config is committed and applies consistently
-**Relevant Files:** `package.json`, `.prettierrc*` or `prettier.config.*`
-## task_end
 
 ## group_end
 

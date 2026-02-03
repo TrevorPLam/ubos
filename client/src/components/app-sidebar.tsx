@@ -42,9 +42,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/use-auth";
 
-const mainNavItems = [
-  { title: "Dashboard", url: "/", icon: LayoutDashboard },
-];
+const mainNavItems = [{ title: "Dashboard", url: "/", icon: LayoutDashboard }];
 
 const crmItems = [
   { title: "Clients", url: "/clients", icon: Building2 },

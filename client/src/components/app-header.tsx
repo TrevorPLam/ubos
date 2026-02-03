@@ -34,7 +34,9 @@ export function AppHeader({ title }: AppHeaderProps) {
       <div className="flex items-center gap-3">
         <SidebarTrigger data-testid="button-sidebar-toggle" className="-ml-1" />
         {title && (
-          <h1 className="text-lg font-semibold" data-testid="text-page-title">{title}</h1>
+          <h1 className="text-lg font-semibold" data-testid="text-page-title">
+            {title}
+          </h1>
         )}
       </div>
 

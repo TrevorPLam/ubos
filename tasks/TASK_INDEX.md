@@ -76,9 +76,10 @@ title: Declare supported Node.js versions
 type: docs  
 priority: high  
 component: onboarding  
-status: todo  
-location: BACKLOG.md  
+status: done  
+location: ARCHIVE.md  
 created: 2026-02-03  
+completed: 2026-02-03  
 title: Add a production-quality README  
 ## index_entry_end
 
@@ -87,9 +88,10 @@ title: Add a production-quality README
 type: docs  
 priority: high  
 component: config  
-status: todo  
-location: BACKLOG.md  
+status: done  
+location: ARCHIVE.md  
 created: 2026-02-03  
+completed: 2026-02-03  
 title: Add .env.example and document required env vars  
 ## index_entry_end
 
@@ -98,9 +100,10 @@ title: Add .env.example and document required env vars
 type: quality  
 priority: high  
 component: tooling  
-status: todo  
-location: BACKLOG.md  
+status: done  
+location: ARCHIVE.md  
 created: 2026-02-03  
+completed: 2026-02-03  
 title: Add ESLint configuration for TS + React  
 ## index_entry_end
 
@@ -109,9 +112,10 @@ title: Add ESLint configuration for TS + React
 type: quality  
 priority: high  
 component: tooling  
-status: todo  
-location: BACKLOG.md  
+status: done  
+location: ARCHIVE.md  
 created: 2026-02-03  
+completed: 2026-02-03  
 title: Add Prettier formatting + CI format check  
 ## index_entry_end
 

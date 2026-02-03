@@ -168,7 +168,7 @@ export default function ClientsPage() {
   };
 
   const filteredClients = clients?.filter((client) =>
-    client.name.toLowerCase().includes(searchQuery.toLowerCase())
+    client.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const columns = [
@@ -181,9 +181,7 @@ export default function ClientsPage() {
           </div>
           <div>
             <p className="font-medium">{client.name}</p>
-            {client.website && (
-              <p className="text-xs text-muted-foreground">{client.website}</p>
-            )}
+            {client.website && <p className="text-xs text-muted-foreground">{client.website}</p>}
           </div>
         </div>
       ),
@@ -250,7 +248,11 @@ export default function ClientsPage() {
                       <FormItem>
                         <FormLabel>Company Name *</FormLabel>
                         <FormControl>
-                          <Input placeholder="Acme Inc." {...field} data-testid="input-client-name" />
+                          <Input
+                            placeholder="Acme Inc."
+                            {...field}
+                            data-testid="input-client-name"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -264,7 +266,11 @@ export default function ClientsPage() {
                         <FormItem>
                           <FormLabel>Website</FormLabel>
                           <FormControl>
-                            <Input placeholder="https://example.com" {...field} data-testid="input-client-website" />
+                            <Input
+                              placeholder="https://example.com"
+                              {...field}
+                              data-testid="input-client-website"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -277,7 +283,11 @@ export default function ClientsPage() {
                         <FormItem>
                           <FormLabel>Industry</FormLabel>
                           <FormControl>
-                            <Input placeholder="Technology" {...field} data-testid="input-client-industry" />
+                            <Input
+                              placeholder="Technology"
+                              {...field}
+                              data-testid="input-client-industry"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -291,7 +301,11 @@ export default function ClientsPage() {
                       <FormItem>
                         <FormLabel>Address</FormLabel>
                         <FormControl>
-                          <Input placeholder="123 Main St" {...field} data-testid="input-client-address" />
+                          <Input
+                            placeholder="123 Main St"
+                            {...field}
+                            data-testid="input-client-address"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -305,7 +319,11 @@ export default function ClientsPage() {
                         <FormItem>
                           <FormLabel>City</FormLabel>
                           <FormControl>
-                            <Input placeholder="San Francisco" {...field} data-testid="input-client-city" />
+                            <Input
+                              placeholder="San Francisco"
+                              {...field}
+                              data-testid="input-client-city"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -346,7 +364,11 @@ export default function ClientsPage() {
                         <FormItem>
                           <FormLabel>Country</FormLabel>
                           <FormControl>
-                            <Input placeholder="USA" {...field} data-testid="input-client-country" />
+                            <Input
+                              placeholder="USA"
+                              {...field}
+                              data-testid="input-client-country"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

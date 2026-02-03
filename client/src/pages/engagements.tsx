@@ -176,7 +176,7 @@ export default function EngagementsPage() {
   };
 
   const filteredEngagements = engagements?.filter((engagement) =>
-    engagement.name.toLowerCase().includes(searchQuery.toLowerCase())
+    engagement.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const columns = [
@@ -190,7 +190,9 @@ export default function EngagementsPage() {
           <div>
             <p className="font-medium">{engagement.name}</p>
             {engagement.description && (
-              <p className="text-xs text-muted-foreground truncate max-w-xs">{engagement.description}</p>
+              <p className="text-xs text-muted-foreground truncate max-w-xs">
+                {engagement.description}
+              </p>
             )}
           </div>
         </div>
@@ -220,7 +222,11 @@ export default function EngagementsPage() {
       accessor: (engagement: Engagement) => (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" data-testid={`button-engagement-menu-${engagement.id}`}>
+            <Button
+              variant="ghost"
+              size="icon"
+              data-testid={`button-engagement-menu-${engagement.id}`}
+            >
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -257,7 +263,9 @@ export default function EngagementsPage() {
             </DialogTrigger>
             <DialogContent className="max-w-lg">
               <DialogHeader>
-                <DialogTitle>{editingEngagement ? "Edit Engagement" : "New Engagement"}</DialogTitle>
+                <DialogTitle>
+                  {editingEngagement ? "Edit Engagement" : "New Engagement"}
+                </DialogTitle>
               </DialogHeader>
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -268,7 +276,11 @@ export default function EngagementsPage() {
                       <FormItem>
                         <FormLabel>Engagement Name *</FormLabel>
                         <FormControl>
-                          <Input placeholder="Website Redesign Project" {...field} data-testid="input-engagement-name" />
+                          <Input
+                            placeholder="Website Redesign Project"
+                            {...field}
+                            data-testid="input-engagement-name"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -306,7 +318,12 @@ export default function EngagementsPage() {
                         <FormItem>
                           <FormLabel>Total Value ($)</FormLabel>
                           <FormControl>
-                            <Input type="number" placeholder="25000" {...field} data-testid="input-engagement-value" />
+                            <Input
+                              type="number"
+                              placeholder="25000"
+                              {...field}
+                              data-testid="input-engagement-value"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

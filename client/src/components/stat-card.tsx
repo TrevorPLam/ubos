@@ -40,9 +40,7 @@ export function StatCard({ title, value, description, icon: Icon, trend }: StatC
                 </span>
               )}
             </div>
-            {description && (
-              <p className="text-xs text-muted-foreground">{description}</p>
-            )}
+            {description && <p className="text-xs text-muted-foreground">{description}</p>}
           </div>
           {Icon && (
             <div className="rounded-lg bg-muted p-2.5">

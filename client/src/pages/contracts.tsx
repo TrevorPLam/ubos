@@ -9,7 +9,16 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Plus, FilePenLine, Search, MoreHorizontal, Pencil, Trash2, Send, CheckCircle } from "lucide-react";
+import {
+  Plus,
+  FilePenLine,
+  Search,
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+  Send,
+  CheckCircle,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -238,7 +247,7 @@ export default function ContractsPage() {
   };
 
   const filteredContracts = contracts?.filter((contract) =>
-    contract.name.toLowerCase().includes(searchQuery.toLowerCase())
+    contract.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const columns = [
@@ -340,7 +349,11 @@ export default function ContractsPage() {
                       <FormItem>
                         <FormLabel>Contract Name *</FormLabel>
                         <FormControl>
-                          <Input placeholder="Service Agreement" {...field} data-testid="input-contract-name" />
+                          <Input
+                            placeholder="Service Agreement"
+                            {...field}
+                            data-testid="input-contract-name"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -404,7 +417,12 @@ export default function ContractsPage() {
                         <FormItem>
                           <FormLabel>Total Value ($)</FormLabel>
                           <FormControl>
-                            <Input type="number" placeholder="10000" {...field} data-testid="input-contract-value" />
+                            <Input
+                              type="number"
+                              placeholder="10000"
+                              {...field}
+                              data-testid="input-contract-value"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -459,7 +477,8 @@ export default function ContractsPage() {
           <DialogHeader>
             <DialogTitle>Sign Contract</DialogTitle>
             <DialogDescription>
-              Type your name below to sign this contract. This will create an engagement automatically.
+              Type your name below to sign this contract. This will create an engagement
+              automatically.
             </DialogDescription>
           </DialogHeader>
           <Form {...signatureForm}>
@@ -486,7 +505,11 @@ export default function ContractsPage() {
                 <Button type="button" variant="outline" onClick={() => setIsSignDialogOpen(false)}>
                   Cancel
                 </Button>
-                <Button type="submit" disabled={signMutation.isPending} data-testid="button-confirm-sign">
+                <Button
+                  type="submit"
+                  disabled={signMutation.isPending}
+                  data-testid="button-confirm-sign"
+                >
                   {signMutation.isPending ? "Signing..." : "Sign Contract"}
                 </Button>
               </div>

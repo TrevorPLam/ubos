@@ -195,7 +195,7 @@ export default function ProposalsPage() {
   };
 
   const filteredProposals = proposals?.filter((proposal) =>
-    proposal.name.toLowerCase().includes(searchQuery.toLowerCase())
+    proposal.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const columns = [
@@ -285,7 +285,11 @@ export default function ProposalsPage() {
                       <FormItem>
                         <FormLabel>Proposal Name *</FormLabel>
                         <FormControl>
-                          <Input placeholder="Website Redesign Proposal" {...field} data-testid="input-proposal-name" />
+                          <Input
+                            placeholder="Website Redesign Proposal"
+                            {...field}
+                            data-testid="input-proposal-name"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -349,7 +353,12 @@ export default function ProposalsPage() {
                         <FormItem>
                           <FormLabel>Total Value ($)</FormLabel>
                           <FormControl>
-                            <Input type="number" placeholder="10000" {...field} data-testid="input-proposal-value" />
+                            <Input
+                              type="number"
+                              placeholder="10000"
+                              {...field}
+                              data-testid="input-proposal-value"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

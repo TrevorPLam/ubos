@@ -10,7 +10,17 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Plus, Receipt, Search, MoreHorizontal, Pencil, Trash2, Send, CheckCircle, DollarSign } from "lucide-react";
+import {
+  Plus,
+  Receipt,
+  Search,
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+  Send,
+  CheckCircle,
+  DollarSign,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -225,7 +235,7 @@ export default function InvoicesPage() {
   };
 
   const filteredInvoices = invoices?.filter((invoice) =>
-    invoice.invoiceNumber.toLowerCase().includes(searchQuery.toLowerCase())
+    invoice.invoiceNumber.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const columns = [
@@ -250,7 +260,9 @@ export default function InvoicesPage() {
       accessor: (invoice: Invoice) => (
         <div className="flex items-center gap-1">
           <DollarSign className="h-3.5 w-3.5 text-muted-foreground" />
-          <span className="font-mono font-medium">{Number(invoice.totalAmount || 0).toLocaleString()}</span>
+          <span className="font-mono font-medium">
+            {Number(invoice.totalAmount || 0).toLocaleString()}
+          </span>
         </div>
       ),
     },
@@ -332,7 +344,11 @@ export default function InvoicesPage() {
                       <FormItem>
                         <FormLabel>Invoice Number *</FormLabel>
                         <FormControl>
-                          <Input placeholder="INV-001" {...field} data-testid="input-invoice-number" />
+                          <Input
+                            placeholder="INV-001"
+                            {...field}
+                            data-testid="input-invoice-number"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -370,7 +386,12 @@ export default function InvoicesPage() {
                         <FormItem>
                           <FormLabel>Amount ($) *</FormLabel>
                           <FormControl>
-                            <Input type="number" placeholder="1000" {...field} data-testid="input-invoice-amount" />
+                            <Input
+                              type="number"
+                              placeholder="1000"
+                              {...field}
+                              data-testid="input-invoice-amount"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -383,7 +404,12 @@ export default function InvoicesPage() {
                         <FormItem>
                           <FormLabel>Tax ($)</FormLabel>
                           <FormControl>
-                            <Input type="number" placeholder="0" {...field} data-testid="input-invoice-tax" />
+                            <Input
+                              type="number"
+                              placeholder="0"
+                              {...field}
+                              data-testid="input-invoice-tax"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

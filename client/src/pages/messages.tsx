@@ -136,7 +136,7 @@ export default function MessagesPage() {
   };
 
   const filteredThreads = threads?.filter((thread) =>
-    thread.subject.toLowerCase().includes(searchQuery.toLowerCase())
+    thread.subject.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
@@ -165,7 +165,11 @@ export default function MessagesPage() {
                       <FormItem>
                         <FormLabel>Subject *</FormLabel>
                         <FormControl>
-                          <Input placeholder="Discussion topic" {...field} data-testid="input-thread-subject" />
+                          <Input
+                            placeholder="Discussion topic"
+                            {...field}
+                            data-testid="input-thread-subject"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -230,7 +234,11 @@ export default function MessagesPage() {
                     <Button type="button" variant="outline" onClick={handleDialogClose}>
                       Cancel
                     </Button>
-                    <Button type="submit" disabled={createThreadMutation.isPending} data-testid="button-create-thread">
+                    <Button
+                      type="submit"
+                      disabled={createThreadMutation.isPending}
+                      data-testid="button-create-thread"
+                    >
                       {createThreadMutation.isPending ? "Creating..." : "Create Thread"}
                     </Button>
                   </div>
@@ -282,9 +290,13 @@ export default function MessagesPage() {
                         </div>
                         <Badge variant="outline" className="text-xs flex-shrink-0">
                           {thread.type === "internal" ? (
-                            <><Lock className="h-3 w-3 mr-1" /> Internal</>
+                            <>
+                              <Lock className="h-3 w-3 mr-1" /> Internal
+                            </>
                           ) : (
-                            <><Users className="h-3 w-3 mr-1" /> Client</>
+                            <>
+                              <Users className="h-3 w-3 mr-1" /> Client
+                            </>
                           )}
                         </Badge>
                       </div>
@@ -314,9 +326,13 @@ export default function MessagesPage() {
                   </div>
                   <Badge variant="outline">
                     {selectedThread.type === "internal" ? (
-                      <><Lock className="h-3 w-3 mr-1" /> Internal</>
+                      <>
+                        <Lock className="h-3 w-3 mr-1" /> Internal
+                      </>
                     ) : (
-                      <><Users className="h-3 w-3 mr-1" /> Client</>
+                      <>
+                        <Users className="h-3 w-3 mr-1" /> Client
+                      </>
                     )}
                   </Badge>
                 </div>
@@ -324,7 +340,9 @@ export default function MessagesPage() {
               <CardContent className="flex-1 p-0 overflow-hidden">
                 <ScrollArea className="h-[calc(100%-5rem)] p-4">
                   {messagesLoading ? (
-                    <div className="text-center text-muted-foreground py-8">Loading messages...</div>
+                    <div className="text-center text-muted-foreground py-8">
+                      Loading messages...
+                    </div>
                   ) : messages && messages.length > 0 ? (
                     <div className="space-y-4">
                       {messages.map((message) => (

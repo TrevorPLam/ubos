@@ -99,26 +99,10 @@ export default function DashboardPage() {
           </>
         ) : (
           <>
-            <StatCard
-              title="Active Clients"
-              value={stats?.clients || 0}
-              icon={Building2}
-            />
-            <StatCard
-              title="Open Deals"
-              value={stats?.deals || 0}
-              icon={TrendingUp}
-            />
-            <StatCard
-              title="Active Engagements"
-              value={stats?.engagements || 0}
-              icon={Briefcase}
-            />
-            <StatCard
-              title="Pending Invoices"
-              value={stats?.pendingInvoices || 0}
-              icon={Receipt}
-            />
+            <StatCard title="Active Clients" value={stats?.clients || 0} icon={Building2} />
+            <StatCard title="Open Deals" value={stats?.deals || 0} icon={TrendingUp} />
+            <StatCard title="Active Engagements" value={stats?.engagements || 0} icon={Briefcase} />
+            <StatCard title="Pending Invoices" value={stats?.pendingInvoices || 0} icon={Receipt} />
           </>
         )}
       </div>

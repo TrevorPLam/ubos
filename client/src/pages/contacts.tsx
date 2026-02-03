@@ -166,7 +166,7 @@ export default function ContactsPage() {
   };
 
   const filteredContacts = contacts?.filter((contact) =>
-    `${contact.firstName} ${contact.lastName}`.toLowerCase().includes(searchQuery.toLowerCase())
+    `${contact.firstName} ${contact.lastName}`.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const getInitials = (firstName: string, lastName: string) => {
@@ -186,13 +186,9 @@ export default function ContactsPage() {
           <div>
             <p className="font-medium">
               {contact.firstName} {contact.lastName}
-              {contact.isPrimary && (
-                <span className="ml-2 text-xs text-primary">(Primary)</span>
-              )}
+              {contact.isPrimary && <span className="ml-2 text-xs text-primary">(Primary)</span>}
             </p>
-            {contact.title && (
-              <p className="text-xs text-muted-foreground">{contact.title}</p>
-            )}
+            {contact.title && <p className="text-xs text-muted-foreground">{contact.title}</p>}
           </div>
         </div>
       ),
@@ -284,7 +280,11 @@ export default function ContactsPage() {
                         <FormItem>
                           <FormLabel>First Name *</FormLabel>
                           <FormControl>
-                            <Input placeholder="John" {...field} data-testid="input-contact-firstname" />
+                            <Input
+                              placeholder="John"
+                              {...field}
+                              data-testid="input-contact-firstname"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -297,7 +297,11 @@ export default function ContactsPage() {
                         <FormItem>
                           <FormLabel>Last Name *</FormLabel>
                           <FormControl>
-                            <Input placeholder="Doe" {...field} data-testid="input-contact-lastname" />
+                            <Input
+                              placeholder="Doe"
+                              {...field}
+                              data-testid="input-contact-lastname"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -312,7 +316,12 @@ export default function ContactsPage() {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input type="email" placeholder="john@example.com" {...field} data-testid="input-contact-email" />
+                            <Input
+                              type="email"
+                              placeholder="john@example.com"
+                              {...field}
+                              data-testid="input-contact-email"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -325,7 +334,11 @@ export default function ContactsPage() {
                         <FormItem>
                           <FormLabel>Phone</FormLabel>
                           <FormControl>
-                            <Input placeholder="+1 (555) 123-4567" {...field} data-testid="input-contact-phone" />
+                            <Input
+                              placeholder="+1 (555) 123-4567"
+                              {...field}
+                              data-testid="input-contact-phone"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

@@ -66,10 +66,16 @@ export default function LandingPage() {
             <span className="font-semibold text-lg">UBOS</span>
           </div>
           <div className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <a
+              href="#features"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
               Features
             </a>
-            <a href="#benefits" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <a
+              href="#benefits"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
               Benefits
             </a>
           </div>
@@ -91,11 +97,10 @@ export default function LandingPage() {
                 Unified Business Operations Suite
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight mb-6">
-                All your business operations in{" "}
-                <span className="text-primary">one place</span>
+                All your business operations in <span className="text-primary">one place</span>
               </h1>
               <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-                From lead to invoice, manage your entire client lifecycle. CRM, proposals, 
+                From lead to invoice, manage your entire client lifecycle. CRM, proposals,
                 contracts, projects, documents, communications, and billing — unified.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -128,8 +133,8 @@ export default function LandingPage() {
             <div className="text-center mb-12">
               <h2 className="text-3xl font-semibold mb-4">Everything you need</h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                A complete suite of tools to manage your business operations, 
-                designed to work together seamlessly.
+                A complete suite of tools to manage your business operations, designed to work
+                together seamlessly.
               </p>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -152,12 +157,10 @@ export default function LandingPage() {
           <div className="max-w-7xl mx-auto">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div>
-                <h2 className="text-3xl font-semibold mb-6">
-                  Built for modern businesses
-                </h2>
+                <h2 className="text-3xl font-semibold mb-6">Built for modern businesses</h2>
                 <p className="text-muted-foreground mb-8">
-                  UBOS is designed from the ground up to handle the complexity of 
-                  modern business operations while remaining simple to use.
+                  UBOS is designed from the ground up to handle the complexity of modern business
+                  operations while remaining simple to use.
                 </p>
                 <ul className="space-y-4">
                   {benefits.map((benefit) => (
@@ -191,9 +194,7 @@ export default function LandingPage() {
 
         <section className="py-20 px-6 bg-primary text-primary-foreground">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-semibold mb-4">
-              Ready to unify your operations?
-            </h2>
+            <h2 className="text-3xl font-semibold mb-4">Ready to unify your operations?</h2>
             <p className="text-primary-foreground/80 mb-8">
               Join businesses that have streamlined their workflow with UBOS.
             </p>

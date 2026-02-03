@@ -1,7 +1,16 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Plus, CreditCard, Search, MoreHorizontal, Pencil, Trash2, CheckCircle, X } from "lucide-react";
+import {
+  Plus,
+  CreditCard,
+  Search,
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+  CheckCircle,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -207,7 +216,7 @@ export default function BillsPage() {
   };
 
   const filteredBills = bills?.filter((bill) =>
-    bill.billNumber.toLowerCase().includes(searchQuery.toLowerCase())
+    bill.billNumber.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const columns = [
@@ -317,7 +326,11 @@ export default function BillsPage() {
                       <FormItem>
                         <FormLabel>Bill Number *</FormLabel>
                         <FormControl>
-                          <Input placeholder="BILL-001" {...field} data-testid="input-bill-number" />
+                          <Input
+                            placeholder="BILL-001"
+                            {...field}
+                            data-testid="input-bill-number"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -380,7 +393,12 @@ export default function BillsPage() {
                       <FormItem>
                         <FormLabel>Amount ($) *</FormLabel>
                         <FormControl>
-                          <Input type="number" placeholder="500" {...field} data-testid="input-bill-amount" />
+                          <Input
+                            type="number"
+                            placeholder="500"
+                            {...field}
+                            data-testid="input-bill-amount"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

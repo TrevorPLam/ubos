@@ -14,10 +14,7 @@ export default function SettingsPage() {
 
   return (
     <div className="p-6 max-w-4xl">
-      <PageHeader
-        title="Settings"
-        description="Manage your account and preferences"
-      />
+      <PageHeader title="Settings" description="Manage your account and preferences" />
 
       <div className="space-y-6">
         <Card>
@@ -90,7 +87,9 @@ export default function SettingsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <Label>Email Notifications</Label>
-                <p className="text-sm text-muted-foreground">Receive email updates about activity</p>
+                <p className="text-sm text-muted-foreground">
+                  Receive email updates about activity
+                </p>
               </div>
               <Switch data-testid="switch-email-notifications" />
             </div>
@@ -98,7 +97,9 @@ export default function SettingsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <Label>Client Portal Access</Label>
-                <p className="text-sm text-muted-foreground">Allow clients to access their portal</p>
+                <p className="text-sm text-muted-foreground">
+                  Allow clients to access their portal
+                </p>
               </div>
               <Switch defaultChecked data-testid="switch-client-portal" />
             </div>

@@ -1,14 +1,7 @@
 {
   "extends": "./tsconfig.json",
-  "include": [
-    "vite.config.ts",
-    "tailwind.config.ts",
-    "script/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ],
+  "include": ["vite.config.ts", "tailwind.config.ts", "script/**/*.ts"],
+  "exclude": ["node_modules", "dist"],
   "compilerOptions": {
     "noEmit": true,
     "types": ["node"]

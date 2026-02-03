@@ -188,7 +188,7 @@ export default function DealsPage() {
   };
 
   const filteredDeals = deals?.filter((deal) =>
-    deal.name.toLowerCase().includes(searchQuery.toLowerCase())
+    deal.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const columns = [
@@ -281,7 +281,11 @@ export default function DealsPage() {
                       <FormItem>
                         <FormLabel>Deal Name *</FormLabel>
                         <FormControl>
-                          <Input placeholder="Website Redesign" {...field} data-testid="input-deal-name" />
+                          <Input
+                            placeholder="Website Redesign"
+                            {...field}
+                            data-testid="input-deal-name"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -319,7 +323,12 @@ export default function DealsPage() {
                         <FormItem>
                           <FormLabel>Value ($)</FormLabel>
                           <FormControl>
-                            <Input type="number" placeholder="10000" {...field} data-testid="input-deal-value" />
+                            <Input
+                              type="number"
+                              placeholder="10000"
+                              {...field}
+                              data-testid="input-deal-value"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

@@ -12,7 +12,16 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Plus, FolderKanban, Search, MoreHorizontal, Pencil, Trash2, CheckCircle, Clock } from "lucide-react";
+import {
+  Plus,
+  FolderKanban,
+  Search,
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+  CheckCircle,
+  Clock,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -168,7 +177,7 @@ export default function ProjectsPage() {
   };
 
   const filteredProjects = projects?.filter((project) =>
-    project.name.toLowerCase().includes(searchQuery.toLowerCase())
+    project.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const columns = [
@@ -182,7 +191,9 @@ export default function ProjectsPage() {
           <div>
             <p className="font-medium">{project.name}</p>
             {project.description && (
-              <p className="text-xs text-muted-foreground truncate max-w-xs">{project.description}</p>
+              <p className="text-xs text-muted-foreground truncate max-w-xs">
+                {project.description}
+              </p>
             )}
           </div>
         </div>
@@ -265,7 +276,11 @@ export default function ProjectsPage() {
                       <FormItem>
                         <FormLabel>Project Name *</FormLabel>
                         <FormControl>
-                          <Input placeholder="Website Development" {...field} data-testid="input-project-name" />
+                          <Input
+                            placeholder="Website Development"
+                            {...field}
+                            data-testid="input-project-name"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

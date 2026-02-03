@@ -90,7 +90,7 @@ async function getOrCreateOrg(userId: string): Promise<string> {
   if (!org) {
     org = await storage.createOrganization(
       { name: "My Organization", slug: `org-${userId.slice(0, 8)}` },
-      userId
+      userId,
     );
   }
   return org.id;
@@ -140,21 +140,23 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
     try {
       const userId = getUserIdFromRequest(req)!;
       const orgId = await getOrCreateOrg(userId);
-      
+
       const [clients, deals, engagements, invoices] = await Promise.all([
         storage.getClientCompanies(orgId),
         storage.getDeals(orgId),
         storage.getEngagements(orgId),
         storage.getInvoices(orgId),
       ]);
-      
-      const pendingInvoices = invoices.filter(i => i.status === "sent" || i.status === "viewed");
-      const totalRevenue = invoices.filter(i => i.status === "paid").reduce((sum, i) => sum + Number(i.totalAmount || 0), 0);
-      
+
+      const pendingInvoices = invoices.filter((i) => i.status === "sent" || i.status === "viewed");
+      const totalRevenue = invoices
+        .filter((i) => i.status === "paid")
+        .reduce((sum, i) => sum + Number(i.totalAmount || 0), 0);
+
       res.json({
         clients: clients.length,
-        deals: deals.filter(d => d.stage !== "won" && d.stage !== "lost").length,
-        engagements: engagements.filter(e => e.status === "active").length,
+        deals: deals.filter((d) => d.stage !== "won" && d.stage !== "lost").length,
+        engagements: engagements.filter((e) => e.status === "active").length,
         pendingInvoices: pendingInvoices.length,
         totalRevenue: totalRevenue.toFixed(2),
       });
@@ -190,31 +192,39 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
     }
   });
 
-  app.patch("/api/clients/:id", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const userId = req.user!.claims.sub;
-      const orgId = await getOrCreateOrg(userId);
-      const client = await storage.updateClientCompany(req.params.id, orgId, req.body);
-      if (!client) return res.status(404).json({ error: "Client not found" });
-      res.json(client);
-    } catch (error) {
-      console.error("Update client error:", error);
-      res.status(500).json({ error: "Failed to update client" });
-    }
-  });
+  app.patch(
+    "/api/clients/:id",
+    isAuthenticated,
+    async (req: AuthenticatedRequest, res: Response) => {
+      try {
+        const userId = req.user!.claims.sub;
+        const orgId = await getOrCreateOrg(userId);
+        const client = await storage.updateClientCompany(req.params.id, orgId, req.body);
+        if (!client) return res.status(404).json({ error: "Client not found" });
+        res.json(client);
+      } catch (error) {
+        console.error("Update client error:", error);
+        res.status(500).json({ error: "Failed to update client" });
+      }
+    },
+  );
 
-  app.delete("/api/clients/:id", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const userId = req.user!.claims.sub;
-      const orgId = await getOrCreateOrg(userId);
-      const success = await storage.deleteClientCompany(req.params.id, orgId);
-      if (!success) return res.status(404).json({ error: "Client not found" });
-      res.status(204).send();
-    } catch (error) {
-      console.error("Delete client error:", error);
-      res.status(500).json({ error: "Failed to delete client" });
-    }
-  });
+  app.delete(
+    "/api/clients/:id",
+    isAuthenticated,
+    async (req: AuthenticatedRequest, res: Response) => {
+      try {
+        const userId = req.user!.claims.sub;
+        const orgId = await getOrCreateOrg(userId);
+        const success = await storage.deleteClientCompany(req.params.id, orgId);
+        if (!success) return res.status(404).json({ error: "Client not found" });
+        res.status(204).send();
+      } catch (error) {
+        console.error("Delete client error:", error);
+        res.status(500).json({ error: "Failed to delete client" });
+      }
+    },
+  );
 
   // ==================== CONTACTS ====================
 
@@ -242,31 +252,39 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
     }
   });
 
-  app.patch("/api/contacts/:id", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const userId = req.user!.claims.sub;
-      const orgId = await getOrCreateOrg(userId);
-      const contact = await storage.updateContact(req.params.id, orgId, req.body);
-      if (!contact) return res.status(404).json({ error: "Contact not found" });
-      res.json(contact);
-    } catch (error) {
-      console.error("Update contact error:", error);
-      res.status(500).json({ error: "Failed to update contact" });
-    }
-  });
+  app.patch(
+    "/api/contacts/:id",
+    isAuthenticated,
+    async (req: AuthenticatedRequest, res: Response) => {
+      try {
+        const userId = req.user!.claims.sub;
+        const orgId = await getOrCreateOrg(userId);
+        const contact = await storage.updateContact(req.params.id, orgId, req.body);
+        if (!contact) return res.status(404).json({ error: "Contact not found" });
+        res.json(contact);
+      } catch (error) {
+        console.error("Update contact error:", error);
+        res.status(500).json({ error: "Failed to update contact" });
+      }
+    },
+  );
 
-  app.delete("/api/contacts/:id", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const userId = req.user!.claims.sub;
-      const orgId = await getOrCreateOrg(userId);
-      const success = await storage.deleteContact(req.params.id, orgId);
-      if (!success) return res.status(404).json({ error: "Contact not found" });
-      res.status(204).send();
-    } catch (error) {
-      console.error("Delete contact error:", error);
-      res.status(500).json({ error: "Failed to delete contact" });
-    }
-  });
+  app.delete(
+    "/api/contacts/:id",
+    isAuthenticated,
+    async (req: AuthenticatedRequest, res: Response) => {
+      try {
+        const userId = req.user!.claims.sub;
+        const orgId = await getOrCreateOrg(userId);
+        const success = await storage.deleteContact(req.params.id, orgId);
+        if (!success) return res.status(404).json({ error: "Contact not found" });
+        res.status(204).send();
+      } catch (error) {
+        console.error("Delete contact error:", error);
+        res.status(500).json({ error: "Failed to delete contact" });
+      }
+    },
+  );
 
   // ==================== DEALS ====================
 
@@ -286,7 +304,11 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
     try {
       const userId = req.user!.claims.sub;
       const orgId = await getOrCreateOrg(userId);
-      const deal = await storage.createDeal({ ...req.body, organizationId: orgId, ownerId: userId });
+      const deal = await storage.createDeal({
+        ...req.body,
+        organizationId: orgId,
+        ownerId: userId,
+      });
       res.status(201).json(deal);
     } catch (error) {
       console.error("Create deal error:", error);
@@ -307,18 +329,22 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
     }
   });
 
-  app.delete("/api/deals/:id", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const userId = req.user!.claims.sub;
-      const orgId = await getOrCreateOrg(userId);
-      const success = await storage.deleteDeal(req.params.id, orgId);
-      if (!success) return res.status(404).json({ error: "Deal not found" });
-      res.status(204).send();
-    } catch (error) {
-      console.error("Delete deal error:", error);
-      res.status(500).json({ error: "Failed to delete deal" });
-    }
-  });
+  app.delete(
+    "/api/deals/:id",
+    isAuthenticated,
+    async (req: AuthenticatedRequest, res: Response) => {
+      try {
+        const userId = req.user!.claims.sub;
+        const orgId = await getOrCreateOrg(userId);
+        const success = await storage.deleteDeal(req.params.id, orgId);
+        if (!success) return res.status(404).json({ error: "Deal not found" });
+        res.status(204).send();
+      } catch (error) {
+        console.error("Delete deal error:", error);
+        res.status(500).json({ error: "Failed to delete deal" });
+      }
+    },
+  );
 
   // ==================== PROPOSALS ====================
 
@@ -338,7 +364,11 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
     try {
       const userId = req.user!.claims.sub;
       const orgId = await getOrCreateOrg(userId);
-      const proposal = await storage.createProposal({ ...req.body, organizationId: orgId, createdById: userId });
+      const proposal = await storage.createProposal({
+        ...req.body,
+        organizationId: orgId,
+        createdById: userId,
+      });
       res.status(201).json(proposal);
     } catch (error) {
       console.error("Create proposal error:", error);
@@ -346,44 +376,59 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
     }
   });
 
-  app.patch("/api/proposals/:id", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const userId = req.user!.claims.sub;
-      const orgId = await getOrCreateOrg(userId);
-      const proposal = await storage.updateProposal(req.params.id, orgId, req.body);
-      if (!proposal) return res.status(404).json({ error: "Proposal not found" });
-      res.json(proposal);
-    } catch (error) {
-      console.error("Update proposal error:", error);
-      res.status(500).json({ error: "Failed to update proposal" });
-    }
-  });
+  app.patch(
+    "/api/proposals/:id",
+    isAuthenticated,
+    async (req: AuthenticatedRequest, res: Response) => {
+      try {
+        const userId = req.user!.claims.sub;
+        const orgId = await getOrCreateOrg(userId);
+        const proposal = await storage.updateProposal(req.params.id, orgId, req.body);
+        if (!proposal) return res.status(404).json({ error: "Proposal not found" });
+        res.json(proposal);
+      } catch (error) {
+        console.error("Update proposal error:", error);
+        res.status(500).json({ error: "Failed to update proposal" });
+      }
+    },
+  );
 
-  app.post("/api/proposals/:id/send", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const userId = req.user!.claims.sub;
-      const orgId = await getOrCreateOrg(userId);
-      const proposal = await storage.updateProposal(req.params.id, orgId, { status: "sent", sentAt: new Date() });
-      if (!proposal) return res.status(404).json({ error: "Proposal not found" });
-      res.json(proposal);
-    } catch (error) {
-      console.error("Send proposal error:", error);
-      res.status(500).json({ error: "Failed to send proposal" });
-    }
-  });
+  app.post(
+    "/api/proposals/:id/send",
+    isAuthenticated,
+    async (req: AuthenticatedRequest, res: Response) => {
+      try {
+        const userId = req.user!.claims.sub;
+        const orgId = await getOrCreateOrg(userId);
+        const proposal = await storage.updateProposal(req.params.id, orgId, {
+          status: "sent",
+          sentAt: new Date(),
+        });
+        if (!proposal) return res.status(404).json({ error: "Proposal not found" });
+        res.json(proposal);
+      } catch (error) {
+        console.error("Send proposal error:", error);
+        res.status(500).json({ error: "Failed to send proposal" });
+      }
+    },
+  );
 
-  app.delete("/api/proposals/:id", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const userId = req.user!.claims.sub;
-      const orgId = await getOrCreateOrg(userId);
-      const success = await storage.deleteProposal(req.params.id, orgId);
-      if (!success) return res.status(404).json({ error: "Proposal not found" });
-      res.status(204).send();
-    } catch (error) {
-      console.error("Delete proposal error:", error);
-      res.status(500).json({ error: "Failed to delete proposal" });
-    }
-  });
+  app.delete(
+    "/api/proposals/:id",
+    isAuthenticated,
+    async (req: AuthenticatedRequest, res: Response) => {
+      try {
+        const userId = req.user!.claims.sub;
+        const orgId = await getOrCreateOrg(userId);
+        const success = await storage.deleteProposal(req.params.id, orgId);
+        if (!success) return res.status(404).json({ error: "Proposal not found" });
+        res.status(204).send();
+      } catch (error) {
+        console.error("Delete proposal error:", error);
+        res.status(500).json({ error: "Failed to delete proposal" });
+      }
+    },
+  );
 
   // ==================== CONTRACTS ====================
 
@@ -403,7 +448,11 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
     try {
       const userId = req.user!.claims.sub;
       const orgId = await getOrCreateOrg(userId);
-      const contract = await storage.createContract({ ...req.body, organizationId: orgId, createdById: userId });
+      const contract = await storage.createContract({
+        ...req.body,
+        organizationId: orgId,
+        createdById: userId,
+      });
       res.status(201).json(contract);
     } catch (error) {
       console.error("Create contract error:", error);
@@ -411,78 +460,94 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
     }
   });
 
-  app.patch("/api/contracts/:id", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const userId = req.user!.claims.sub;
-      const orgId = await getOrCreateOrg(userId);
-      const contract = await storage.updateContract(req.params.id, orgId, req.body);
-      if (!contract) return res.status(404).json({ error: "Contract not found" });
-      res.json(contract);
-    } catch (error) {
-      console.error("Update contract error:", error);
-      res.status(500).json({ error: "Failed to update contract" });
-    }
-  });
+  app.patch(
+    "/api/contracts/:id",
+    isAuthenticated,
+    async (req: AuthenticatedRequest, res: Response) => {
+      try {
+        const userId = req.user!.claims.sub;
+        const orgId = await getOrCreateOrg(userId);
+        const contract = await storage.updateContract(req.params.id, orgId, req.body);
+        if (!contract) return res.status(404).json({ error: "Contract not found" });
+        res.json(contract);
+      } catch (error) {
+        console.error("Update contract error:", error);
+        res.status(500).json({ error: "Failed to update contract" });
+      }
+    },
+  );
 
-  app.post("/api/contracts/:id/send", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const userId = req.user!.claims.sub;
-      const orgId = await getOrCreateOrg(userId);
-      const contract = await storage.updateContract(req.params.id, orgId, { status: "sent" });
-      if (!contract) return res.status(404).json({ error: "Contract not found" });
-      res.json(contract);
-    } catch (error) {
-      console.error("Send contract error:", error);
-      res.status(500).json({ error: "Failed to send contract" });
-    }
-  });
+  app.post(
+    "/api/contracts/:id/send",
+    isAuthenticated,
+    async (req: AuthenticatedRequest, res: Response) => {
+      try {
+        const userId = req.user!.claims.sub;
+        const orgId = await getOrCreateOrg(userId);
+        const contract = await storage.updateContract(req.params.id, orgId, { status: "sent" });
+        if (!contract) return res.status(404).json({ error: "Contract not found" });
+        res.json(contract);
+      } catch (error) {
+        console.error("Send contract error:", error);
+        res.status(500).json({ error: "Failed to send contract" });
+      }
+    },
+  );
 
-  app.post("/api/contracts/:id/sign", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const userId = req.user!.claims.sub;
-      const orgId = await getOrCreateOrg(userId);
-      const { signedByName } = req.body;
-      
-      const contract = await storage.updateContract(req.params.id, orgId, {
-        status: "signed",
-        signedAt: new Date(),
-        signedByName,
-      });
-      
-      if (!contract) return res.status(404).json({ error: "Contract not found" });
-      
-      const engagement = await storage.createEngagement({
-        organizationId: orgId,
-        contractId: contract.id,
-        dealId: contract.dealId,
-        clientCompanyId: contract.clientCompanyId,
-        contactId: contract.contactId,
-        ownerId: userId,
-        name: `Engagement: ${contract.name}`,
-        status: "active",
-        totalValue: contract.totalValue,
-        startDate: new Date(),
-      });
-      
-      res.json({ contract, engagement });
-    } catch (error) {
-      console.error("Sign contract error:", error);
-      res.status(500).json({ error: "Failed to sign contract" });
-    }
-  });
+  app.post(
+    "/api/contracts/:id/sign",
+    isAuthenticated,
+    async (req: AuthenticatedRequest, res: Response) => {
+      try {
+        const userId = req.user!.claims.sub;
+        const orgId = await getOrCreateOrg(userId);
+        const { signedByName } = req.body;
 
-  app.delete("/api/contracts/:id", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const userId = req.user!.claims.sub;
-      const orgId = await getOrCreateOrg(userId);
-      const success = await storage.deleteContract(req.params.id, orgId);
-      if (!success) return res.status(404).json({ error: "Contract not found" });
-      res.status(204).send();
-    } catch (error) {
-      console.error("Delete contract error:", error);
-      res.status(500).json({ error: "Failed to delete contract" });
-    }
-  });
+        const contract = await storage.updateContract(req.params.id, orgId, {
+          status: "signed",
+          signedAt: new Date(),
+          signedByName,
+        });
+
+        if (!contract) return res.status(404).json({ error: "Contract not found" });
+
+        const engagement = await storage.createEngagement({
+          organizationId: orgId,
+          contractId: contract.id,
+          dealId: contract.dealId,
+          clientCompanyId: contract.clientCompanyId,
+          contactId: contract.contactId,
+          ownerId: userId,
+          name: `Engagement: ${contract.name}`,
+          status: "active",
+          totalValue: contract.totalValue,
+          startDate: new Date(),
+        });
+
+        res.json({ contract, engagement });
+      } catch (error) {
+        console.error("Sign contract error:", error);
+        res.status(500).json({ error: "Failed to sign contract" });
+      }
+    },
+  );
+
+  app.delete(
+    "/api/contracts/:id",
+    isAuthenticated,
+    async (req: AuthenticatedRequest, res: Response) => {
+      try {
+        const userId = req.user!.claims.sub;
+        const orgId = await getOrCreateOrg(userId);
+        const success = await storage.deleteContract(req.params.id, orgId);
+        if (!success) return res.status(404).json({ error: "Contract not found" });
+        res.status(204).send();
+      } catch (error) {
+        console.error("Delete contract error:", error);
+        res.status(500).json({ error: "Failed to delete contract" });
+      }
+    },
+  );
 
   // ==================== ENGAGEMENTS ====================
 
@@ -498,43 +563,59 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
     }
   });
 
-  app.post("/api/engagements", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const userId = req.user!.claims.sub;
-      const orgId = await getOrCreateOrg(userId);
-      const engagement = await storage.createEngagement({ ...req.body, organizationId: orgId, ownerId: userId });
-      res.status(201).json(engagement);
-    } catch (error) {
-      console.error("Create engagement error:", error);
-      res.status(500).json({ error: "Failed to create engagement" });
-    }
-  });
+  app.post(
+    "/api/engagements",
+    isAuthenticated,
+    async (req: AuthenticatedRequest, res: Response) => {
+      try {
+        const userId = req.user!.claims.sub;
+        const orgId = await getOrCreateOrg(userId);
+        const engagement = await storage.createEngagement({
+          ...req.body,
+          organizationId: orgId,
+          ownerId: userId,
+        });
+        res.status(201).json(engagement);
+      } catch (error) {
+        console.error("Create engagement error:", error);
+        res.status(500).json({ error: "Failed to create engagement" });
+      }
+    },
+  );
 
-  app.patch("/api/engagements/:id", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const userId = req.user!.claims.sub;
-      const orgId = await getOrCreateOrg(userId);
-      const engagement = await storage.updateEngagement(req.params.id, orgId, req.body);
-      if (!engagement) return res.status(404).json({ error: "Engagement not found" });
-      res.json(engagement);
-    } catch (error) {
-      console.error("Update engagement error:", error);
-      res.status(500).json({ error: "Failed to update engagement" });
-    }
-  });
+  app.patch(
+    "/api/engagements/:id",
+    isAuthenticated,
+    async (req: AuthenticatedRequest, res: Response) => {
+      try {
+        const userId = req.user!.claims.sub;
+        const orgId = await getOrCreateOrg(userId);
+        const engagement = await storage.updateEngagement(req.params.id, orgId, req.body);
+        if (!engagement) return res.status(404).json({ error: "Engagement not found" });
+        res.json(engagement);
+      } catch (error) {
+        console.error("Update engagement error:", error);
+        res.status(500).json({ error: "Failed to update engagement" });
+      }
+    },
+  );
 
-  app.delete("/api/engagements/:id", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const userId = req.user!.claims.sub;
-      const orgId = await getOrCreateOrg(userId);
-      const success = await storage.deleteEngagement(req.params.id, orgId);
-      if (!success) return res.status(404).json({ error: "Engagement not found" });
-      res.status(204).send();
-    } catch (error) {
-      console.error("Delete engagement error:", error);
-      res.status(500).json({ error: "Failed to delete engagement" });
-    }
-  });
+  app.delete(
+    "/api/engagements/:id",
+    isAuthenticated,
+    async (req: AuthenticatedRequest, res: Response) => {
+      try {
+        const userId = req.user!.claims.sub;
+        const orgId = await getOrCreateOrg(userId);
+        const success = await storage.deleteEngagement(req.params.id, orgId);
+        if (!success) return res.status(404).json({ error: "Engagement not found" });
+        res.status(204).send();
+      } catch (error) {
+        console.error("Delete engagement error:", error);
+        res.status(500).json({ error: "Failed to delete engagement" });
+      }
+    },
+  );
 
   // ==================== PROJECTS ====================
 
@@ -562,31 +643,39 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
     }
   });
 
-  app.patch("/api/projects/:id", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const userId = req.user!.claims.sub;
-      const orgId = await getOrCreateOrg(userId);
-      const project = await storage.updateProject(req.params.id, orgId, req.body);
-      if (!project) return res.status(404).json({ error: "Project not found" });
-      res.json(project);
-    } catch (error) {
-      console.error("Update project error:", error);
-      res.status(500).json({ error: "Failed to update project" });
-    }
-  });
+  app.patch(
+    "/api/projects/:id",
+    isAuthenticated,
+    async (req: AuthenticatedRequest, res: Response) => {
+      try {
+        const userId = req.user!.claims.sub;
+        const orgId = await getOrCreateOrg(userId);
+        const project = await storage.updateProject(req.params.id, orgId, req.body);
+        if (!project) return res.status(404).json({ error: "Project not found" });
+        res.json(project);
+      } catch (error) {
+        console.error("Update project error:", error);
+        res.status(500).json({ error: "Failed to update project" });
+      }
+    },
+  );
 
-  app.delete("/api/projects/:id", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const userId = req.user!.claims.sub;
-      const orgId = await getOrCreateOrg(userId);
-      const success = await storage.deleteProject(req.params.id, orgId);
-      if (!success) return res.status(404).json({ error: "Project not found" });
-      res.status(204).send();
-    } catch (error) {
-      console.error("Delete project error:", error);
-      res.status(500).json({ error: "Failed to delete project" });
-    }
-  });
+  app.delete(
+    "/api/projects/:id",
+    isAuthenticated,
+    async (req: AuthenticatedRequest, res: Response) => {
+      try {
+        const userId = req.user!.claims.sub;
+        const orgId = await getOrCreateOrg(userId);
+        const success = await storage.deleteProject(req.params.id, orgId);
+        if (!success) return res.status(404).json({ error: "Project not found" });
+        res.status(204).send();
+      } catch (error) {
+        console.error("Delete project error:", error);
+        res.status(500).json({ error: "Failed to delete project" });
+      }
+    },
+  );
 
   // ==================== TASKS ====================
 
@@ -633,7 +722,11 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
     try {
       const userId = req.user!.claims.sub;
       const orgId = await getOrCreateOrg(userId);
-      const thread = await storage.createThread({ ...req.body, organizationId: orgId, createdById: userId });
+      const thread = await storage.createThread({
+        ...req.body,
+        organizationId: orgId,
+        createdById: userId,
+      });
       res.status(201).json(thread);
     } catch (error) {
       console.error("Create thread error:", error);
@@ -641,39 +734,49 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
     }
   });
 
-  app.get("/api/threads/:id/messages", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const userId = req.user!.claims.sub;
-      const orgId = await getOrCreateOrg(userId);
-      const thread = await storage.getThread(req.params.id, orgId);
-      if (!thread) return res.status(404).json({ error: "Thread not found" });
-      const messages = await storage.getMessages(req.params.id);
-      res.json(messages);
-    } catch (error) {
-      console.error("Get messages error:", error);
-      res.status(500).json({ error: "Failed to fetch messages" });
-    }
-  });
+  app.get(
+    "/api/threads/:id/messages",
+    isAuthenticated,
+    async (req: AuthenticatedRequest, res: Response) => {
+      try {
+        const userId = req.user!.claims.sub;
+        const orgId = await getOrCreateOrg(userId);
+        const thread = await storage.getThread(req.params.id, orgId);
+        if (!thread) return res.status(404).json({ error: "Thread not found" });
+        const messages = await storage.getMessages(req.params.id);
+        res.json(messages);
+      } catch (error) {
+        console.error("Get messages error:", error);
+        res.status(500).json({ error: "Failed to fetch messages" });
+      }
+    },
+  );
 
-  app.post("/api/threads/:id/messages", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const userId = req.user!.claims.sub;
-      const user = await storage.getUser(userId);
-      const orgId = await getOrCreateOrg(userId);
-      const thread = await storage.getThread(req.params.id, orgId);
-      if (!thread) return res.status(404).json({ error: "Thread not found" });
-      const message = await storage.createMessage({
-        threadId: req.params.id,
-        senderId: userId,
-        senderName: user ? `${user.firstName || ""} ${user.lastName || ""}`.trim() || "Unknown" : "Unknown",
-        content: req.body.content,
-      });
-      res.status(201).json(message);
-    } catch (error) {
-      console.error("Create message error:", error);
-      res.status(500).json({ error: "Failed to create message" });
-    }
-  });
+  app.post(
+    "/api/threads/:id/messages",
+    isAuthenticated,
+    async (req: AuthenticatedRequest, res: Response) => {
+      try {
+        const userId = req.user!.claims.sub;
+        const user = await storage.getUser(userId);
+        const orgId = await getOrCreateOrg(userId);
+        const thread = await storage.getThread(req.params.id, orgId);
+        if (!thread) return res.status(404).json({ error: "Thread not found" });
+        const message = await storage.createMessage({
+          threadId: req.params.id,
+          senderId: userId,
+          senderName: user
+            ? `${user.firstName || ""} ${user.lastName || ""}`.trim() || "Unknown"
+            : "Unknown",
+          content: req.body.content,
+        });
+        res.status(201).json(message);
+      } catch (error) {
+        console.error("Create message error:", error);
+        res.status(500).json({ error: "Failed to create message" });
+      }
+    },
+  );
 
   // ==================== INVOICES ====================
 
@@ -701,62 +804,81 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
     }
   });
 
-  app.patch("/api/invoices/:id", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const userId = req.user!.claims.sub;
-      const orgId = await getOrCreateOrg(userId);
-      const invoice = await storage.updateInvoice(req.params.id, orgId, req.body);
-      if (!invoice) return res.status(404).json({ error: "Invoice not found" });
-      res.json(invoice);
-    } catch (error) {
-      console.error("Update invoice error:", error);
-      res.status(500).json({ error: "Failed to update invoice" });
-    }
-  });
+  app.patch(
+    "/api/invoices/:id",
+    isAuthenticated,
+    async (req: AuthenticatedRequest, res: Response) => {
+      try {
+        const userId = req.user!.claims.sub;
+        const orgId = await getOrCreateOrg(userId);
+        const invoice = await storage.updateInvoice(req.params.id, orgId, req.body);
+        if (!invoice) return res.status(404).json({ error: "Invoice not found" });
+        res.json(invoice);
+      } catch (error) {
+        console.error("Update invoice error:", error);
+        res.status(500).json({ error: "Failed to update invoice" });
+      }
+    },
+  );
 
-  app.post("/api/invoices/:id/send", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const userId = req.user!.claims.sub;
-      const orgId = await getOrCreateOrg(userId);
-      const invoice = await storage.updateInvoice(req.params.id, orgId, { status: "sent", sentAt: new Date() });
-      if (!invoice) return res.status(404).json({ error: "Invoice not found" });
-      res.json(invoice);
-    } catch (error) {
-      console.error("Send invoice error:", error);
-      res.status(500).json({ error: "Failed to send invoice" });
-    }
-  });
+  app.post(
+    "/api/invoices/:id/send",
+    isAuthenticated,
+    async (req: AuthenticatedRequest, res: Response) => {
+      try {
+        const userId = req.user!.claims.sub;
+        const orgId = await getOrCreateOrg(userId);
+        const invoice = await storage.updateInvoice(req.params.id, orgId, {
+          status: "sent",
+          sentAt: new Date(),
+        });
+        if (!invoice) return res.status(404).json({ error: "Invoice not found" });
+        res.json(invoice);
+      } catch (error) {
+        console.error("Send invoice error:", error);
+        res.status(500).json({ error: "Failed to send invoice" });
+      }
+    },
+  );
 
-  app.post("/api/invoices/:id/mark-paid", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const userId = req.user!.claims.sub;
-      const orgId = await getOrCreateOrg(userId);
-      const existing = await storage.getInvoice(req.params.id, orgId);
-      if (!existing) return res.status(404).json({ error: "Invoice not found" });
-      const invoice = await storage.updateInvoice(req.params.id, orgId, {
-        status: "paid",
-        paidAt: new Date(),
-        paidAmount: existing.totalAmount,
-      });
-      res.json(invoice);
-    } catch (error) {
-      console.error("Mark invoice paid error:", error);
-      res.status(500).json({ error: "Failed to mark invoice as paid" });
-    }
-  });
+  app.post(
+    "/api/invoices/:id/mark-paid",
+    isAuthenticated,
+    async (req: AuthenticatedRequest, res: Response) => {
+      try {
+        const userId = req.user!.claims.sub;
+        const orgId = await getOrCreateOrg(userId);
+        const existing = await storage.getInvoice(req.params.id, orgId);
+        if (!existing) return res.status(404).json({ error: "Invoice not found" });
+        const invoice = await storage.updateInvoice(req.params.id, orgId, {
+          status: "paid",
+          paidAt: new Date(),
+          paidAmount: existing.totalAmount,
+        });
+        res.json(invoice);
+      } catch (error) {
+        console.error("Mark invoice paid error:", error);
+        res.status(500).json({ error: "Failed to mark invoice as paid" });
+      }
+    },
+  );
 
-  app.delete("/api/invoices/:id", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const userId = req.user!.claims.sub;
-      const orgId = await getOrCreateOrg(userId);
-      const success = await storage.deleteInvoice(req.params.id, orgId);
-      if (!success) return res.status(404).json({ error: "Invoice not found" });
-      res.status(204).send();
-    } catch (error) {
-      console.error("Delete invoice error:", error);
-      res.status(500).json({ error: "Failed to delete invoice" });
-    }
-  });
+  app.delete(
+    "/api/invoices/:id",
+    isAuthenticated,
+    async (req: AuthenticatedRequest, res: Response) => {
+      try {
+        const userId = req.user!.claims.sub;
+        const orgId = await getOrCreateOrg(userId);
+        const success = await storage.deleteInvoice(req.params.id, orgId);
+        if (!success) return res.status(404).json({ error: "Invoice not found" });
+        res.status(204).send();
+      } catch (error) {
+        console.error("Delete invoice error:", error);
+        res.status(500).json({ error: "Failed to delete invoice" });
+      }
+    },
+  );
 
   // ==================== BILLS ====================
 
@@ -776,7 +898,11 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
     try {
       const userId = req.user!.claims.sub;
       const orgId = await getOrCreateOrg(userId);
-      const bill = await storage.createBill({ ...req.body, organizationId: orgId, createdById: userId });
+      const bill = await storage.createBill({
+        ...req.body,
+        organizationId: orgId,
+        createdById: userId,
+      });
       res.status(201).json(bill);
     } catch (error) {
       console.error("Create bill error:", error);
@@ -797,61 +923,80 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
     }
   });
 
-  app.post("/api/bills/:id/approve", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const userId = req.user!.claims.sub;
-      const orgId = await getOrCreateOrg(userId);
-      const bill = await storage.updateBill(req.params.id, orgId, {
-        status: "approved",
-        approvedById: userId,
-        approvedAt: new Date(),
-      });
-      if (!bill) return res.status(404).json({ error: "Bill not found" });
-      res.json(bill);
-    } catch (error) {
-      console.error("Approve bill error:", error);
-      res.status(500).json({ error: "Failed to approve bill" });
-    }
-  });
+  app.post(
+    "/api/bills/:id/approve",
+    isAuthenticated,
+    async (req: AuthenticatedRequest, res: Response) => {
+      try {
+        const userId = req.user!.claims.sub;
+        const orgId = await getOrCreateOrg(userId);
+        const bill = await storage.updateBill(req.params.id, orgId, {
+          status: "approved",
+          approvedById: userId,
+          approvedAt: new Date(),
+        });
+        if (!bill) return res.status(404).json({ error: "Bill not found" });
+        res.json(bill);
+      } catch (error) {
+        console.error("Approve bill error:", error);
+        res.status(500).json({ error: "Failed to approve bill" });
+      }
+    },
+  );
 
-  app.post("/api/bills/:id/reject", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const userId = req.user!.claims.sub;
-      const orgId = await getOrCreateOrg(userId);
-      const bill = await storage.updateBill(req.params.id, orgId, { status: "rejected" });
-      if (!bill) return res.status(404).json({ error: "Bill not found" });
-      res.json(bill);
-    } catch (error) {
-      console.error("Reject bill error:", error);
-      res.status(500).json({ error: "Failed to reject bill" });
-    }
-  });
+  app.post(
+    "/api/bills/:id/reject",
+    isAuthenticated,
+    async (req: AuthenticatedRequest, res: Response) => {
+      try {
+        const userId = req.user!.claims.sub;
+        const orgId = await getOrCreateOrg(userId);
+        const bill = await storage.updateBill(req.params.id, orgId, { status: "rejected" });
+        if (!bill) return res.status(404).json({ error: "Bill not found" });
+        res.json(bill);
+      } catch (error) {
+        console.error("Reject bill error:", error);
+        res.status(500).json({ error: "Failed to reject bill" });
+      }
+    },
+  );
 
-  app.post("/api/bills/:id/mark-paid", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const userId = req.user!.claims.sub;
-      const orgId = await getOrCreateOrg(userId);
-      const bill = await storage.updateBill(req.params.id, orgId, { status: "paid", paidAt: new Date() });
-      if (!bill) return res.status(404).json({ error: "Bill not found" });
-      res.json(bill);
-    } catch (error) {
-      console.error("Mark bill paid error:", error);
-      res.status(500).json({ error: "Failed to mark bill as paid" });
-    }
-  });
+  app.post(
+    "/api/bills/:id/mark-paid",
+    isAuthenticated,
+    async (req: AuthenticatedRequest, res: Response) => {
+      try {
+        const userId = req.user!.claims.sub;
+        const orgId = await getOrCreateOrg(userId);
+        const bill = await storage.updateBill(req.params.id, orgId, {
+          status: "paid",
+          paidAt: new Date(),
+        });
+        if (!bill) return res.status(404).json({ error: "Bill not found" });
+        res.json(bill);
+      } catch (error) {
+        console.error("Mark bill paid error:", error);
+        res.status(500).json({ error: "Failed to mark bill as paid" });
+      }
+    },
+  );
 
-  app.delete("/api/bills/:id", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const userId = req.user!.claims.sub;
-      const orgId = await getOrCreateOrg(userId);
-      const success = await storage.deleteBill(req.params.id, orgId);
-      if (!success) return res.status(404).json({ error: "Bill not found" });
-      res.status(204).send();
-    } catch (error) {
-      console.error("Delete bill error:", error);
-      res.status(500).json({ error: "Failed to delete bill" });
-    }
-  });
+  app.delete(
+    "/api/bills/:id",
+    isAuthenticated,
+    async (req: AuthenticatedRequest, res: Response) => {
+      try {
+        const userId = req.user!.claims.sub;
+        const orgId = await getOrCreateOrg(userId);
+        const success = await storage.deleteBill(req.params.id, orgId);
+        if (!success) return res.status(404).json({ error: "Bill not found" });
+        res.status(204).send();
+      } catch (error) {
+        console.error("Delete bill error:", error);
+        res.status(500).json({ error: "Failed to delete bill" });
+      }
+    },
+  );
 
   // ==================== VENDORS ====================
 
