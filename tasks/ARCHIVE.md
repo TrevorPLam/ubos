@@ -5,6 +5,8 @@ SYSTEM INSTRUCTIONS — ARCHIVE.md (agent-enforced)
 
 Purpose: Append-only history of completed tasks.
 
+Canonical workflow + templates live in: TASKS.md
+
 Rules:
 1) APPEND-ONLY — agent MUST append new completed tasks at bottom.
 2) NEVER modify existing archived tasks (no rewrites, no reformatting).

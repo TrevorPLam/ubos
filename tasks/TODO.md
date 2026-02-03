@@ -5,6 +5,8 @@ SYSTEM INSTRUCTIONS — TODO.md (agent-enforced)
 
 Purpose: Active work queue. This file MUST contain tasks of a SINGLE batch type.
 
+Canonical workflow + templates live in: TASKS.md
+
 Global Rules:
 1) Task blocks MUST be wrapped with:
    ## task_begin
@@ -27,43 +29,81 @@ Global Rules:
 -->
 
 ## 🎯 Current Batch Focus
-**Batch Type:** [type:example]  
-**Batch Goal:** Example batch goal description  
+**Batch Type:** [type:config]  
+**Batch Goal:** Improve config/tooling stability and reduce build-time surprises  
 **Batch Size Target:** 5
 
 ---
 
-<!-- Example task template - replace with actual tasks when ready -->
+<!-- Tasks are promoted here from BACKLOG.md. Keep only active tasks in this file. -->
+
 ## task_begin
-## 1. # [id:TASK-YYYYMMDD-001][type:example][priority:high][component:example] Example task title
+## 1. # [id:TASK-20260203-001][type:config][priority:medium][component:tooling] Type-check root config files
 
 **Status:** todo  
-**Created:** YYYY-MM-DD  
+**Created:** 2026-02-03  
 **Assignee:** @agent
 
 ### Description
-> Example task description
+> Ensure TypeScript type-checking covers root config files like Vite and Tailwind configs.
 
 ### Acceptance Criteria
-- [ ] Example acceptance criterion 1
-- [ ] Example acceptance criterion 2
-
-### Definition of Done
-- [ ] Example done criterion 1
-- [ ] Example done criterion 2
+- [ ] `npm run check` fails on TS errors in `vite.config.ts` and `tailwind.config.ts`
+- [ ] Approach is documented (e.g., `tsconfig.node.json` or updated `include`)
 
 ### Relevant Files
-- `example/file.path`
-
-### Dependencies
-- None
-
-### Plan
-1. Example step 1
-2. Example step 2
+- `tsconfig.json`
+- `vite.config.ts`
+- `tailwind.config.ts`
 
 ### Notes & Summary
-- [log] Example log entry
+-
 ## task_end
 
 ---
+
+## task_begin
+## 2. # [id:TASK-20260203-002][type:config][priority:medium][component:css] Stop suppressing the PostCSS warning in Vite
+
+**Status:** todo  
+**Created:** 2026-02-03  
+**Assignee:** @agent
+
+### Description
+> Remove the Vite logger suppression hiding the PostCSS "from" warning and address the underlying cause if needed.
+
+### Acceptance Criteria
+- [ ] Logger warning suppression is removed
+- [ ] CSS build succeeds without reintroducing noisy warnings
+
+### Relevant Files
+- `vite.config.ts`
+- `postcss.config.js`
+
+### Notes & Summary
+-
+## task_end
+
+---
+
+## task_begin
+## 3. # [id:TASK-20260203-003][type:config][priority:medium][component:css] Make PostCSS config compatible across tooling
+
+**Status:** todo  
+**Created:** 2026-02-03  
+**Assignee:** @agent
+
+### Description
+> Ensure the PostCSS config format works reliably for current and future tooling (ESM vs CommonJS).
+
+### Acceptance Criteria
+- [ ] PostCSS config format choice is explicit and works in the build pipeline
+- [ ] If switching to CommonJS, config is renamed appropriately (e.g., `.cjs`)
+
+### Relevant Files
+- `postcss.config.js`
+- `package.json`
+
+### Notes & Summary
+-
+## task_end
