@@ -29,9 +29,10 @@ Rules:
 type: config  
 priority: medium  
 component: tooling  
-status: todo  
-location: TODO.md  
+status: done  
+location: ARCHIVE.md  
 created: 2026-02-03  
+completed: 2026-02-03  
 title: Type-check root config files  
 ## index_entry_end
 
@@ -40,9 +41,10 @@ title: Type-check root config files
 type: config  
 priority: medium  
 component: css  
-status: todo  
-location: TODO.md  
+status: done  
+location: ARCHIVE.md  
 created: 2026-02-03  
+completed: 2026-02-03  
 title: Stop suppressing the PostCSS warning in Vite  
 ## index_entry_end
 
@@ -51,9 +53,10 @@ title: Stop suppressing the PostCSS warning in Vite
 type: config  
 priority: medium  
 component: css  
-status: todo  
-location: TODO.md  
+status: done  
+location: ARCHIVE.md  
 created: 2026-02-03  
+completed: 2026-02-03  
 title: Make PostCSS config compatible across tooling  
 ## index_entry_end
 
