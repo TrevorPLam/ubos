@@ -185,7 +185,7 @@ const requireAuth: RequestHandler = (req, res, next) => {
 - Multi-tenant data isolation enforced
 - Organization-based authorization
 - Automated testing for tenant isolation
-- See [tests/backend/multi-tenant-isolation.test.ts](../../tests/backend/multi-tenant-isolation.test.ts)
+- See [tests/backend/multi-tenant-isolation.test.ts](/tests/backend/multi-tenant-isolation.test.ts)
 
 **CC6.6 - Cryptographic Protection**
 - Data encrypted in transit (TLS 1.2+)
@@ -463,10 +463,10 @@ export const clients = pgTable("clients", {
 ## Compliance Evidence
 
 ### Testing Evidence
-- [Authentication Tests](../../tests/backend/auth-middleware.test.ts)
-- [Multi-Tenant Isolation Tests](../../tests/backend/multi-tenant-isolation.test.ts)
-- [API Security Tests](../../tests/backend/api-routes.test.ts)
-- [Schema Validation Tests](../../shared/schema.test.ts)
+- [Authentication Tests](/tests/backend/auth-middleware.test.ts)
+- [Multi-Tenant Isolation Tests](/tests/backend/multi-tenant-isolation.test.ts)
+- [API Security Tests](/tests/backend/api-routes.test.ts)
+- [Schema Validation Tests](/shared/schema.test.ts)
 
 ### Documentation Evidence
 - [Security Testing Guide](../../TESTING.md)

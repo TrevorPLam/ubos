@@ -2,9 +2,9 @@
 
 **Role**: Individual work unit; project execution  
 **Domain**: Projects  
-**Schema**: [shared/schema.ts](../../shared/schema.ts#L449-L484)  
-**Storage**: [server/storage.ts](../../server/storage.ts)  
-**Routes**: [server/routes.ts](../../server/routes.ts)
+**Schema**: [shared/schema.ts](/shared/schema.ts#L449-L484)  
+**Storage**: [server/storage.ts](/server/storage.ts)  
+**Routes**: [server/routes.ts](/server/routes.ts)
 
 ---
 

@@ -2,9 +2,9 @@
 
 **Role**: Sales pipeline; opportunity tracking  
 **Domain**: Sales  
-**Schema**: [shared/schema.ts](../../shared/schema.ts#L202-L240)  
-**Storage**: [server/storage.ts](../../server/storage.ts)  
-**Routes**: [server/routes.ts](../../server/routes.ts)
+**Schema**: [shared/schema.ts](/shared/schema.ts#L202-L240)  
+**Storage**: [server/storage.ts](/server/storage.ts)  
+**Routes**: [server/routes.ts](/server/routes.ts)
 
 ---
 
@@ -202,7 +202,7 @@ lead ──→ qualified ──→ proposal ──→ negotiation ──→ won
 
 ## 🏪 Storage Methods
 
-**File**: [server/storage.ts](../../server/storage.ts)
+**File**: [server/storage.ts](/server/storage.ts)
 
 ```typescript
 getDeals(orgId: string): Promise<Deal[]>;

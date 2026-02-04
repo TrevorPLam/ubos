@@ -2,10 +2,10 @@
 
 **Role**: Cross-domain hub; links Deal → Contract → Project → Invoice → Timeline  
 **Domain**: Engagement (Hub)  
-**Schema**: [shared/schema.ts](../../shared/schema.ts#L324-L354)  
-**Storage**: [server/storage.ts](../../server/storage.ts)  
-**Routes**: [server/routes.ts](../../server/routes.ts)  
-**Validation**: [shared/schema.ts](../../shared/schema.ts#L824)
+**Schema**: [shared/schema.ts](/shared/schema.ts#L324-L354)  
+**Storage**: [server/storage.ts](/server/storage.ts)  
+**Routes**: [server/routes.ts](/server/routes.ts)  
+**Validation**: [shared/schema.ts](/shared/schema.ts#L824)
 
 ---
 
@@ -180,7 +180,7 @@ export type InsertEngagement = z.infer<typeof insertEngagementSchema>;
 
 ## 🏪 Storage Layer Interface
 
-**File**: [server/storage.ts](../../server/storage.ts)
+**File**: [server/storage.ts](/server/storage.ts)
 
 ```typescript
 // Read operations
@@ -214,7 +214,7 @@ getEngagements(orgId: string) {
 
 ## 🌐 API Routes
 
-**File**: [server/routes.ts](../../server/routes.ts)
+**File**: [server/routes.ts](/server/routes.ts)
 
 | Method | Endpoint | Handler | Description |
 |--------|----------|---------|-------------|

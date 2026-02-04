@@ -1,8 +1,8 @@
 # API Contracts & Data Payloads
 
 **Coverage**: HTTP endpoints that read/write data; request/response schemas  
-**Source**: [server/routes.ts](../../server/routes.ts)  
-**Validation**: [shared/schema.ts](../../shared/schema.ts) (Zod insert schemas)
+**Source**: [server/routes.ts](/server/routes.ts)  
+**Validation**: [shared/schema.ts](/shared/schema.ts) (Zod insert schemas)
 
 ---
 
@@ -73,7 +73,7 @@
     "notes": "Preferred customer"
   }
   ```
-- **Validation**: [insertClientCompanySchema](../../shared/schema.ts)
+- **Validation**: [insertClientCompanySchema](/shared/schema.ts)
 - **Response**: Created `ClientCompany` with id, timestamps
 
 #### GET /api/clients/:id (Fetch)
@@ -98,7 +98,7 @@
 | Method | Path | Validation Schema |
 |--------|------|-------------------|
 | GET | `/api/contacts` | — |
-| POST | `/api/contacts` | [insertContactSchema](../../shared/schema.ts) |
+| POST | `/api/contacts` | [insertContactSchema](/shared/schema.ts) |
 | GET | `/api/contacts/:id` | — |
 | PUT | `/api/contacts/:id` | Partial insertContactSchema |
 | DELETE | `/api/contacts/:id` | — |
@@ -128,7 +128,7 @@
 | Method | Path | Schema |
 |--------|------|--------|
 | GET | `/api/deals` | — |
-| POST | `/api/deals` | [insertDealSchema](../../shared/schema.ts) |
+| POST | `/api/deals` | [insertDealSchema](/shared/schema.ts) |
 | GET | `/api/deals/:id` | — |
 | PUT | `/api/deals/:id` | Partial insertDealSchema |
 | DELETE | `/api/deals/:id` | — |
@@ -163,7 +163,7 @@
 | Method | Path | Schema |
 |--------|------|--------|
 | GET | `/api/proposals` | — |
-| POST | `/api/proposals` | [insertProposalSchema](../../shared/schema.ts) |
+| POST | `/api/proposals` | [insertProposalSchema](/shared/schema.ts) |
 | GET | `/api/proposals/:id` | — |
 | PUT | `/api/proposals/:id` | Partial insertProposalSchema |
 | DELETE | `/api/proposals/:id` | — |
@@ -199,7 +199,7 @@
 | Method | Path | Schema |
 |--------|------|--------|
 | GET | `/api/contracts` | — |
-| POST | `/api/contracts` | [insertContractSchema](../../shared/schema.ts) |
+| POST | `/api/contracts` | [insertContractSchema](/shared/schema.ts) |
 | GET | `/api/contracts/:id` | — |
 | PUT | `/api/contracts/:id` | Partial insertContractSchema |
 | DELETE | `/api/contracts/:id` | — |
@@ -237,7 +237,7 @@
 | Method | Path | Schema |
 |--------|------|--------|
 | GET | `/api/engagements` | — |
-| POST | `/api/engagements` | [insertEngagementSchema](../../shared/schema.ts) |
+| POST | `/api/engagements` | [insertEngagementSchema](/shared/schema.ts) |
 | GET | `/api/engagements/:id` | — |
 | PUT | `/api/engagements/:id` | Partial insertEngagementSchema |
 | DELETE | `/api/engagements/:id` | — |
@@ -251,7 +251,7 @@
 | Method | Path | Schema |
 |--------|------|--------|
 | GET | `/api/projects` | — |
-| POST | `/api/projects` | [insertProjectSchema](../../shared/schema.ts) |
+| POST | `/api/projects` | [insertProjectSchema](/shared/schema.ts) |
 | GET | `/api/projects/:id` | — |
 | PUT | `/api/projects/:id` | Partial insertProjectSchema |
 | DELETE | `/api/projects/:id` | — |
@@ -284,7 +284,7 @@
 | Method | Path | Schema |
 |--------|------|--------|
 | GET | `/api/tasks` | — |
-| POST | `/api/tasks` | [insertTaskSchema](../../shared/schema.ts) |
+| POST | `/api/tasks` | [insertTaskSchema](/shared/schema.ts) |
 | GET | `/api/tasks/:id` | — |
 | PUT | `/api/tasks/:id` | Partial insertTaskSchema |
 | DELETE | `/api/tasks/:id` | — |
@@ -319,7 +319,7 @@
 | Method | Path | Schema |
 |--------|------|--------|
 | GET | `/api/threads` | — |
-| POST | `/api/threads` | [insertThreadSchema](../../shared/schema.ts) |
+| POST | `/api/threads` | [insertThreadSchema](/shared/schema.ts) |
 | GET | `/api/threads/:id` | — |
 | DELETE | `/api/threads/:id` | — |
 
@@ -346,7 +346,7 @@
 | Method | Path | Schema |
 |--------|------|--------|
 | GET | `/api/threads/:threadId/messages` | — |
-| POST | `/api/threads/:threadId/messages` | [insertMessageSchema](../../shared/schema.ts) |
+| POST | `/api/threads/:threadId/messages` | [insertMessageSchema](/shared/schema.ts) |
 | DELETE | `/api/threads/:threadId/messages/:id` | — |
 
 **Message schema**:
@@ -371,7 +371,7 @@
 | Method | Path | Schema |
 |--------|------|--------|
 | GET | `/api/invoices` | — |
-| POST | `/api/invoices` | [insertInvoiceSchema](../../shared/schema.ts) |
+| POST | `/api/invoices` | [insertInvoiceSchema](/shared/schema.ts) |
 | GET | `/api/invoices/:id` | — |
 | PUT | `/api/invoices/:id` | Partial insertInvoiceSchema |
 | DELETE | `/api/invoices/:id` | — |
@@ -412,7 +412,7 @@
 | Method | Path | Schema |
 |--------|------|--------|
 | GET | `/api/bills` | — |
-| POST | `/api/bills` | [insertBillSchema](../../shared/schema.ts) |
+| POST | `/api/bills` | [insertBillSchema](/shared/schema.ts) |
 | GET | `/api/bills/:id` | — |
 | PUT | `/api/bills/:id` | Partial insertBillSchema |
 | DELETE | `/api/bills/:id` | — |
@@ -516,7 +516,7 @@ GET /api/clients?cursor=<token>&limit=50
 - [EVENTS_AND_WEBHOOKS.md](EVENTS_AND_WEBHOOKS.md) — Event schemas
 - [FILES_AND_UPLOADS.md](FILES_AND_UPLOADS.md) — File endpoints
 - [../20_entities/ENTITY_INDEX.md](../20_entities/ENTITY_INDEX.md) — Entity specs
-- [../../server/routes.ts](../../server/routes.ts) — Implementation
+- [../../server/routes.ts](/server/routes.ts) — Implementation
 
 ---
 

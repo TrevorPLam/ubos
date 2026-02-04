@@ -1,7 +1,7 @@
 # Tenancy & Access Control
 
 **Coverage**: How organizations own and access data; authorization rules  
-**Evidence**: [shared/schema.ts](../../shared/schema.ts), [server/storage.ts](../../server/storage.ts), [server/routes.ts](../../server/routes.ts)
+**Evidence**: [shared/schema.ts](/shared/schema.ts), [server/storage.ts](/server/storage.ts), [server/routes.ts](/server/routes.ts)
 
 ---
 
@@ -307,7 +307,7 @@ const task = await storage.updateTask(taskId, orgId, {
 
 ## ✅ Test Coverage
 
-**File**: [tests/backend/multi-tenant-isolation.test.ts](../../tests/backend/multi-tenant-isolation.test.ts)
+**File**: [tests/backend/multi-tenant-isolation.test.ts](/tests/backend/multi-tenant-isolation.test.ts)
 
 **Tests**: 
 - ✅ Org A cannot read org B's clients

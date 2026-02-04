@@ -355,10 +355,10 @@ app.get("/api/files/:id/download", (req, res) => {
 - [ ] Add UI for restore (optional)
 
 **Files to change**:
-- [shared/schema.ts](../../shared/schema.ts)
-- [server/storage.ts](../../server/storage.ts) (all methods)
-- [server/routes.ts](../../server/routes.ts) (delete endpoints)
-- [tests/backend/](../../tests/backend/) (add soft-delete tests)
+- [shared/schema.ts](/shared/schema.ts)
+- [server/storage.ts](/server/storage.ts) (all methods)
+- [server/routes.ts](/server/routes.ts) (delete endpoints)
+- [tests/backend/](/tests/backend/) (add soft-delete tests)
 
 ### Activity Event Auto-Logging
 - [ ] Add middleware to capture pre/post state
@@ -369,9 +369,9 @@ app.get("/api/files/:id/download", (req, res) => {
 - [ ] Update timeline UI to fetch activityEvents
 
 **Files to change**:
-- [server/index.ts](../../server/index.ts) (middleware)
-- [server/storage.ts](../../server/storage.ts) (add helper for batch activity creation)
-- [tests/backend/](../../tests/backend/) (add audit tests)
+- [server/index.ts](/server/index.ts) (middleware)
+- [server/storage.ts](/server/storage.ts) (add helper for batch activity creation)
+- [tests/backend/](/tests/backend/) (add audit tests)
 
 ### Outbox Pattern
 - [ ] Create `outbox` table schema
@@ -384,9 +384,9 @@ app.get("/api/files/:id/download", (req, res) => {
 - [ ] Update all domain services to write outbox instead of direct updates
 
 **Files to create**:
-- [server/outbox.ts](../../server/outbox.ts) (schema + dispatcher)
-- [server/jobs/outbox-dispatcher.ts](../../server/jobs/outbox-dispatcher.ts) (job)
-- [tests/backend/outbox.test.ts](../../tests/backend/outbox.test.ts)
+- [server/outbox.ts](/server/outbox.ts) (schema + dispatcher)
+- [server/jobs/outbox-dispatcher.ts](/server/jobs/outbox-dispatcher.ts) (job)
+- [tests/backend/outbox.test.ts](/tests/backend/outbox.test.ts)
 
 ### Workflow Engine
 - [ ] Create `workflow_trigger`, `workflow_run`, `workflow_action` tables
@@ -398,9 +398,9 @@ app.get("/api/files/:id/download", (req, res) => {
 - [ ] Implement the 6 flagship workflows
 
 **Files to create**:
-- [server/workflow.ts](../../server/workflow.ts) (engine)
-- [server/workflows/](../../server/workflows/) (workflow definitions)
-- [tests/backend/workflow.test.ts](../../tests/backend/workflow.test.ts)
+- [server/workflow.ts](/server/workflow.ts) (engine)
+- [server/workflows/](/server/workflows/) (workflow definitions)
+- [tests/backend/workflow.test.ts](/tests/backend/workflow.test.ts)
 
 ---
 

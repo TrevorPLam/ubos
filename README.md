@@ -1,6 +1,7 @@
 # UBOS
 
 UBOS is a full-stack TypeScript app (React + Express) with a Postgres-backed API.
+How every aspect of this repo should reflect: the basics and the fundaments (industry standards), the highest standards and best practices (enterprise level), and unique and novel information (differentiators).
 
 ## Prerequisites
 

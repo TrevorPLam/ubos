@@ -27,12 +27,45 @@ Rules:
 ## index_entry_begin
 [id:TASK-20260203-001]  
 type: config  
-priority: high  
+priority: critical  
 component: repo  
 status: todo  
 location: BACKLOG.md  
 created: 2026-02-03  
 title: Create AGENTS governance pack  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-001]  
+type: security  
+priority: critical  
+component: server  
+status: todo  
+location: TODO.md  
+created: 2026-02-04  
+title: Implement Redis-backed rate limiting  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-002]  
+type: security  
+priority: critical  
+component: server  
+status: todo  
+location: TODO.md  
+created: 2026-02-04  
+title: Implement Redis-backed session store  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-003]  
+type: security  
+priority: critical  
+component: server  
+status: todo  
+location: TODO.md  
+created: 2026-02-04  
+title: Implement soft deletes for audit trail  
 ## index_entry_end
 
 ## index_entry_begin
@@ -154,6 +187,281 @@ status: todo
 location: BACKLOG.md  
 created: 2026-02-03  
 title: Harden and finalize implementation  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-004]  
+type: security  
+priority: high  
+component: server  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-04  
+title: Implement RBAC (Role-Based Access Control)  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-005]  
+type: security  
+priority: high  
+component: server  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-04  
+title: Implement encryption at rest for sensitive data  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-006]  
+type: security  
+priority: high  
+component: server  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-04  
+title: Implement key rotation and escrow  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-007]  
+type: security  
+priority: high  
+component: server  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-04  
+title: Implement enhanced audit logging  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-008]  
+type: security  
+priority: medium  
+component: server  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-04  
+title: Implement MFA (Multi-Factor Authentication)  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-009]  
+type: security  
+priority: medium  
+component: server  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-04  
+title: Implement database Row-Level Security (RLS)  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-010]  
+type: security  
+priority: medium  
+component: server  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-04  
+title: Implement anomaly detection and alerting  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-011]  
+type: security  
+priority: medium  
+component: infra  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-04  
+title: Implement SIEM integration  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-012]  
+type: security  
+priority: medium  
+component: ci  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-04  
+title: Implement SAST in CI/CD pipeline  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-013]  
+type: security  
+priority: medium  
+component: server  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-04  
+title: Implement password hashing (when auth added)  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-014]  
+type: security  
+priority: medium  
+component: server  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-04  
+title: Implement file upload security  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-015]  
+type: docs  
+priority: high  
+component: security  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-04  
+title: Create SECURITY_POLICY.md  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-016]  
+type: docs  
+priority: high  
+component: security  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-04  
+title: Create SECURITY_TESTING.md  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-017]  
+type: docs  
+priority: high  
+component: security  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-04  
+title: Create VULNERABILITY_MANAGEMENT.md  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-018]  
+type: docs  
+priority: high  
+component: security  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-04  
+title: Create NETWORK_SECURITY.md  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-019]  
+type: docs  
+priority: high  
+component: security  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-04  
+title: Create DEPLOYMENT_SECURITY.md  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-020]  
+type: docs  
+priority: high  
+component: security  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-04  
+title: Create CHANGE_MANAGEMENT.md  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-021]  
+type: docs  
+priority: high  
+component: architecture  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-04  
+title: Create BUILD_AND_TOOLING.md  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-022]  
+type: docs  
+priority: high  
+component: architecture  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-04  
+title: Create CONFIGURATION_MODEL.md  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-023]  
+type: docs  
+priority: high  
+component: architecture  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-04  
+title: Create DEPENDENCY_GRAPH.md  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-024]  
+type: docs  
+priority: high  
+component: architecture  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-04  
+title: Create AUTH_AND_SESSION.md  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-025]  
+type: docs  
+priority: high  
+component: architecture  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-04  
+title: Create SECURITY_BASELINE.md  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-026]  
+type: docs  
+priority: high  
+component: data  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-04  
+title: Resolve 10 data unknowns  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-027]  
+type: docs  
+priority: high  
+component: data  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-04  
+title: Document 17 remaining entities  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-028]  
+type: docs  
+priority: high  
+component: data  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-04  
+title: Create 6 current state docs  
 ## index_entry_end
 
 ## index_entry_begin

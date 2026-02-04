@@ -2,7 +2,7 @@
 
 **Master list of all data entities in UBOS.**  
 **Last updated**: 2025-02-04  
-**Evidence**: [shared/schema.ts](../../shared/schema.ts)
+**Evidence**: [shared/schema.ts](/shared/schema.ts)
 
 ---
 

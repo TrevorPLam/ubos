@@ -76,9 +76,9 @@ docs/data/
 | 1 | Are migrations applied at startup? | Data schema consistency | Check Dockerfile, docker-compose.yml, or package.json scripts |
 | 2 | Is soft delete implemented? | Audit trail, compliance | Search schema.ts for `deleted_at` column; check storage for soft-delete logic |
 | 3 | Are activities auto-logged? | Auditability | Grep for `createActivityEvent()` calls in routes.ts; count manual vs auto |
-| 4 | Is CSRF protection enforced? | Security | Check [server/csrf.ts](../../server/csrf.ts) + test coverage |
-| 5 | Is rate limiting enforced? | DoS protection | Check [server/security.ts](../../server/security.ts) config |
-| 6 | Are request bodies logged? | Security risk | Check [server/index.ts](../../server/index.ts) middleware for body logging |
+| 4 | Is CSRF protection enforced? | Security | Check [server/csrf.ts](/server/csrf.ts) + test coverage |
+| 5 | Is rate limiting enforced? | DoS protection | Check [server/security.ts](/server/security.ts) config |
+| 6 | Are request bodies logged? | Security risk | Check [server/index.ts](/server/index.ts) middleware for body logging |
 | 7 | Is presign URL service implemented? | File security | Search for "presign" or S3 client in codebase; grep routes.ts |
 | 8 | Is pagination implemented? | Query performance | Check routes for limit/offset params; test with 1000+ records |
 | 9 | Is search implemented? | Discoverability | Check for FTS indexes or search endpoints |
@@ -117,7 +117,7 @@ docs/data/
 1. Trace entity in [30_interfaces/API_CONTRACTS.md](30_interfaces/API_CONTRACTS.md) (request/response)
 2. Check storage methods in [10_current_state/DATA_SOURCES.md](10_current_state/DATA_SOURCES.md) (is org scoping correct?)
 3. Check routes in [40_gaps_and_roadmap/EVIDENCE_MAP.md](40_gaps_and_roadmap/EVIDENCE_MAP.md) (is auth correct?)
-4. Run tests in [tests/backend/](../../tests/backend/) (do they pass?)
+4. Run tests in [tests/backend/](/tests/backend/) (do they pass?)
 
 ---
 
@@ -142,11 +142,11 @@ docs/data/
 ## 🚀 Recommended Next Steps
 
 ### Immediate (This Week)
-1. **Soft deletes**: Add `deleted_at` column to [shared/schema.ts](../../shared/schema.ts) (20 tables)
+1. **Soft deletes**: Add `deleted_at` column to [shared/schema.ts](/shared/schema.ts) (20 tables)
    - Effort: 40 hours
    - Follow: [GAP_ANALYSIS.md#1-soft-deletes](40_gaps_and_roadmap/GAP_ANALYSIS.md#1-soft-deletes-critical-for-compliance)
    
-2. **Activity auto-logging**: Wire [server/index.ts](../../server/index.ts) middleware to log all CRUD
+2. **Activity auto-logging**: Wire [server/index.ts](/server/index.ts) middleware to log all CRUD
    - Effort: 30 hours
    - Follow: [GAP_ANALYSIS.md#2-activity-event-auto-logging](40_gaps_and_roadmap/GAP_ANALYSIS.md#2-activity-event-auto-logging-critical-for-audit)
 
@@ -227,9 +227,9 @@ grep -r "export\|import.*csv\|download" server/routes.ts 2>/dev/null | head
 
 ### To add a missing entity doc:
 1. Copy [20_entities/Deal.md](20_entities/Deal.md) template
-2. Find entity in [shared/schema.ts](../../shared/schema.ts)
-3. Find storage methods in [server/storage.ts](../../server/storage.ts)
-4. Find routes in [server/routes.ts](../../server/routes.ts)
+2. Find entity in [shared/schema.ts](/shared/schema.ts)
+3. Find storage methods in [server/storage.ts](/server/storage.ts)
+4. Find routes in [server/routes.ts](/server/routes.ts)
 5. Fill in schema, fields, lifecycle
 6. Link in [20_entities/ENTITY_INDEX.md](20_entities/ENTITY_INDEX.md)
 
@@ -280,7 +280,7 @@ grep -r "export\|import.*csv\|download" server/routes.ts 2>/dev/null | head
 1. Start: [docs/data/README.md](README.md) (this folder)
 2. Read: [docs/data/20_entities/Invoice.md](20_entities/Invoice.md) (understanding)
 3. Find code: [docs/data/40_gaps_and_roadmap/EVIDENCE_MAP.md](40_gaps_and_roadmap/EVIDENCE_MAP.md#invoice) (links)
-4. Edit: [shared/schema.ts](../../shared/schema.ts) + [server/storage.ts](../../server/storage.ts) + tests
+4. Edit: [shared/schema.ts](/shared/schema.ts) + [server/storage.ts](/server/storage.ts) + tests
 5. Check: Does UPDATE work? Are tests passing? Is org scoping still enforced?
 
 **Use case: "Why is my query slow?"**
@@ -293,7 +293,7 @@ grep -r "export\|import.*csv\|download" server/routes.ts 2>/dev/null | head
 1. Start: [docs/data/40_gaps_and_roadmap/GAP_ANALYSIS.md#1-soft-deletes](40_gaps_and_roadmap/GAP_ANALYSIS.md#1-soft-deletes-critical-for-compliance)
 2. Checklist: Follow the item-by-item list
 3. Files: All 20 tables listed
-4. Tests: Reference [tests/backend/multi-tenant-isolation.test.ts](../../tests/backend/multi-tenant-isolation.test.ts)
+4. Tests: Reference [tests/backend/multi-tenant-isolation.test.ts](/tests/backend/multi-tenant-isolation.test.ts)
 
 ---
 

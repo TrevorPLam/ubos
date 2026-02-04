@@ -2,9 +2,9 @@
 
 **Role**: Accounts receivable; billing records  
 **Domain**: Revenue  
-**Schema**: [shared/schema.ts](../../shared/schema.ts#L530-L575)  
-**Storage**: [server/storage.ts](../../server/storage.ts)  
-**Routes**: [server/routes.ts](../../server/routes.ts)
+**Schema**: [shared/schema.ts](/shared/schema.ts#L530-L575)  
+**Storage**: [server/storage.ts](/server/storage.ts)  
+**Routes**: [server/routes.ts](/server/routes.ts)
 
 ---
 

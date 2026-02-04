@@ -2,9 +2,9 @@
 
 **Role**: Individual person at a client company; CRM contact record  
 **Domain**: CRM  
-**Schema**: [shared/schema.ts](../../shared/schema.ts#L113-L160)  
-**Storage**: [server/storage.ts](../../server/storage.ts)  
-**Routes**: [server/routes.ts](../../server/routes.ts)
+**Schema**: [shared/schema.ts](/shared/schema.ts#L113-L160)  
+**Storage**: [server/storage.ts](/server/storage.ts)  
+**Routes**: [server/routes.ts](/server/routes.ts)
 
 ---
 

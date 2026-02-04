@@ -28,7 +28,7 @@
 1. Check [30_interfaces/API_CONTRACTS.md](30_interfaces/API_CONTRACTS.md) — Is request/response correct?
 2. Check [10_current_state/DATA_SOURCES.md](10_current_state/DATA_SOURCES.md) — Is org scoping enforced?
 3. Trace to code via [40_gaps_and_roadmap/EVIDENCE_MAP.md](40_gaps_and_roadmap/EVIDENCE_MAP.md)
-4. Run [tests/backend/multi-tenant-isolation.test.ts](../../tests/backend/multi-tenant-isolation.test.ts)
+4. Run [tests/backend/multi-tenant-isolation.test.ts](/tests/backend/multi-tenant-isolation.test.ts)
 
 ### See what's coming
 1. Read [00_plan_intent/PLAN_SUMMARY.md](00_plan_intent/PLAN_SUMMARY.md) — Vision from PLAN.md
@@ -37,7 +37,7 @@
 
 ### Understand tenancy
 1. Read [10_current_state/TENANCY_AND_ACCESS.md](10_current_state/TENANCY_AND_ACCESS.md)
-2. Check tests: [tests/backend/multi-tenant-isolation.test.ts](../../tests/backend/multi-tenant-isolation.test.ts)
+2. Check tests: [tests/backend/multi-tenant-isolation.test.ts](/tests/backend/multi-tenant-isolation.test.ts)
 
 ### Find API endpoints
 → [30_interfaces/API_CONTRACTS.md](30_interfaces/API_CONTRACTS.md)

@@ -1,6 +1,6 @@
 # Target Data Model (Per PLAN.md)
 
-**Source**: [PLAN.md](../../PLAN.md) → Stages 0–3  
+**Source**: [PLAN.md](/PLAN.md) → Stages 0–3  
 **Phase**: Foundation (Stage 0) through Revenue (Stage 2)
 
 ## 📋 Complete Entity List (Target State)
@@ -112,8 +112,8 @@ ClientPortalAccess (magic links)
 
 ### Tenant Scoping
 - All tables EXCEPT `users`, `organizations` include `organizationId` foreign key
-- **Storage enforcement point**: [server/storage.ts](../../server/storage.ts) — all read/update/delete queries include `organizationId` filter
-- **Test coverage**: [tests/backend/multi-tenant-isolation.test.ts](../../tests/backend/multi-tenant-isolation.test.ts)
+- **Storage enforcement point**: [server/storage.ts](/server/storage.ts) — all read/update/delete queries include `organizationId` filter
+- **Test coverage**: [tests/backend/multi-tenant-isolation.test.ts](/tests/backend/multi-tenant-isolation.test.ts)
 
 ### Foreign Keys (Cross-Domain References)
 | Referencing Table | Foreign Key(s) | Target | Enforcement |

@@ -2,9 +2,9 @@
 
 **Role**: Vendor invoice received; accounts payable  
 **Domain**: Revenue (Accounts Payable)  
-**Schema**: [shared/schema.ts](../../shared/schema.ts#L684-L721)  
-**Storage**: [server/storage.ts](../../server/storage.ts)  
-**Routes**: [server/routes.ts](../../server/routes.ts)
+**Schema**: [shared/schema.ts](/shared/schema.ts#L684-L721)  
+**Storage**: [server/storage.ts](/server/storage.ts)  
+**Routes**: [server/routes.ts](/server/routes.ts)
 
 ---
 

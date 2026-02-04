@@ -9,12 +9,12 @@
 ### Primary: PostgreSQL
 
 **Purpose**: Relational data for all business entities  
-**Connection**: [server/db.ts](../../server/db.ts)  
+**Connection**: [server/db.ts](/server/db.ts)  
 **Config**: `DATABASE_URL` environment variable  
-**Tables**: 23 tables defined in [shared/schema.ts](../../shared/schema.ts)
+**Tables**: 23 tables defined in [shared/schema.ts](/shared/schema.ts)
 
 **Access Patterns**:
-- All reads/writes go through [server/storage.ts](../../server/storage.ts)
+- All reads/writes go through [server/storage.ts](/server/storage.ts)
 - Storage methods enforce `organizationId` scoping
 - Drizzle ORM handles type safety + migrations (push-based)
 
@@ -26,7 +26,7 @@ const db = drizzle(pool, { schema });
 ```
 
 **Schema Management**:
-- Definitions: [shared/schema.ts](../../shared/schema.ts) (Drizzle table definitions)
+- Definitions: [shared/schema.ts](/shared/schema.ts) (Drizzle table definitions)
 - Insert schemas: Generated via `createInsertSchema()` for Zod validation
 - Migrations: ❓ UNKNOWN — no migration files in repo; likely using Drizzle push or manual SQL
 
@@ -49,7 +49,7 @@ import AWS from 'aws-sdk';
 const s3 = new AWS.S3({ ... });
 ```
 
-**Integration Point**: [server/storage.ts](../../server/storage.ts)  
+**Integration Point**: [server/storage.ts](/server/storage.ts)  
 **Related table**: fileObjects (stores path, name, mimeType, size)  
 **Missing functionality**:
 - Upload handler → S3
@@ -321,7 +321,7 @@ Per PLAN.md, must implement:
 
 ## 📊 Storage Layer Implementation Details
 
-**File**: [server/storage.ts](../../server/storage.ts) (719 lines)  
+**File**: [server/storage.ts](/server/storage.ts) (719 lines)  
 **Interface**: `IStorage` (defines all methods)  
 **Implementation**: Stateless functions using Drizzle ORM
 

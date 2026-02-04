@@ -1,7 +1,7 @@
 # Current State Overview
 
 **As of**: 2025-02-04  
-**Evidence base**: [shared/schema.ts](../../shared/schema.ts), [server/storage.ts](../../server/storage.ts), [server/routes.ts](../../server/routes.ts)
+**Evidence base**: [shared/schema.ts](/shared/schema.ts), [server/storage.ts](/server/storage.ts), [server/routes.ts](/server/routes.ts)
 
 ## 🎯 Current Implementation Status
 
@@ -24,12 +24,12 @@
 
 ## 📊 Entities Implemented (27 Total)
 
-### Schema Location: [shared/schema.ts](../../shared/schema.ts)
+### Schema Location: [shared/schema.ts](/shared/schema.ts)
 
 #### Identity & Tenancy (3 tables)
 1. **organizations** — Tenant root; no FK to other table
 2. **organizationMembers** — Join of user→org + role
-3. **users** (in [shared/models/auth.ts](../../shared/models/auth.ts)) — Global user store
+3. **users** (in [shared/models/auth.ts](/shared/models/auth.ts)) — Global user store
 
 #### CRM Golden Record (3 tables)
 4. **clientCompanies** — Canonical client; FK organization
@@ -103,14 +103,14 @@ See [20_entities/ENTITY_INDEX.md](../20_entities/ENTITY_INDEX.md) for full field
 
 ### Primary Data Store
 - **Database**: PostgreSQL (single instance, no replication configured)
-- **Connection**: [server/db.ts](../../server/db.ts) creates Drizzle ORM instance
+- **Connection**: [server/db.ts](/server/db.ts) creates Drizzle ORM instance
 - **Connection string**: `DATABASE_URL` environment variable
-- **Schema definition**: [shared/schema.ts](../../shared/schema.ts) (Drizzle table definitions)
+- **Schema definition**: [shared/schema.ts](/shared/schema.ts) (Drizzle table definitions)
 - **Migrations**: UNKNOWN (no migration files found in current structure; assumed Drizzle push or manual)
 
 ### Object Storage (Planned)
 - **Type**: S3-compatible (MinIO local)
-- **Implementation**: [server/storage.ts](../../server/storage.ts) has stubs for presign, but no S3 client
+- **Implementation**: [server/storage.ts](/server/storage.ts) has stubs for presign, but no S3 client
 - **Usage**: FileObject paths stored in DB; actual blobs in S3
 - **Status**: 🔴 NOT IMPLEMENTED
 
@@ -130,9 +130,9 @@ See [20_entities/ENTITY_INDEX.md](../20_entities/ENTITY_INDEX.md) for full field
 
 ### Enforcement Model
 - **Primary key**: `organizationId` on all org-scoped tables
-- **Enforcement point**: [server/storage.ts](../../server/storage.ts) — every read/update/delete includes `WHERE organizationId = ?`
-- **Route-level check**: [server/routes.ts](../../server/routes.ts) — `requireAuth` middleware + `getOrCreateOrg()` to resolve org
-- **Test coverage**: [tests/backend/multi-tenant-isolation.test.ts](../../tests/backend/multi-tenant-isolation.test.ts)
+- **Enforcement point**: [server/storage.ts](/server/storage.ts) — every read/update/delete includes `WHERE organizationId = ?`
+- **Route-level check**: [server/routes.ts](/server/routes.ts) — `requireAuth` middleware + `getOrCreateOrg()` to resolve org
+- **Test coverage**: [tests/backend/multi-tenant-isolation.test.ts](/tests/backend/multi-tenant-isolation.test.ts)
 
 ### Tenant ID Resolution
 ```typescript
@@ -209,7 +209,7 @@ See [30_interfaces/API_CONTRACTS.md](../30_interfaces/API_CONTRACTS.md) for full
 
 ### Schema Layer
 - **Framework**: Zod (for insert schemas)
-- **Source**: [shared/schema.ts](../../shared/schema.ts) — auto-generated via `createInsertSchema()`
+- **Source**: [shared/schema.ts](/shared/schema.ts) — auto-generated via `createInsertSchema()`
 - **Example**: 
   ```typescript
   export const insertClientCompanySchema = createInsertSchema(clientCompanies).omit({
@@ -240,13 +240,13 @@ See [30_interfaces/API_CONTRACTS.md](../30_interfaces/API_CONTRACTS.md) for full
 - **No automatic trigger**: Currently, routes must explicitly log activities; not integrated into entity CRUD
 
 ### Request Logging
-- **Middleware**: [server/index.ts](../../server/index.ts) logs all `/api` requests
+- **Middleware**: [server/index.ts](/server/index.ts) logs all `/api` requests
 - **Format**: METHOD PATH STATUS DURATION_MS
 - **Redaction**: Basic redaction via `sanitizeRequestForLog()` (TBD: full implementation)
 - **Issue**: Headers + request body logged (may include secrets)
 
 ### Error Logging
-- **Handler**: [server/index.ts](../../server/index.ts) middleware captures errors
+- **Handler**: [server/index.ts](/server/index.ts) middleware captures errors
 - **Redaction**: TBD (currently may log sensitive data)
 
 ---
@@ -305,9 +305,9 @@ See [30_interfaces/API_CONTRACTS.md](../30_interfaces/API_CONTRACTS.md) for full
 | Are migrations applied at startup? | Data schema consistency | No migrations folder found; check DB init script or Dockerfile |
 | Is soft delete implemented? | Data recovery, compliance | Search for `deleted_at` column |
 | Are activity events auto-logged? | Auditability | Check all CRUD routes for `createActivityEvent()` calls |
-| Is CSRF protection enabled? | Security | [server/security.ts](../../server/security.ts) + [tests/backend/csrf.test.ts](../../tests/backend/csrf.test.ts) |
-| Is rate limiting enforced? | DoS protection | [server/security.ts](../../server/security.ts) |
-| Are requests body logged? | Security risk | [server/index.ts](../../server/index.ts) middleware |
+| Is CSRF protection enabled? | Security | [server/security.ts](/server/security.ts) + [tests/backend/csrf.test.ts](/tests/backend/csrf.test.ts) |
+| Is rate limiting enforced? | DoS protection | [server/security.ts](/server/security.ts) |
+| Are requests body logged? | Security risk | [server/index.ts](/server/index.ts) middleware |
 | Is presign URL service implemented? | File security | Search codebase for "presign" |
 | Is pagination implemented? | Query performance | Check routes for limit/offset |
 | Is search implemented? | Discoverability | Check for full-text search or LIKE queries |

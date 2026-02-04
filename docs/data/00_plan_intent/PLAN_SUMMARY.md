@@ -1,6 +1,6 @@
 # Plan Intent: Data-Focused Summary
 
-**Source**: [PLAN.md](../../PLAN.md)  
+**Source**: [PLAN.md](/PLAN.md)  
 **Date extracted**: 2025-02-04
 
 ## 🎯 Product Vision (Data Perspective)
