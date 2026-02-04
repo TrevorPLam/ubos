@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    name: Security Validation
+    name: Test Suite
     runs-on: ubuntu-latest
     
     strategy:
@@ -28,12 +28,24 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run security validation (single truth command)
-        run: npm run validate:security
+      - name: Run backend tests with coverage
+        run: npm run test:backend -- --coverage
+
+      - name: Run frontend tests with coverage
+        run: npm run test:frontend -- --coverage
+
+      - name: Generate combined coverage report
+        run: npm run test:ci
+
+      - name: Enforce coverage thresholds
+        run: npm run enforce-coverage
 
       - name: Run linter
         run: npm run lint
         continue-on-error: true
+
+      - name: Run security validation
+        run: npm run validate:security
 
       - name: Check for unexpected console output in tests
         run: |
@@ -49,7 +61,6 @@ jobs:
           files: ./coverage/lcov.info
           flags: unittests
           name: codecov-umbrella
-          fail_ci_if_error: false
           fail_ci_if_error: false
 
   build:

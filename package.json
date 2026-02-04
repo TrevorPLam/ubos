@@ -18,6 +18,7 @@
     "test:frontend": "vitest run --config vitest.config.client.ts",
     "test:ci": "vitest run --coverage",
     "coverage": "vitest run --coverage",
+    "enforce-coverage": "tsx script/enforce-coverage.ts",
     "validate:security": "npm run check && npm run test:backend && npm run test:frontend && npm run coverage && npm run build && npm run security:check-tests",
     "security:check-tests": "node -e \"const fs=require('fs');const glob=require('glob');const files=glob.sync('tests/**/*.test.ts');let hasOnly=false;files.forEach(f=>{const content=fs.readFileSync(f,'utf8');if(/\\.(only|skip)\\(/.test(content)){console.error('ERROR: Found .only() or .skip() in '+f);hasOnly=true;}});if(hasOnly)process.exit(1);console.log('✓ No focused/skipped tests found');\"",
     "generate-task-index": "tsx script/generate-task-index.ts",
