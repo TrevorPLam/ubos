@@ -94,7 +94,7 @@ Documented in `.env.example`.
 
 ## Security
 
-UBOS implements comprehensive security standards and best practices. See [Security Documentation](./docs/security/README.md) for details.
+UBOS implements comprehensive security standards and best practices. See [Security Documentation](./docs/security/00-overview/README.md) for details.
 
 ### Security Features
 
@@ -119,13 +119,13 @@ UBOS documentation supports compliance with:
 
 ### Security Documentation
 
-- [Security Overview](./docs/security/README.md)
-- [Application Security Guide](./docs/security/APPLICATION_SECURITY.md)
-- [Developer Security Guide](./docs/security/DEVELOPER_GUIDE.md)
-- [SOC2 Compliance](./docs/security/SOC2_COMPLIANCE.md)
-- [PCI-DSS Guidelines](./docs/security/PCI_DSS_GUIDELINES.md)
-- [HIPAA Compliance](./docs/security/HIPAA_COMPLIANCE.md)
-- [GDPR Compliance](./docs/security/GDPR_COMPLIANCE.md)
+- [Security Overview](./docs/security/00-overview/README.md)
+- [Application Security Guide](./docs/security/30-implementation-guides/APPLICATION_SECURITY.md)
+- [Developer Security Guide](./docs/security/30-implementation-guides/DEVELOPER_GUIDE.md)
+- [SOC2 Compliance](./docs/security/40-compliance/SOC2_COMPLIANCE.md)
+- [PCI-DSS Guidelines](./docs/security/40-compliance/PCI_DSS_GUIDELINES.md)
+- [HIPAA Compliance](./docs/security/40-compliance/HIPAA_COMPLIANCE.md)
+- [GDPR Compliance](./docs/security/40-compliance/GDPR_COMPLIANCE.md)
 
 ### Security Testing
 

@@ -1077,7 +1077,7 @@ describe("Authorization", () => {
 
 - [APPLICATION_SECURITY.md](./APPLICATION_SECURITY.md) - Secure coding practices
 - [SECURITY_MONITORING.md](./SECURITY_MONITORING.md) - Audit logging and monitoring
-- [INCIDENT_RESPONSE.md](./INCIDENT_RESPONSE.md) - Security incident procedures
+- [INCIDENT_RESPONSE.md](../50-incident-response/INCIDENT_RESPONSE.md) - Security incident procedures
 - [DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md) - Developer security guidelines
 
 ## Compliance References

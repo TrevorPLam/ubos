@@ -8,9 +8,9 @@
  * - Request sanitization
  * 
  * References:
- * - SOC2 Compliance: docs/security/SOC2_COMPLIANCE.md (CC6 - Access Controls)
- * - OWASP Top 10: docs/security/APPLICATION_SECURITY.md
- * - Security Monitoring: docs/security/SECURITY_MONITORING.md
+ * - SOC2 Compliance: docs/security/40-compliance/SOC2_COMPLIANCE.md (CC6 - Access Controls)
+ * - OWASP Top 10: docs/security/30-implementation-guides/APPLICATION_SECURITY.md
+ * - Security Monitoring: docs/security/30-implementation-guides/SECURITY_MONITORING.md
  * 
  * @see {@link https://helmetjs.github.io/ Helmet.js Documentation}
  * @see {@link https://www.npmjs.com/package/express-rate-limit Rate Limiting}
@@ -20,6 +20,7 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import cors from "cors";
 import type { Express, Request, Response, NextFunction } from "express";
+import { logger } from "./logger";
 
 /**
  * Configure security headers using Helmet.
@@ -174,9 +175,10 @@ export function setupCORS(app: Express): void {
         
         if (allowedOrigins.length === 0) {
           // SECURITY: In production without ALLOWED_ORIGINS, deny CORS
-          console.warn(
-            "SECURITY WARNING: ALLOWED_ORIGINS not configured in production. CORS disabled."
-          );
+          logger.warn("ALLOWED_ORIGINS not configured in production. CORS disabled.", {
+            source: "SECURITY",
+            severity: "CRITICAL"
+          });
           return callback(new Error("CORS not configured for production"));
         }
         

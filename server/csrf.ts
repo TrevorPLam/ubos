@@ -20,6 +20,7 @@
 
 import { randomBytes } from "crypto";
 import type { Request, Response, NextFunction, RequestHandler } from "express";
+import { logger } from "./logger";
 
 /**
  * CSRF token storage in session.
@@ -299,7 +300,10 @@ export function cleanupExpiredCsrfTokens(): void {
   expired.forEach(userId => csrfTokenStore.delete(userId));
   
   if (expired.length > 0) {
-    console.log(`[CSRF] Cleaned up ${expired.length} expired tokens`);
+    logger.debug("Cleaned up expired CSRF tokens", {
+      source: "CSRF",
+      count: expired.length
+    });
   }
 }
 

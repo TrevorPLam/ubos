@@ -9,8 +9,8 @@
  * 
  * References:
  * - server/security.ts
- * - docs/security/APPLICATION_SECURITY.md
- * - docs/security/SOC2_COMPLIANCE.md
+ * - docs/security/30-implementation-guides/APPLICATION_SECURITY.md
+ * - docs/security/40-compliance/SOC2_COMPLIANCE.md
  */
 
 import { describe, it, expect } from 'vitest';
@@ -361,16 +361,16 @@ describe('Security Features Documentation', () => {
 describe('Security Compliance Validation', () => {
   it('should reference security documentation', () => {
     const securityDocs = [
-      'docs/security/SOC2_COMPLIANCE.md',
-      'docs/security/PCI_DSS_GUIDELINES.md',
-      'docs/security/HIPAA_COMPLIANCE.md',
-      'docs/security/GDPR_COMPLIANCE.md',
-      'docs/security/APPLICATION_SECURITY.md',
-      'docs/security/DEVELOPER_GUIDE.md',
+      'docs/security/40-compliance/SOC2_COMPLIANCE.md',
+      'docs/security/40-compliance/PCI_DSS_GUIDELINES.md',
+      'docs/security/40-compliance/HIPAA_COMPLIANCE.md',
+      'docs/security/40-compliance/GDPR_COMPLIANCE.md',
+      'docs/security/30-implementation-guides/APPLICATION_SECURITY.md',
+      'docs/security/30-implementation-guides/DEVELOPER_GUIDE.md',
     ];
     
     expect(securityDocs.length).toBe(6);
-    expect(securityDocs).toContain('docs/security/SOC2_COMPLIANCE.md');
+    expect(securityDocs).toContain('docs/security/40-compliance/SOC2_COMPLIANCE.md');
   });
 
   it('should document security review process', () => {

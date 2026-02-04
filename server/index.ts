@@ -15,7 +15,7 @@
  * - Rate limiting to prevent brute force and DoS attacks
  * - CORS configuration for cross-origin requests
  * - Request sanitization to prevent injection attacks
- * - See docs/security/APPLICATION_SECURITY.md for details
+ * - See docs/security/30-implementation-guides/APPLICATION_SECURITY.md for details
  *
  * AI iteration notes:
  * - Add new API endpoints in `server/routes.ts` (keep auth + org scoping consistent).
@@ -31,6 +31,8 @@ import {
   sanitizeResponseForLog, 
   createSafeErrorLog 
 } from "./security-utils";
+import { logger, log } from "./logger";
+import { assertValidConfiguration } from "./config-validation";
 import { createServer } from "http";
 
 const app = express();
@@ -39,6 +41,42 @@ const httpServer = createServer(app);
 // Environment check
 const isProduction = process.env.NODE_ENV === "production";
 const isDevelopment = process.env.NODE_ENV === "development";
+
+// CRITICAL: Validate configuration before starting server
+// Fails fast if required security settings are missing
+// Evidence: config-validation.ts enforces OWASP ASVS requirements
+assertValidConfiguration();
+
+// CRITICAL: Configure Express proxy trust for production deployments
+// Required for correct client IP extraction from X-Forwarded-For headers
+// This affects rate limiting, session binding, and security logging
+// OWASP ASVS 14.1.3: Verify that all components are up to date with proper configuration
+if (isProduction) {
+  const trustProxy = process.env.TRUST_PROXY;
+  if (trustProxy) {
+    // Parse trust proxy value
+    if (trustProxy === "true" || trustProxy === "1") {
+      app.set("trust proxy", true);
+      logger.info("Proxy trust enabled (all proxies)", { source: "EXPRESS" });
+    } else if (!isNaN(Number(trustProxy))) {
+      app.set("trust proxy", Number(trustProxy));
+      logger.info("Proxy trust enabled", { 
+        source: "EXPRESS",
+        hopCount: Number(trustProxy)
+      });
+    } else {
+      app.set("trust proxy", trustProxy);
+      logger.info("Proxy trust enabled (custom)", {
+        source: "EXPRESS",
+        config: trustProxy
+      });
+    }
+  }
+} else if (isDevelopment) {
+  // In development, trust local proxies (e.g., Vite dev server)
+  app.set("trust proxy", "loopback");
+  logger.debug("Proxy trust enabled (loopback only)", { source: "EXPRESS" });
+}
 
 declare module "http" {
   interface IncomingMessage {
@@ -66,17 +104,6 @@ app.use(
 );
 
 app.use(express.urlencoded({ extended: false, limit: '100kb' }));
-
-export function log(message: string, source = "express") {
-  const formattedTime = new Date().toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true,
-  });
-
-  console.log(`${formattedTime} [${source}] ${message}`);
-}
 
 // Enhanced request logging with PII redaction
 // SOC2: CC7.1 (System Monitoring), GDPR Art 32 (Security of Processing)

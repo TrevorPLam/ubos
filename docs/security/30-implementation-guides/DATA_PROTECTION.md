@@ -8,8 +8,8 @@ classification: "internal"
 related_docs:
   - APPLICATION_SECURITY.md
   - ACCESS_CONTROL.md
-  - GDPR_COMPLIANCE.md
-  - HIPAA_COMPLIANCE.md
+  - ../40-compliance/GDPR_COMPLIANCE.md
+  - ../40-compliance/HIPAA_COMPLIANCE.md
 ---
 
 # Data Protection and Encryption
@@ -1428,8 +1428,8 @@ class EncryptedNotesService {
 
 - [ACCESS_CONTROL.md](./ACCESS_CONTROL.md) - Authentication and authorization
 - [SECURITY_MONITORING.md](./SECURITY_MONITORING.md) - Audit logging and monitoring
-- [GDPR_COMPLIANCE.md](./GDPR_COMPLIANCE.md) - GDPR requirements
-- [HIPAA_COMPLIANCE.md](./HIPAA_COMPLIANCE.md) - HIPAA requirements
+- [GDPR_COMPLIANCE.md](../40-compliance/GDPR_COMPLIANCE.md) - GDPR requirements
+- [HIPAA_COMPLIANCE.md](../40-compliance/HIPAA_COMPLIANCE.md) - HIPAA requirements
 
 ## Compliance References
 

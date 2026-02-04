@@ -35,7 +35,7 @@ The system is protected against unauthorized access, both physical and logical.
 **CC1.3 - Management Structure**
 - Clear security roles and responsibilities defined
 - Security team reports to executive leadership
-- Escalation procedures documented in [Incident Response Plan](./INCIDENT_RESPONSE.md)
+- Escalation procedures documented in [Incident Response Plan](../50-incident-response/INCIDENT_RESPONSE.md)
 
 **CC1.4 - Commitment to Competence**
 - Security training program for all staff
@@ -294,7 +294,7 @@ The system is available for operation and use as committed or agreed.
 - Incident response procedures
 
 **A1.3 - Incident Management**
-- Documented in [Incident Response Plan](./INCIDENT_RESPONSE.md)
+- Documented in [Incident Response Plan](../50-incident-response/INCIDENT_RESPONSE.md)
 - On-call rotation maintained
 - Incident classification and prioritization
 - Post-incident reviews conducted
@@ -469,8 +469,8 @@ export const clients = pgTable("clients", {
 - [Schema Validation Tests](../../shared/schema.test.ts)
 
 ### Documentation Evidence
-- [Security Testing Guide](../TESTING.md)
-- [Code Documentation Standards](../COMMENTING.md)
+- [Security Testing Guide](../../TESTING.md)
+- [Code Documentation Standards](../../COMMENTING.md)
 - This SOC2 compliance document
 
 ## Audit Preparation
@@ -514,9 +514,9 @@ export const clients = pgTable("clients", {
 ## References
 
 - [SOC2 Trust Service Criteria](https://us.aicpa.org/interestareas/frc/assuranceadvisoryservices/trustdataintegrity)
-- [Access Control Documentation](./ACCESS_CONTROL.md)
-- [Incident Response Plan](./INCIDENT_RESPONSE.md)
-- [Security Monitoring](./SECURITY_MONITORING.md)
+- [Access Control Documentation](../30-implementation-guides/ACCESS_CONTROL.md)
+- [Incident Response Plan](../50-incident-response/INCIDENT_RESPONSE.md)
+- [Security Monitoring](../30-implementation-guides/SECURITY_MONITORING.md)
 
 ---
 

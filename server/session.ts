@@ -20,6 +20,7 @@
 
 import { randomUUID } from "crypto";
 import type { Request, Response, NextFunction, RequestHandler } from "express";
+import { logger } from "./logger";
 
 /**
  * Session data structure.
@@ -86,7 +87,7 @@ let sessionConfig: SessionConfig = { ...DEFAULT_SESSION_CONFIG };
  */
 export function configureSession(config: Partial<SessionConfig>): void {
   sessionConfig = { ...sessionConfig, ...config };
-  console.log("[SESSION] Configuration updated:", sessionConfig);
+  logger.info("Configuration updated", { source: "SESSION", config: JSON.stringify(sessionConfig) });
 }
 
 /**
@@ -119,7 +120,12 @@ export function createSession(userId: string, req: Request): string {
   
   sessionStore.set(sessionId, session);
   
-  console.log(`[SESSION] Created session ${sessionId} for user ${userId} from IP ${req.ip}`);
+  logger.info(`Created session for user ${userId}`, { 
+    source: "SESSION", 
+    sessionId: sessionId.slice(0, 8),
+    userId,
+    ip: req.ip 
+  });
   
   return sessionId;
 }
@@ -151,20 +157,22 @@ export function getSession(sessionId: string | undefined, req: Request): Session
   
   // Check absolute TTL
   if (now - session.createdAt > sessionConfig.absoluteTTL) {
-    console.warn(
-      `[SESSION] Session ${sessionId} expired (absolute TTL), ` +
-      `age: ${Math.floor((now - session.createdAt) / 1000)}s`
-    );
+    logger.warn("Session expired (absolute TTL)", {
+      source: "SESSION",
+      sessionId: sessionId.slice(0, 8),
+      ageSeconds: Math.floor((now - session.createdAt) / 1000)
+    });
     sessionStore.delete(sessionId);
     return null;
   }
   
   // Check idle timeout
   if (now - session.lastActivity > sessionConfig.idleTimeout) {
-    console.warn(
-      `[SESSION] Session ${sessionId} expired (idle timeout), ` +
-      `idle: ${Math.floor((now - session.lastActivity) / 1000)}s`
-    );
+    logger.warn("Session expired (idle timeout)", {
+      source: "SESSION",
+      sessionId: sessionId.slice(0, 8),
+      idleSeconds: Math.floor((now - session.lastActivity) / 1000)
+    });
     sessionStore.delete(sessionId);
     return null;
   }
@@ -172,10 +180,12 @@ export function getSession(sessionId: string | undefined, req: Request): Session
   // Optional: Check for IP/UA changes (anomaly detection)
   // In production, consider whether to enforce or just log
   if (session.ipAddress && session.ipAddress !== req.ip) {
-    console.warn(
-      `[SESSION] IP address change detected for session ${sessionId}: ` +
-      `${session.ipAddress} -> ${req.ip}`
-    );
+    logger.warn("IP address change detected", {
+      source: "SESSION",
+      sessionId: sessionId.slice(0, 8),
+      oldIp: session.ipAddress,
+      newIp: req.ip
+    });
     // For now, just log. Strict enforcement could break mobile users.
   }
   
@@ -237,10 +247,12 @@ export function rotateSession(oldSessionId: string, req: Request): string | null
   // Delete old ID
   sessionStore.delete(oldSessionId);
   
-  console.log(
-    `[SESSION] Rotated session for user ${session.userId}: ` +
-    `${oldSessionId.slice(0, 8)} -> ${newSessionId.slice(0, 8)}`
-  );
+  logger.info("Session rotated", {
+    source: "SESSION",
+    userId: session.userId,
+    oldSessionId: oldSessionId.slice(0, 8),
+    newSessionId: newSessionId.slice(0, 8)
+  });
   
   return newSessionId;
 }
@@ -255,7 +267,11 @@ export function rotateSession(oldSessionId: string, req: Request): string | null
 export function destroySession(sessionId: string): void {
   const session = sessionStore.get(sessionId);
   if (session) {
-    console.log(`[SESSION] Destroyed session ${sessionId} for user ${session.userId}`);
+    logger.info("Session destroyed", {
+      source: "SESSION",
+      sessionId: sessionId.slice(0, 8),
+      userId: session.userId
+    });
     sessionStore.delete(sessionId);
   }
 }
@@ -282,7 +298,10 @@ export function cleanupExpiredSessions(): void {
   expired.forEach(sessionId => sessionStore.delete(sessionId));
   
   if (expired.length > 0) {
-    console.log(`[SESSION] Cleaned up ${expired.length} expired sessions`);
+    logger.debug("Cleaned up expired sessions", {
+      source: "SESSION",
+      count: expired.length
+    });
   }
 }
 

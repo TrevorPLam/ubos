@@ -546,7 +546,7 @@ npm run check
 - Regular vendor audits
 
 **12.5 - Incident Response**
-- Documented in [Incident Response Plan](./INCIDENT_RESPONSE.md)
+- Documented in [Incident Response Plan](../50-incident-response/INCIDENT_RESPONSE.md)
 - 24/7 incident response capability
 - Incident classification
 - Post-incident review

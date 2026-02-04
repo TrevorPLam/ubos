@@ -20,12 +20,12 @@ This document maps security requirements from various standards (SOC2, OWASP ASV
 | **Authentication & Session Management** |
 | AC-1 | OWASP ASVS 2.1 | Secure password storage | TODO: Implement Argon2id hashing | N/A | NOT_IMPL |
 | AC-2 | OWASP ASVS 2.2 | Anti-automation | ✅ Rate limiting on /api/login | server/security.ts:119-127, tests/backend/security.test.ts | IMPLEMENTED |
-| AC-3 | OWASP ASVS 2.3 | Session timeout | TODO: 15min inactivity, 24h max | N/A | NOT_IMPL |
-| AC-4 | OWASP ASVS 2.4 | Session termination | TODO: Logout invalidates session | N/A | NOT_IMPL |
+| AC-3 | OWASP ASVS 2.3 | Session timeout | ✅ 15min idle, 24h absolute max, 1h rotation, startup validation | server/session.ts:54-56, server/config-validation.ts (2026-02-04) | IMPLEMENTED |
+| AC-4 | OWASP ASVS 2.4 | Session termination | ✅ Logout invalidates via sessionStore.delete() | server/session.ts:198-202 (invalidateSession) | IMPLEMENTED |
 | AC-5 | OWASP ASVS 2.5 | HttpOnly cookies | ✅ Cookies are HttpOnly | server/routes.ts:104-108 | IMPLEMENTED |
 | AC-6 | OWASP ASVS 2.6 | Secure flag | ⚠️ Needs verification in production | server/routes.ts:106 (TODO: env check) | PARTIAL |
 | AC-7 | OWASP ASVS 2.7 | SameSite attribute | ✅ SameSite=Lax | server/routes.ts:107 | IMPLEMENTED |
-| AC-8 | OWASP ASVS 2.8 | CSRF protection | ⚠️ SameSite only, no tokens | N/A | PARTIAL |
+| AC-8 | OWASP ASVS 2.8 | CSRF protection | ✅ Synchronizer token pattern (generateCsrfToken, validateCsrfToken) | server/csrf.ts:52-90 (token generation and validation) | IMPLEMENTED |
 | AC-9 | SOC2 CC6.1 | Multi-factor authentication | TODO: MFA for sensitive operations | N/A | NOT_IMPL |
 | AC-10 | NIST AC-2 | Account management | ✅ User-org association | server/routes.ts:86-97 | IMPLEMENTED |
 | AC-11 | NIST AC-7 | Unsuccessful login attempts | ⚠️ Rate limiting only | server/security.ts:119-127 | PARTIAL |
@@ -46,7 +46,7 @@ This document maps security requirements from various standards (SOC2, OWASP ASV
 | IV-6 | SOC2 PI1 | Input completeness | ✅ Zod required fields | shared/schema.ts | IMPLEMENTED |
 | IV-7 | SOC2 PI1 | Input accuracy | ✅ Zod type/format validation | shared/schema.ts | IMPLEMENTED |
 | **Cryptography** |
-| CR-1 | OWASP ASVS 6.1 | Data classification | ⚠️ Defined in threat model, not enforced | docs/security/THREAT_MODEL.md | PARTIAL |
+| CR-1 | OWASP ASVS 6.1 | Data classification | ⚠️ Defined in threat model, not enforced | docs/security/20-threat-model/THREAT_MODEL.md | PARTIAL |
 | CR-2 | OWASP ASVS 6.2 | Cryptographic algorithms | ✅ TLS 1.2+, modern ciphers (TODO: verify) | server/security.ts (TODO: explicit config) | PARTIAL |
 | CR-3 | OWASP ASVS 6.3 | Random values | ✅ crypto.randomUUID() | server/routes.ts:33 | IMPLEMENTED |
 | CR-4 | OWASP ASVS 6.4 | Secret management | ⚠️ Env vars, no rotation | process.env.DATABASE_URL | PARTIAL |
@@ -54,19 +54,19 @@ This document maps security requirements from various standards (SOC2, OWASP ASV
 | CR-6 | SOC2 CC6.7 | Encryption in transit | ✅ TLS (TODO: enforce) | Deployment config | PARTIAL |
 | CR-7 | NIST SC-12 | Key management | TODO: Key rotation, escrow | N/A | NOT_IMPL |
 | **Error Handling & Logging** |
-| EL-1 | OWASP ASVS 7.1 | Error logging | ✅ Server-side logging | server/index.ts:54-78 | IMPLEMENTED |
+| EL-1 | OWASP ASVS 7.1 | Error logging | ✅ Server-side logging | server/index.ts:54-78, server/logger.ts | IMPLEMENTED |
 | EL-2 | OWASP ASVS 7.2 | Error handling | ✅ No stack traces to client in production | server/index.ts:83-101 | IMPLEMENTED |
-| EL-3 | OWASP ASVS 7.3 | Security logging | ⚠️ Basic request logging, needs enhancement | server/index.ts:67-73 | PARTIAL |
-| EL-4 | OWASP ASVS 7.4 | Log protection | TODO: Tamper-evident logs, PII redaction | N/A | NOT_IMPL |
+| EL-3 | OWASP ASVS 7.3 | Security logging | ✅ Centralized structured logging with PII redaction | server/logger.ts (2026-02-04) | IMPLEMENTED |
+| EL-4 | OWASP ASVS 7.4 | Log protection | TODO: Tamper-evident logs, external SIEM | N/A | NOT_IMPL |
 | EL-5 | SOC2 CC7.1 | System monitoring | ⚠️ Basic logging, no alerting | server/index.ts:54-78 | PARTIAL |
 | EL-6 | SOC2 A1.2 | Incident detection | TODO: Anomaly detection, SIEM | N/A | NOT_IMPL |
 | EL-7 | NIST AU-2 | Audit logging | ⚠️ Basic access logs | server/index.ts:67-73 | PARTIAL |
 | EL-8 | NIST AU-3 | Content of audit records | TODO: User, timestamp, action, result | N/A | PARTIAL |
 | EL-9 | NIST AU-9 | Audit log protection | TODO: Append-only, integrity checks | N/A | NOT_IMPL |
 | **Data Protection** |
-| DP-1 | OWASP ASVS 8.1 | Sensitive data classification | ⚠️ Defined, not tagged | docs/security/THREAT_MODEL.md | PARTIAL |
+| DP-1 | OWASP ASVS 8.1 | Sensitive data classification | ⚠️ Defined, not tagged | docs/security/20-threat-model/THREAT_MODEL.md | PARTIAL |
 | DP-2 | OWASP ASVS 8.2 | Client-side data protection | ✅ No sensitive data in client storage | N/A | IMPLEMENTED |
-| DP-3 | OWASP ASVS 8.3 | Sensitive data in logs | ⚠️ No explicit redaction | server/index.ts:67-73 (logs full response) | AT_RISK |
+| DP-3 | OWASP ASVS 8.3 | Sensitive data in logs | ✅ Centralized logger with mandatory PII redaction | server/logger.ts:100-140, server/security-utils.ts:92-120 (2026-02-04) | IMPLEMENTED |
 | DP-4 | SOC2 C1.2 | Data encryption | ⚠️ TLS in transit, TODO: at rest | Deployment | PARTIAL |
 | DP-5 | SOC2 C1.3 | Data access controls | ✅ Org-level scoping | server/routes.ts:86-97 | IMPLEMENTED |
 | DP-6 | SOC2 C1.4 | Data disposal | TODO: Secure deletion, retention policy | N/A | NOT_IMPL |
@@ -74,8 +74,8 @@ This document maps security requirements from various standards (SOC2, OWASP ASV
 | DP-8 | HIPAA 164.312(a) | Access controls | ⚠️ Org-level only | server/routes.ts:70-81 | PARTIAL |
 | DP-9 | PCI-DSS 3.4 | Render PAN unreadable | N/A (no payment data) | N/A | NOT_APPLICABLE |
 | **Communications Security** |
-| CS-1 | OWASP ASVS 9.1 | TLS configuration | ⚠️ Assumes LB handles, needs verification | Deployment docs | PARTIAL |
-| CS-2 | OWASP ASVS 9.2 | Server communications | ✅ HTTPS enforced (TODO: verify HSTS) | server/security.ts:41-45 | PARTIAL |
+| CS-1 | OWASP ASVS 9.1 | TLS configuration | ✅ Proxy trust configured with validation | server/index.ts:23-50, server/config-validation.ts (2026-02-04) | IMPLEMENTED |
+| CS-2 | OWASP ASVS 9.2 | Server communications | ✅ HTTPS enforced with HSTS | server/security.ts:41-45 | IMPLEMENTED |
 | CS-3 | SOC2 CC6.7 | Transmission security | ⚠️ TLS assumed, not enforced | N/A | PARTIAL |
 | CS-4 | NIST SC-8 | Transmission confidentiality | ✅ TLS for all communications | Deployment | IMPLEMENTED |
 | **Malicious Code Protection** |
@@ -170,9 +170,9 @@ This document maps security requirements from various standards (SOC2, OWASP ASV
 - **Dependencies**: package-lock.json
 
 ### Documentation Evidence
-- **Threat Model**: docs/security/THREAT_MODEL.md
-- **Security Controls**: docs/security/CONTROLS_MATRIX.md (this document)
-- **Compliance**: docs/security/{SOC2,PCI_DSS,HIPAA,GDPR}_COMPLIANCE.md
+- **Threat Model**: docs/security/20-threat-model/THREAT_MODEL.md
+- **Security Controls**: docs/security/10-controls/CONTROLS_MATRIX.md (this document)
+- **Compliance**: docs/security/40-compliance/{SOC2,PCI_DSS,HIPAA,GDPR}_COMPLIANCE.md
 
 ## Remediation Roadmap
 

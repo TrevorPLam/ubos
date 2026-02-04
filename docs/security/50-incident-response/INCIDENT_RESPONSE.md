@@ -6,9 +6,9 @@ status: "active"
 owner: "Security Team"
 classification: "confidential"
 related_docs:
-  - SECURITY_MONITORING.md
-  - ACCESS_CONTROL.md
-  - DATA_PROTECTION.md
+  - ../30-implementation-guides/SECURITY_MONITORING.md
+  - ../30-implementation-guides/ACCESS_CONTROL.md
+  - ../30-implementation-guides/DATA_PROTECTION.md
 ---
 
 # Incident Response Plan
@@ -1589,10 +1589,10 @@ export async function verifyToolAccess(userId: string): Promise<{
 
 ## Related Documents
 
-- [SECURITY_MONITORING.md](./SECURITY_MONITORING.md) - Detection and alerting
-- [ACCESS_CONTROL.md](./ACCESS_CONTROL.md) - Authentication and authorization
-- [DATA_PROTECTION.md](./DATA_PROTECTION.md) - Encryption and data handling
-- [GDPR_COMPLIANCE.md](./GDPR_COMPLIANCE.md) - GDPR breach notification
+- [SECURITY_MONITORING.md](../30-implementation-guides/SECURITY_MONITORING.md) - Detection and alerting
+- [ACCESS_CONTROL.md](../30-implementation-guides/ACCESS_CONTROL.md) - Authentication and authorization
+- [DATA_PROTECTION.md](../30-implementation-guides/DATA_PROTECTION.md) - Encryption and data handling
+- [GDPR_COMPLIANCE.md](../40-compliance/GDPR_COMPLIANCE.md) - GDPR breach notification
 
 ## Compliance References
 
