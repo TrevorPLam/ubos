@@ -57,10 +57,30 @@ function parseCookies(header: string | undefined): Record<string, string> {
 }
 
 function getUserIdFromRequest(req: Request): string | undefined {
-  // Allow non-browser callers to impersonate a user via header.
-  // This keeps development + automation simple without an external auth provider.
-  const headerUserId = req.header("x-user-id") || req.header("x-user");
-  if (headerUserId) return headerUserId;
+  // SECURITY: Header-based authentication is for development/testing ONLY
+  // THREAT_MODEL.md: T1.2 (Authentication Header Forgery)
+  // In production, this authentication method MUST be disabled
+  const isProduction = process.env.NODE_ENV === "production";
+  
+  if (!isProduction) {
+    // Allow non-browser callers to impersonate a user via header (DEV ONLY).
+    // This keeps development + automation simple without an external auth provider.
+    const headerUserId = req.header("x-user-id") || req.header("x-user");
+    if (headerUserId) {
+      console.warn(`[DEV] Header-based auth used for user: ${headerUserId}`);
+      return headerUserId;
+    }
+  } else {
+    // PRODUCTION: Explicitly reject header-based authentication
+    const headerUserId = req.header("x-user-id") || req.header("x-user");
+    if (headerUserId) {
+      console.error(
+        `[SECURITY] Attempted header-based auth in production rejected. ` +
+        `IP: ${req.ip}, User-Agent: ${req.get('user-agent')}`
+      );
+      // Don't use header value in production - fall through to cookie auth
+    }
+  }
 
   // Browser path: our `/api/login` endpoint stores the user id in an HttpOnly cookie.
   const cookies = parseCookies(req.header("cookie"));

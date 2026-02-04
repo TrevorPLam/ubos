@@ -90,3 +90,57 @@ Documented in `.env.example`.
 - `shared/` — Shared types/schema used by both client and server
 - `script/build.ts` — Production build pipeline (Vite + esbuild)
 - `tasks/` — File-based task workflow and backlogs
+- `docs/` — Project documentation including security standards
+
+## Security
+
+UBOS implements comprehensive security standards and best practices. See [Security Documentation](./docs/security/README.md) for details.
+
+### Security Features
+
+- **Authentication & Authorization**: Cookie-based auth with multi-tenant isolation
+- **Security Headers**: HSTS, CSP, X-Frame-Options, and more via Helmet
+- **Rate Limiting**: Protects against brute force and DoS attacks
+- **Input Validation**: Zod schemas for all user input
+- **SQL Injection Prevention**: Parameterized queries via Drizzle ORM
+- **XSS Prevention**: React auto-escaping + output encoding
+- **Error Handling**: No information disclosure in production
+- **CORS**: Configurable cross-origin resource sharing
+- **Request Sanitization**: Defense-in-depth against injection attacks
+
+### Compliance Standards
+
+UBOS documentation supports compliance with:
+
+- **SOC2**: Trust Service Criteria (Security, Availability, Processing Integrity, Confidentiality, Privacy)
+- **PCI-DSS**: Payment Card Industry Data Security Standard guidelines
+- **HIPAA**: Health Insurance Portability and Accountability Act compliance
+- **GDPR**: General Data Protection Regulation requirements
+
+### Security Documentation
+
+- [Security Overview](./docs/security/README.md)
+- [Application Security Guide](./docs/security/APPLICATION_SECURITY.md)
+- [Developer Security Guide](./docs/security/DEVELOPER_GUIDE.md)
+- [SOC2 Compliance](./docs/security/SOC2_COMPLIANCE.md)
+- [PCI-DSS Guidelines](./docs/security/PCI_DSS_GUIDELINES.md)
+- [HIPAA Compliance](./docs/security/HIPAA_COMPLIANCE.md)
+- [GDPR Compliance](./docs/security/GDPR_COMPLIANCE.md)
+
+### Security Testing
+
+Run security-focused tests:
+
+```bash
+npm test tests/backend/security.test.ts
+```
+
+All tests (101 tests including 32 security tests):
+
+```bash
+npm test
+```
+
+### Reporting Security Issues
+
+If you discover a security vulnerability, please report it to security@ubos.example.com. We take security seriously and will respond promptly to verified reports.
