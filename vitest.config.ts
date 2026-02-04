@@ -33,6 +33,8 @@ export default defineConfig({
       '*.config.*',
     ],
     globals: true,
+    // Fail if focused tests are found (prevents accidentally committing .only)
+    allowOnly: false,
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
