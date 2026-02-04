@@ -91,6 +91,7 @@ Documented in `.env.example`.
 - `shared/` — Shared types/schema used by both client and server
 - `script/build.ts` — Production build pipeline (Vite + esbuild)
 - `agents/roles/` — Agent roles and task management per role
+- `TASK_INDEX.md` — Repo-wide consolidated task index across all 30 roles
 - `docs/` — Project documentation including security standards
 
 ## Architecture & Development Plan

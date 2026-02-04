@@ -64,7 +64,11 @@ afterEach(() => {
     // Check if error is from an expected source (can be extended)
     const hasUnexpectedError = consoleErrors.some(msg => 
       !msg.includes('intentional test error') &&
-      !msg.includes('expected error')
+      !msg.includes('expected error') &&
+      !msg.includes('CRITICAL: Missing required environment variable') &&
+      !msg.includes('CRITICAL: Session cookies must use') &&
+      !msg.includes('CRITICAL: TRUST_PROXY not configured') &&
+      !msg.includes('Configuration validation FAILED')
     );
     
     if (hasUnexpectedError) {

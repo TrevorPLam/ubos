@@ -35,7 +35,7 @@
  * @see security-utils.ts for redaction implementation
  */
 
-import { redactSensitiveData } from "./security-utils";
+import { redactSensitiveData, redactSensitiveFields } from "./security-utils";
 
 /**
  * Log levels aligned with syslog severity.
@@ -162,14 +162,7 @@ function writeLog(level: LogLevel, message: string, context?: LogContext): void 
   // Redact PII from context
   let redactedContext: LogContext | undefined = context;
   if (context && config.redactPII) {
-    redactedContext = {};
-    for (const [key, value] of Object.entries(context)) {
-      if (typeof value === "string") {
-        redactedContext[key] = redactSensitiveData(value);
-      } else {
-        redactedContext[key] = value;
-      }
-    }
+    redactedContext = redactSensitiveFields(context);
   }
   
   const timestamp = formatTimestamp();
