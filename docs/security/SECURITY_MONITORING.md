@@ -1300,7 +1300,8 @@ app.post("/api/admin/block-ip",
     
     await blockIP(ip, duration);
     
-    logSecurityEvent("ip_blocked", {
+    // Log as system event since IP_BLOCKED not in SecurityEvent enum
+    logger.security("ip_blocked", {
       ip,
       duration,
       blockedBy: (req as AuthenticatedRequest).user!.claims.sub,
