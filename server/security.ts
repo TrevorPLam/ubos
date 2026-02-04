@@ -268,9 +268,15 @@ function sanitizeObject(obj: any): any {
 /**
  * Sanitize a string by removing potentially dangerous content.
  * 
- * Note: This is a basic sanitization. For user-generated content
- * that will be displayed, use a proper HTML sanitizer like DOMPurify.
+ * IMPORTANT: This is defense-in-depth only. Primary security measures:
+ * 1. React automatically escapes JSX expressions (XSS prevention)
+ * 2. Drizzle ORM uses parameterized queries (SQL injection prevention)
+ * 3. Zod schema validation (input validation)
  * 
+ * Regex-based sanitization has inherent limitations and can be bypassed.
+ * This function provides additional safety but should NOT be the only defense.
+ * 
+ * @see {@link https://cheatsheetseries.owasp.org/cheatsheets/XSS_Filter_Evasion_Cheat_Sheet.html OWASP XSS Filter Evasion}
  * @param str - String to sanitize
  * @returns Sanitized string
  */
@@ -278,11 +284,20 @@ function sanitizeString(str: string): string {
   // Remove null bytes
   str = str.replace(/\0/g, "");
 
-  // Basic XSS prevention (but React already escapes by default)
-  // This is defense-in-depth
-  str = str.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "");
-  str = str.replace(/javascript:/gi, "");
-  str = str.replace(/on\w+\s*=/gi, "");
+  // Note: The following sanitizations are basic defense-in-depth measures.
+  // They have known limitations (e.g., <script > with space can bypass simple regex).
+  // Primary XSS defense is React's auto-escaping of JSX expressions.
+  // Do NOT rely on these regex patterns as the sole protection mechanism.
+  
+  // Remove script tags (basic pattern - React provides primary XSS protection)
+  str = str.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi, "");
+  
+  // Remove javascript: protocol (basic pattern - use Content Security Policy)
+  str = str.replace(/javascript\s*:/gi, "");
+  
+  // Remove event handlers (basic pattern - React provides primary protection)
+  // Note: This won't catch all variations (e.g., on<tab>click=)
+  str = str.replace(/\bon\w+\s*=/gi, "");
 
   return str;
 }
