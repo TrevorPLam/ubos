@@ -84,17 +84,27 @@ export function mockResponse(): Partial<Response> & {
 /**
  * Create a mock Express NextFunction for testing middleware.
  */
-export function mockNext(): NextFunction {
-  const next = (() => {}) as any;
-  next.called = false;
-  next.error = null;
+export function mockNext(): NextFunction & { called: boolean; error: any } {
+  let called = false;
+  let error: any = null;
 
-  return ((err?: any) => {
-    next.called = true;
+  const next = ((err?: any) => {
+    called = true;
     if (err) {
-      next.error = err;
+      error = err;
     }
-  }) as NextFunction;
+  }) as any;
+
+  // Add properties for assertion
+  Object.defineProperty(next, 'called', {
+    get: () => called,
+  });
+  
+  Object.defineProperty(next, 'error', {
+    get: () => error,
+  });
+
+  return next;
 }
 
 /**
