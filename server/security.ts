@@ -153,11 +153,13 @@ export function setupRateLimiting(app: Express): void {
  * 
  * SOC2: CC6.7 - Transmission Security
  * OWASP: A05:2021 - Security Misconfiguration
+ * THREAT_MODEL.md: CS-1 (TLS Configuration)
  * 
  * @param app - Express application instance
  */
 export function setupCORS(app: Express): void {
   const isProduction = process.env.NODE_ENV === "production";
+  const isDevelopment = process.env.NODE_ENV === "development";
 
   const corsOptions: cors.CorsOptions = {
     origin: (origin, callback) => {
@@ -166,16 +168,25 @@ export function setupCORS(app: Express): void {
         return callback(null, true);
       }
 
-      // In production, restrict to specific domains
+      // In production, restrict to specific domains only
       if (isProduction) {
-        const allowedOrigins = (process.env.ALLOWED_ORIGINS || "").split(",");
+        const allowedOrigins = (process.env.ALLOWED_ORIGINS || "").split(",").filter(Boolean);
+        
+        if (allowedOrigins.length === 0) {
+          // SECURITY: In production without ALLOWED_ORIGINS, deny CORS
+          console.warn(
+            "SECURITY WARNING: ALLOWED_ORIGINS not configured in production. CORS disabled."
+          );
+          return callback(new Error("CORS not configured for production"));
+        }
+        
         if (allowedOrigins.includes(origin)) {
           callback(null, true);
         } else {
-          callback(new Error("Not allowed by CORS"));
+          callback(new Error(`Origin ${origin} not allowed by CORS`));
         }
-      } else {
-        // In development, allow localhost
+      } else if (isDevelopment) {
+        // In development, allow localhost and common dev ports
         if (
           origin.includes("localhost") ||
           origin.includes("127.0.0.1") ||
@@ -183,8 +194,11 @@ export function setupCORS(app: Express): void {
         ) {
           callback(null, true);
         } else {
-          callback(new Error("Not allowed by CORS"));
+          callback(new Error(`Origin ${origin} not allowed in development`));
         }
+      } else {
+        // Other environments: restrictive by default
+        callback(new Error("CORS not configured for this environment"));
       }
     },
     credentials: true, // Allow cookies
