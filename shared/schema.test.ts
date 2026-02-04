@@ -34,7 +34,12 @@ import {
   insertVendorSchema,
   insertThreadSchema,
   insertMessageSchema,
-} from '@shared/schema';
+  insertMilestoneSchema,
+  insertFileObjectSchema,
+  insertActivityEventSchema,
+  insertProjectTemplateSchema,
+  insertInvoiceScheduleSchema,
+} from './schema';
 
 describe('Schema Validation Tests', () => {
   describe('Organization Schema', () => {
@@ -393,6 +398,104 @@ describe('Schema Validation Tests', () => {
         senderId: 'user-123',
       };
       expect(() => insertMessageSchema.parse(invalid)).toThrow();
+    });
+  });
+
+  describe('Milestone Schema', () => {
+    it('should validate a valid milestone', () => {
+      const valid = {
+        organizationId: 'org-123',
+        projectId: 'project-123',
+        name: 'Test Milestone',
+        description: 'Test milestone description',
+        status: 'pending',
+      };
+      expect(() => insertMilestoneSchema.parse(valid)).not.toThrow();
+    });
+
+    it('should require name', () => {
+      const invalid = {
+        organizationId: 'org-123',
+        projectId: 'project-123',
+        description: 'Test milestone description',
+        status: 'pending',
+      };
+      expect(() => insertMilestoneSchema.parse(invalid)).toThrow();
+    });
+  });
+
+  describe('File Object Schema', () => {
+    it('should validate a valid file object', () => {
+      const valid = {
+        organizationId: 'org-123',
+        uploadedById: 'user-123',
+        name: 'test.pdf',
+        originalName: 'test.pdf',
+        mimeType: 'application/pdf',
+        size: 1024,
+        path: '/uploads/test.pdf',
+      };
+      expect(() => insertFileObjectSchema.parse(valid)).not.toThrow();
+    });
+
+    it('should require filename', () => {
+      const invalid = {
+        organizationId: 'org-123',
+        uploadedById: 'user-123',
+        originalName: 'test.pdf',
+        mimeType: 'application/pdf',
+        size: 1024,
+        path: '/uploads/test.pdf',
+      };
+      expect(() => insertFileObjectSchema.parse(invalid)).toThrow();
+    });
+  });
+
+  describe('Activity Event Schema', () => {
+    it('should validate a valid activity event', () => {
+      const valid = {
+        organizationId: 'org-123',
+        actorId: 'user-123',
+        entityType: 'deal',
+        entityId: 'deal-123',
+        action: 'created',
+        type: 'status_changed',
+      };
+      expect(() => insertActivityEventSchema.parse(valid)).not.toThrow();
+    });
+
+    it('should require action', () => {
+      const invalid = {
+        organizationId: 'org-123',
+        actorId: 'user-123',
+        entityType: 'deal',
+        entityId: 'deal-123',
+      };
+      expect(() => insertActivityEventSchema.parse(invalid)).toThrow();
+    });
+  });
+
+  describe('Invoice Schedule Schema', () => {
+    it('should validate a valid invoice schedule', () => {
+      const valid = {
+        organizationId: 'org-123',
+        engagementId: 'eng-123',
+        name: 'Monthly Invoice',
+        frequency: 'monthly',
+        totalAmount: '1000',
+        nextDate: '2024-01-01',
+      };
+      expect(() => insertInvoiceScheduleSchema.parse(valid)).not.toThrow();
+    });
+
+    it('should require frequency', () => {
+      const invalid = {
+        organizationId: 'org-123',
+        engagementId: 'eng-123',
+        totalAmount: '1000',
+        nextDate: '2024-01-01',
+      };
+      expect(() => insertInvoiceScheduleSchema.parse(invalid)).toThrow();
     });
   });
 });
