@@ -26,6 +26,20 @@ Rules:
 
 ---
 
+## index_entry_begin
+[id:TASK-20260204-293]
+type: security
+priority: medium
+p_level: P2
+component: server
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Implement Soft Deletes for Data Safety
+## index_entry_end
+
+---
+
 
 ## index_entry_begin
 [id:TASK-20260204-001]  

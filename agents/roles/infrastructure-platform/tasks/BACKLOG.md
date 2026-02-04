@@ -45,7 +45,40 @@ Global Rules:
 
 
 ## group_end
+## group_begin [type:infra][priority:critical]
+## 🏗️ Infrastructure — CRITICAL (Production Blockers)
 
+## task_begin
+### # [id:TASK-20260204-288][type:infra][priority:critical][p_level:P0][component:server] Migrate Session Store to Redis
+**Status:** todo  
+**Description:** Replace in-memory session store with Redis to enable horizontal scaling and persistent sessions across restarts. This is a production blocker per SECURITY_SUMMARY.md risk acceptance (deadline: 2026-03-04).  
+**Acceptance Criteria:**  
+- [ ] Redis client integrated (ioredis or node-redis)
+- [ ] Session storage migrated from Map to Redis
+- [ ] Session TTL and idle timeout enforced in Redis
+- [ ] Session rotation working with Redis
+- [ ] Rate limiting migrated to Redis
+- [ ] Tests passing with Redis session store
+- [ ] Docker compose updated with Redis service
+**Relevant Files:** `server/session.ts`, `server/security.ts` (rate limiting), `docker-compose.yml`, `package.json`  
+**Relevant Documentation:** `docs/security/SECURITY_SUMMARY.md` — Risk acceptance deadline, `ANALYSIS.md` — Critical quality issues (session scalability), `docs/architecture/10_current_state/CONFIGURATION_MODEL.md` — Environment variables  
+**Plan:**  
+1. Install Redis client library (ioredis recommended)
+2. Add REDIS_URL environment variable and validation
+3. Create Redis connection pool in server/redis.ts
+4. Refactor createSession to use Redis (SETEX with TTL)
+5. Refactor getSession to use Redis (GET + TTL check)
+6. Refactor destroySession to use Redis (DEL)
+7. Migrate rate limiter to Redis (use sliding window algorithm)
+8. Add Redis to docker-compose.yml
+9. Update tests to use Redis or mock
+10. Document Redis configuration in README
+**Estimated Effort:** 3 days
+## task_end
+
+---
+
+## group_end
 ## group_begin [type:infra][priority:high]
 ## ðŸ³ Infrastructure (Unscheduled) â€” High
 

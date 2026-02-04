@@ -147,8 +147,31 @@ Global Rules:
 ## group_begin [type:docs][priority:high]
 ## ðŸ“š Documentation â€” HIGH
 
-## task_begin
-### # [id:TASK-20260204-015][type:docs][priority:high][component:security] Create SECURITY_POLICY.md
+## task_begin### # [id:TASK-20260204-291][type:docs][priority:high][p_level:P1][component:documentation] Update README to Clarify Current vs Future State
+**Status:** todo  
+**Description:** Update README.md to clarify what is currently implemented (~55% of vision per ANALYSIS.md) versus what is planned for future. Remove ambiguity about NestJS migration, workflow engine, and domain modules.  
+**Acceptance Criteria:**  
+- [ ] README updated with "Current Status" vs "Future Vision" sections
+- [ ] Technology stack section reflects current (Express + npm, not NestJS + pnpm)
+- [ ] Architecture section clarifies current monolith vs future modular structure
+- [ ] Roadmap section added with implementation stages and timelines
+- [ ] ANALYSIS.md findings incorporated into roadmap
+**Relevant Files:** `README.md`, `ANALYSIS.md`, `agents/REPO.md`  
+**Relevant Documentation:** `docs/architecture/README.md` — Architecture documentation, `ANALYSIS.md` — Gap analysis  
+**Plan:**  
+1. Add "Current Status" section at top of README
+2. Update Technology Stack to reflect Express + npm (current reality)
+3. Move NestJS, modules, workflow engine to "Future Vision" section
+4. Create Roadmap section with 4 stages from ANALYSIS.md
+5. Update Architecture section to reflect current modular monolith goals
+6. Cross-reference with agents/REPO.md for consistency
+7. Add links to ANALYSIS.md for detailed gap analysis
+**Estimated Effort:** 4 hours
+## task_end
+
+---
+
+## task_begin### # [id:TASK-20260204-015][type:docs][priority:high][component:security] Create SECURITY_POLICY.md
 **Status:** todo  
 **Description:** Document organizational security policies and procedures.  
 **Dependencies:** None  
@@ -526,8 +549,31 @@ Global Rules:
 ## group_begin [type:docs][priority:medium]
 ## ðŸ“š Documentation â€” MEDIUM (P1 Remaining)
 
-## task_begin
-### # [id:TASK-20260204-029][type:docs][priority:medium][component:api] Create OpenAPI specification
+## task_begin### # [id:TASK-20260204-292][type:docs][priority:medium][p_level:P2][component:api] Document API Validation Patterns
+**Status:** todo  
+**Description:** Create comprehensive documentation for API input validation patterns, Zod schema usage, error response formats, and validation best practices.  
+**Acceptance Criteria:**  
+- [ ] docs/api/VALIDATION.md created with validation patterns
+- [ ] Zod schema examples for common patterns (create, update, query params)
+- [ ] Error response format documented (400 with field errors)
+- [ ] Validation middleware usage documented
+- [ ] Best practices for custom validation rules documented
+**Relevant Files:** `docs/api/VALIDATION.md` (new), `server/middleware/validation.ts`, `shared/schema.ts`  
+**Relevant Documentation:** `docs/api/README.md` — API documentation index, `ANALYSIS.md` — Critical quality issues  
+**Plan:**  
+1. Create docs/api/VALIDATION.md
+2. Document validation middleware usage
+3. Provide Zod schema examples (insert, update, query)
+4. Document error response format and structure
+5. Document best practices for validation
+6. Add examples for common validation patterns
+7. Link from docs/api/README.md
+**Estimated Effort:** 4 hours
+## task_end
+
+---
+
+## task_begin### # [id:TASK-20260204-029][type:docs][priority:medium][component:api] Create OpenAPI specification
 **Status:** todo  
 **Description:** Generate OpenAPI 3.0 specification from current API routes for machine-readable API documentation.  
 **Dependencies:** None  

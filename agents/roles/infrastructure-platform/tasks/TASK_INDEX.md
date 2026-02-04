@@ -26,6 +26,20 @@ Rules:
 
 ---
 
+## index_entry_begin
+[id:TASK-20260204-288]
+type: infra
+priority: critical
+p_level: P0
+component: server
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Migrate Session Store to Redis
+## index_entry_end
+
+---
+
 
 
 

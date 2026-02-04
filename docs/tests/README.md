@@ -12,25 +12,19 @@ We use **Vitest** as our test framework for the following reasons:
 
 ## Test Structure
 
-```
-ubos/
-├── client/src/                 # Frontend source code
-│   ├── **/*.test.ts(x)         # Frontend unit tests (co-located)
-│   ├── hooks/                  # React hooks tests
-│   ├── lib/                    # Utility function tests
-│   └── components/             # Component tests
-├── server/                     # Backend source code
-│   └── **/*.test.ts            # Backend unit tests (co-located)
-├── shared/                     # Shared code
-│   └── **/*.test.ts            # Schema validation tests
-└── tests/                      # Test infrastructure
-    ├── setup/                  # Test setup files
-    ├── utils/                  # Test utilities
-    ├── fixtures/               # Test fixtures and factories
-    ├── backend/                # Backend integration tests
-    ├── frontend/               # Frontend integration tests
-    └── integration/            # End-to-end integration tests
-```
+The repository uses a mixed layout: core unit tests are co-located with source files (frontend/backend/shared), while shared test support lives under the top-level `tests/` folder. Current layout:
+
+- `client/src/` — Frontend source, co-located unit/component tests (`*.test.tsx`, `*.test.ts`).
+- `server/` — Backend source, co-located tests (`*.test.ts`).
+- `shared/` — Shared code and schema validation tests.
+- `tests/` — Test infrastructure and cross-cutting tests:
+  - `tests/setup/` — global setup files used by Vitest
+  - `tests/utils/` — test helpers and mocks
+  - `tests/fixtures/` — factories and fixture data
+  - `tests/backend/` — backend-focused integration/unit tests
+  - `tests/frontend/` — frontend integration or flow tests
+
+Note: there is no enforced single layout for all tests — prefer co-locating small unit tests with their modules and placing shared helpers or larger integration tests under `tests/`.
 
 ## Running Tests
 
@@ -56,6 +50,26 @@ npm run test:frontend       # Client component and hook tests
 npm run coverage            # Run tests with coverage report
 npm run test:ci             # CI mode (includes coverage)
 ```
+
+### Run a single test file
+Use `npx vitest` to run a specific test file quickly:
+
+```bash
+npx vitest tests/backend/db.test.ts
+```
+or
+
+```bash
+npx vitest client/src/components/my-component.test.tsx
+```
+
+### CI safety: focused/skipped tests check
+The repository includes a safety script that fails CI if any tests use `.only()` or `.skip()` in `tests/**/*.test.ts`:
+
+- `npm run validate:security` — runs typecheck + backend/frontend tests + coverage + extra checks
+- `npm run security:check-tests` — small check for focused/skipped tests
+
+These help prevent accidental committed focused tests from blocking CI.
 
 ## Test Categories
 
@@ -365,3 +379,39 @@ If you encounter issues with tests or need help writing new tests:
 1. Check this documentation
 2. Review existing test files for examples
 3. Ask in team chat or open an issue
+
+## Test Inventory (auto-generated)
+
+This section lists the current test folders and files under the repository's `tests/` directory, categorized for quick discovery. Updated: 2026-02-04
+
+- **`tests/setup`**: Global test setup files
+  - [tests/setup/frontend.setup.ts](tests/setup/frontend.setup.ts)
+  - [tests/setup/backend.setup.ts](tests/setup/backend.setup.ts)
+
+- **`tests/fixtures`**: Factories and fixtures
+  - [tests/fixtures/factories.ts](tests/fixtures/factories.ts)
+
+- **`tests/backend`**: Backend unit/integration tests
+  - [tests/backend/vite.test.ts](tests/backend/vite.test.ts)
+  - [tests/backend/static.test.ts](tests/backend/static.test.ts)
+  - [tests/backend/storage.test.ts](tests/backend/storage.test.ts)
+  - [tests/backend/server-index.test.ts](tests/backend/server-index.test.ts)
+  - [tests/backend/security.test.ts](tests/backend/security.test.ts)
+  - [tests/backend/security-utils.test.ts](tests/backend/security-utils.test.ts)
+  - [tests/backend/multi-tenant-isolation.test.ts](tests/backend/multi-tenant-isolation.test.ts)
+  - [tests/backend/logger.test.ts](tests/backend/logger.test.ts)
+  - [tests/backend/db.test.ts](tests/backend/db.test.ts)
+  - [tests/backend/csrf.test.ts](tests/backend/csrf.test.ts)
+  - [tests/backend/config-validation.test.ts](tests/backend/config-validation.test.ts)
+  - [tests/backend/auth-middleware.test.ts](tests/backend/auth-middleware.test.ts)
+  - [tests/backend/api-routes.test.ts](tests/backend/api-routes.test.ts)
+
+- **`tests/frontend`**: Frontend integration and page-flow tests
+  - [tests/frontend/page-flows.test.ts](tests/frontend/page-flows.test.ts)
+  - [tests/frontend/App.test.tsx](tests/frontend/App.test.tsx)
+
+- **`tests/utils`**: Test helpers and mocks
+  - [tests/utils/react-test-utils.tsx](tests/utils/react-test-utils.tsx)
+  - [tests/utils/express-mocks.ts](tests/utils/express-mocks.ts)
+
+If you expect additional test files or directories, run a workspace search for `tests/**/*.test.*` or update this document.

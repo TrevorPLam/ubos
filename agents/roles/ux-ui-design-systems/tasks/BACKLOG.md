@@ -106,8 +106,81 @@ Global Rules:
 ## group_begin [type:dev][priority:medium]
 ## ðŸš€ Development (Unscheduled) â€” Medium
 
+## task_begin
+### # [id:TASK-20260204-294][type:dev][priority:medium][p_level:P2][component:client] Implement Optimistic Updates in React Query
+**Status:** todo  
+**Description:** Add optimistic updates to all mutations to improve perceived performance and user experience. Currently all mutations invalidate queries and wait for refetch, causing loading spinners.  
+**Acceptance Criteria:**  
+- [ ] Optimistic update pattern implemented for create mutations
+- [ ] Optimistic update pattern implemented for update mutations
+- [ ] Optimistic update pattern implemented for delete mutations
+- [ ] Rollback on error properly handled
+- [ ] Loading states removed where optimistic updates apply
+**Relevant Files:** `client/src/pages/*.tsx` (all pages with mutations), `client/src/lib/queryClient.ts`  
+**Relevant Documentation:** `docs/architecture/10_current_state/CURRENT_ARCHITECTURE_OVERVIEW.md` — Frontend patterns, `ANALYSIS.md` — Frontend concerns  
+**Plan:**  
+1. Create optimistic update helper functions in queryClient.ts
+2. Update create mutations to use optimistic updates (add temp ID)
+3. Update update mutations to use optimistic updates (immediate update)
+4. Update delete mutations to use optimistic updates (immediate removal)
+5. Add proper rollback handlers on mutation error
+6. Test optimistic update edge cases (simultaneous edits, errors)
+7. Document optimistic update patterns
+**Estimated Effort:** 1 week
+## task_end
 
+---
 
+## task_begin
+### # [id:TASK-20260204-295][type:dev][priority:medium][p_level:P2][component:client] Add Domain-Level Frontend Code Organization
+**Status:** todo  
+**Description:** Reorganize frontend code into domain-specific folders to mirror backend domain structure and improve code navigation and maintainability.  
+**Acceptance Criteria:**  
+- [ ] pages/ reorganized into domain folders (crm/, sales/, finance/, projects/)
+- [ ] Domain-specific components moved to domain folders
+- [ ] Domain-specific hooks created (useCrmDashboard, useProjectsSummary)
+- [ ] All imports updated and working
+- [ ] No duplicate code across domains
+**Relevant Files:** `client/src/pages/*.tsx`, `client/src/components/`, `client/src/hooks/`  
+**Relevant Documentation:** `docs/architecture/10_current_state/CURRENT_ARCHITECTURE_OVERVIEW.md` — Frontend architecture, `ANALYSIS.md` — Frontend concerns  
+**Plan:**  
+1. Create domain folder structure (pages/crm/, pages/finance/, etc.)
+2. Move existing pages to appropriate domain folders
+3. Create domain-specific component folders
+4. Extract domain-specific hooks from pages
+5. Update App.tsx route paths
+6. Update all imports across the codebase
+7. Test all routes still working
+8. Document frontend domain structure
+**Estimated Effort:** 1 week
+## task_end
+
+---
+
+## task_begin
+### # [id:TASK-20260204-296][type:dev][priority:medium][p_level:P2][component:client] Extract Shared Form Schemas
+**Status:** todo  
+**Description:** Extract form validation schemas from individual pages and reuse insert schemas from shared/schema.ts to eliminate duplication and ensure consistency between client and server validation.  
+**Acceptance Criteria:**  
+- [ ] Form schemas extracted to client/src/lib/schemas.ts
+- [ ] All forms reuse schemas from shared/schema.ts where possible
+- [ ] Custom client-only validations properly separated
+- [ ] No duplicate schema definitions
+- [ ] All form validation still working
+**Relevant Files:** `client/src/pages/*.tsx`, `client/src/lib/schemas.ts` (new), `shared/schema.ts`  
+**Relevant Documentation:** `docs/architecture/10_current_state/CURRENT_ARCHITECTURE_OVERVIEW.md` — Form patterns, `ANALYSIS.md` — Frontend concerns  
+**Plan:**  
+1. Create client/src/lib/schemas.ts
+2. Import insert schemas from shared/schema.ts
+3. Create client-specific transformations (e.g., omit organizationId)
+4. Update all pages to use shared schemas
+5. Remove duplicate schema definitions from pages
+6. Test all form validation working
+7. Document schema reuse patterns
+**Estimated Effort:** 3 days
+## task_end
+
+---
 
 ## group_end
 

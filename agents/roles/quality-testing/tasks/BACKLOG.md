@@ -126,7 +126,58 @@ Global Rules:
 
 ## group_begin [type:test][priority:high]
 ## ðŸ§± Testing (Unscheduled) â€” High
+## task_begin
+### # [id:TASK-20260204-289][type:test][priority:high][p_level:P1][component:tests] Add Pagination Integration Tests
+**Status:** todo  
+**Description:** Create comprehensive integration tests for pagination implementation across all list endpoints to ensure correct behavior with limit, offset, total count, and hasMore flag.  
+**Acceptance Criteria:**  
+- [ ] Integration tests for all paginated endpoints
+- [ ] Tests cover edge cases (empty results, single page, last page)
+- [ ] Tests verify total count accuracy
+- [ ] Tests verify hasMore flag correctness
+- [ ] Tests verify limit/offset boundaries
+**Relevant Files:** `tests/backend/pagination.test.ts` (new), `server/routes.ts`, `server/storage.ts`  
+**Relevant Documentation:** `docs/tests/README.md` — Testing standards, `ANALYSIS.md` — Critical recommendations  
+**Plan:**  
+1. Create pagination test fixtures (seed 100+ records)
+2. Write tests for first page (limit=10, offset=0)
+3. Write tests for middle page (limit=10, offset=50)
+4. Write tests for last page (verify hasMore=false)
+5. Write tests for empty results (no matching records)
+6. Write tests for total count accuracy
+7. Write tests for boundary conditions (offset > total)
+8. Document pagination testing patterns
+**Estimated Effort:** 2 days
+## task_end
 
+---
+
+## task_begin
+### # [id:TASK-20260204-290][type:test][priority:high][p_level:P1][component:tests] Add Redis Session Store Integration Tests
+**Status:** todo  
+**Description:** Create integration tests for Redis-based session store to verify session creation, validation, expiration, rotation, and rate limiting behavior.  
+**Acceptance Criteria:**  
+- [ ] Integration tests for session creation and retrieval
+- [ ] Tests for session TTL and idle timeout
+- [ ] Tests for session rotation
+- [ ] Tests for session destruction
+- [ ] Tests for rate limiting with Redis
+- [ ] Tests for Redis connection failures (graceful degradation)
+**Relevant Files:** `tests/backend/session-redis.test.ts` (new), `server/session.ts`, `server/security.ts`  
+**Relevant Documentation:** `docs/tests/README.md` — Testing infrastructure, `ANALYSIS.md` — Critical recommendations  
+**Plan:**  
+1. Set up test Redis instance (Docker or in-memory mock)
+2. Write tests for session creation and storage
+3. Write tests for session expiration (TTL)
+4. Write tests for idle timeout behavior
+5. Write tests for session rotation on critical actions
+6. Write tests for rate limiting counters
+7. Write tests for Redis connection error handling
+8. Document Redis testing patterns
+**Estimated Effort:** 3 days
+## task_end
+
+---
 ## group_end
 
 ## task_begin

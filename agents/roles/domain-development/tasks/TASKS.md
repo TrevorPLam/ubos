@@ -67,6 +67,13 @@ This repo uses a lightweight, file-based task system.
 ### Allowed index locations
 - `BACKLOG.md` | `TODO.md` | `ARCHIVE.md`
 
+### Priority Mapping (P-Levels)
+For cross-role prioritization, tasks map to P-levels:
+- **P0 (Production Blocker)** = `critical` - Security issues, production blockers, hard deadlines
+- **P1 (High Priority)** = `high` - Important features, architectural work, high business value
+- **P2 (Medium Priority)** = `medium` - Useful improvements, quality enhancements, nice-to-haves
+- **P3 (Low Priority)** = `low` - Future aspirations, minor enhancements, low urgency
+
 ### Required Planning Fields
 Every task MUST include:
 - **Plan:** Minimum 3 numbered, actionable steps showing implementation approach
@@ -95,6 +102,7 @@ Every task MUST include:
 [id:TASK-YYYYMMDD-NNN]
 type: <config|docs|quality|ci|test|devex|security|reliability|release|infra|...>
 priority: <critical|high|medium|low>
+p_level: <P0|P1|P2|P3>
 component: <tooling|css|server|repo|automation|...>
 status: todo
 location: BACKLOG.md

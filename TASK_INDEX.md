@@ -20,7 +20,7 @@ Rules:
 ## 📊 Repository Task Overview
 
 **Total Roles:** 30  
-**Total Tasks:** 110  
+**Total Tasks:** 126  
 **Last Generated:** 2026-02-04  
 **Generation Command:** `npm run generate-task-index`
 
@@ -35,6 +35,7 @@ Rules:
 [id:TASK-20260203-001]
 type: config
 priority: critical
+p_level: P0
 component: repo
 status: todo
 location: BACKLOG.md
@@ -47,6 +48,7 @@ role: TASKS_MANAGER
 [id:TASK-20260203-002]
 type: config
 priority: high
+p_level: P1
 component: docs
 status: todo
 location: BACKLOG.md
@@ -59,6 +61,7 @@ role: TASKS_MANAGER
 [id:TASK-20260203-003]
 type: config
 priority: high
+p_level: P1
 component: repo
 status: todo
 location: BACKLOG.md
@@ -71,6 +74,7 @@ role: TASKS_MANAGER
 [id:TASK-20260203-020]
 type: config
 priority: medium
+p_level: P2
 component: tooling
 status: done
 location: ARCHIVE.md
@@ -84,6 +88,7 @@ role: TASKS_MANAGER
 [id:TASK-20260203-021]
 type: config
 priority: medium
+p_level: P2
 component: css
 status: done
 location: ARCHIVE.md
@@ -97,6 +102,7 @@ role: TASKS_MANAGER
 [id:TASK-20260203-022]
 type: config
 priority: medium
+p_level: P2
 component: css
 status: done
 location: ARCHIVE.md
@@ -110,6 +116,7 @@ role: TASKS_MANAGER
 [id:TASK-20260203-023]
 type: config
 priority: low
+p_level: P3
 component: tooling
 status: todo
 location: BACKLOG.md
@@ -137,6 +144,7 @@ role: TASKS_MANAGER
 [id:TASK-20260203-015]
 type: ci
 priority: medium
+p_level: P2
 component: automation
 status: todo
 location: TODO.md
@@ -149,6 +157,7 @@ role: cicd-automation
 [id:TASK-20260203-016]
 type: ci
 priority: medium
+p_level: P2
 component: automation
 status: todo
 location: TODO.md
@@ -161,6 +170,7 @@ role: cicd-automation
 [id:TASK-20260203-028]
 type: ci
 priority: high
+p_level: P1
 component: automation
 status: todo
 location: TODO.md
@@ -178,6 +188,7 @@ role: cicd-automation
 [id:TASK-20260203-012]
 type: quality
 priority: medium
+p_level: P2
 component: repo
 status: todo
 location: BACKLOG.md
@@ -190,6 +201,7 @@ role: code-review-refactoring
 [id:TASK-20260203-026]
 type: quality
 priority: high
+p_level: P1
 component: tooling
 status: done
 location: ARCHIVE.md
@@ -203,6 +215,7 @@ role: code-review-refactoring
 [id:TASK-20260203-027]
 type: quality
 priority: high
+p_level: P1
 component: tooling
 status: done
 location: ARCHIVE.md
@@ -216,6 +229,7 @@ role: code-review-refactoring
 [id:TASK-20260203-012]
 type: quality
 priority: medium
+p_level: P2
 component: repo
 status: in-progress
 location: TODO.md
@@ -238,6 +252,7 @@ role: code-review-refactoring
 [id:TASK-20260203-001]
 type: config
 priority: critical
+p_level: P0
 component: repo
 status: todo
 location: BACKLOG.md
@@ -250,6 +265,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260204-001]
 type: security
 priority: critical
+p_level: P0
 component: server
 status: todo
 location: TODO.md
@@ -262,6 +278,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260204-002]
 type: security
 priority: critical
+p_level: P0
 component: server
 status: todo
 location: TODO.md
@@ -274,6 +291,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260204-003]
 type: security
 priority: critical
+p_level: P0
 component: server
 status: todo
 location: TODO.md
@@ -286,6 +304,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-002]
 type: config
 priority: high
+p_level: P1
 component: docs
 status: todo
 location: BACKLOG.md
@@ -298,6 +317,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-003]
 type: config
 priority: high
+p_level: P1
 component: repo
 status: todo
 location: BACKLOG.md
@@ -310,6 +330,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-004]
 type: infra
 priority: high
+p_level: P1
 component: server
 status: todo
 location: BACKLOG.md
@@ -322,6 +343,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-005]
 type: infra
 priority: high
+p_level: P1
 component: server
 status: todo
 location: BACKLOG.md
@@ -334,6 +356,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-006]
 type: dev
 priority: high
+p_level: P1
 component: server
 status: todo
 location: BACKLOG.md
@@ -346,6 +369,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-007]
 type: dev
 priority: high
+p_level: P1
 component: server
 status: todo
 location: BACKLOG.md
@@ -358,6 +382,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-008]
 type: dev
 priority: high
+p_level: P1
 component: client
 status: todo
 location: BACKLOG.md
@@ -370,6 +395,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-009]
 type: dev
 priority: medium
+p_level: P2
 component: server
 status: todo
 location: BACKLOG.md
@@ -382,6 +408,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-010]
 type: dev
 priority: medium
+p_level: P2
 component: server
 status: todo
 location: BACKLOG.md
@@ -394,6 +421,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-011]
 type: dev
 priority: medium
+p_level: P2
 component: server
 status: todo
 location: BACKLOG.md
@@ -406,6 +434,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-012]
 type: quality
 priority: medium
+p_level: P2
 component: repo
 status: todo
 location: BACKLOG.md
@@ -418,6 +447,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260204-004]
 type: security
 priority: high
+p_level: P1
 component: server
 status: todo
 location: BACKLOG.md
@@ -430,6 +460,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260204-005]
 type: security
 priority: high
+p_level: P1
 component: server
 status: todo
 location: BACKLOG.md
@@ -442,6 +473,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260204-006]
 type: security
 priority: high
+p_level: P1
 component: server
 status: todo
 location: BACKLOG.md
@@ -454,6 +486,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260204-007]
 type: security
 priority: high
+p_level: P1
 component: server
 status: todo
 location: BACKLOG.md
@@ -466,6 +499,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260204-008]
 type: security
 priority: medium
+p_level: P2
 component: server
 status: todo
 location: BACKLOG.md
@@ -478,6 +512,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260204-009]
 type: security
 priority: medium
+p_level: P2
 component: server
 status: todo
 location: BACKLOG.md
@@ -490,6 +525,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260204-010]
 type: security
 priority: medium
+p_level: P2
 component: server
 status: todo
 location: BACKLOG.md
@@ -502,6 +538,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260204-011]
 type: security
 priority: medium
+p_level: P2
 component: infra
 status: todo
 location: BACKLOG.md
@@ -514,6 +551,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260204-012]
 type: security
 priority: medium
+p_level: P2
 component: ci
 status: todo
 location: BACKLOG.md
@@ -526,6 +564,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260204-013]
 type: security
 priority: medium
+p_level: P2
 component: server
 status: todo
 location: BACKLOG.md
@@ -538,6 +577,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260204-014]
 type: security
 priority: medium
+p_level: P2
 component: server
 status: todo
 location: BACKLOG.md
@@ -550,6 +590,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260204-015]
 type: docs
 priority: high
+p_level: P1
 component: security
 status: todo
 location: BACKLOG.md
@@ -562,6 +603,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260204-016]
 type: docs
 priority: high
+p_level: P1
 component: security
 status: todo
 location: BACKLOG.md
@@ -574,6 +616,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260204-017]
 type: docs
 priority: high
+p_level: P1
 component: security
 status: todo
 location: BACKLOG.md
@@ -586,6 +629,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260204-018]
 type: docs
 priority: high
+p_level: P1
 component: security
 status: todo
 location: BACKLOG.md
@@ -598,6 +642,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260204-019]
 type: docs
 priority: high
+p_level: P1
 component: security
 status: todo
 location: BACKLOG.md
@@ -610,6 +655,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260204-020]
 type: docs
 priority: high
+p_level: P1
 component: security
 status: todo
 location: BACKLOG.md
@@ -622,6 +668,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260204-021]
 type: docs
 priority: high
+p_level: P1
 component: architecture
 status: todo
 location: BACKLOG.md
@@ -634,6 +681,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260204-022]
 type: docs
 priority: high
+p_level: P1
 component: architecture
 status: todo
 location: BACKLOG.md
@@ -646,6 +694,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260204-023]
 type: docs
 priority: high
+p_level: P1
 component: architecture
 status: todo
 location: BACKLOG.md
@@ -658,6 +707,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260204-024]
 type: docs
 priority: high
+p_level: P1
 component: architecture
 status: todo
 location: BACKLOG.md
@@ -670,6 +720,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260204-025]
 type: docs
 priority: high
+p_level: P1
 component: architecture
 status: todo
 location: BACKLOG.md
@@ -682,6 +733,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260204-026]
 type: docs
 priority: high
+p_level: P1
 component: data
 status: todo
 location: BACKLOG.md
@@ -694,6 +746,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260204-027]
 type: docs
 priority: high
+p_level: P1
 component: data
 status: todo
 location: BACKLOG.md
@@ -706,6 +759,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260204-028]
 type: docs
 priority: high
+p_level: P1
 component: data
 status: todo
 location: BACKLOG.md
@@ -718,6 +772,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-013]
 type: security
 priority: medium
+p_level: P2
 component: repo
 status: todo
 location: BACKLOG.md
@@ -730,6 +785,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-014]
 type: security
 priority: medium
+p_level: P2
 component: repo
 status: todo
 location: BACKLOG.md
@@ -742,6 +798,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-015]
 type: ci
 priority: medium
+p_level: P2
 component: automation
 status: todo
 location: TODO.md
@@ -754,6 +811,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-016]
 type: ci
 priority: medium
+p_level: P2
 component: automation
 status: todo
 location: TODO.md
@@ -766,6 +824,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-017]
 type: reliability
 priority: low
+p_level: P3
 component: server
 status: todo
 location: BACKLOG.md
@@ -778,6 +837,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-018]
 type: release
 priority: low
+p_level: P3
 component: repo
 status: todo
 location: BACKLOG.md
@@ -790,6 +850,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-019]
 type: infra
 priority: low
+p_level: P3
 component: dev
 status: todo
 location: BACKLOG.md
@@ -802,6 +863,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-020]
 type: config
 priority: medium
+p_level: P2
 component: tooling
 status: done
 location: ARCHIVE.md
@@ -815,6 +877,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-021]
 type: config
 priority: medium
+p_level: P2
 component: css
 status: done
 location: ARCHIVE.md
@@ -828,6 +891,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-022]
 type: config
 priority: medium
+p_level: P2
 component: css
 status: done
 location: ARCHIVE.md
@@ -841,6 +905,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-023]
 type: config
 priority: low
+p_level: P3
 component: tooling
 status: todo
 location: BACKLOG.md
@@ -853,6 +918,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-024]
 type: docs
 priority: high
+p_level: P1
 component: onboarding
 status: done
 location: ARCHIVE.md
@@ -866,6 +932,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-025]
 type: docs
 priority: high
+p_level: P1
 component: config
 status: done
 location: ARCHIVE.md
@@ -879,6 +946,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-026]
 type: quality
 priority: high
+p_level: P1
 component: tooling
 status: done
 location: ARCHIVE.md
@@ -892,6 +960,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-027]
 type: quality
 priority: high
+p_level: P1
 component: tooling
 status: done
 location: ARCHIVE.md
@@ -905,6 +974,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-028]
 type: ci
 priority: high
+p_level: P1
 component: automation
 status: todo
 location: TODO.md
@@ -917,6 +987,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-029]
 type: test
 priority: high
+p_level: P1
 component: tooling
 status: todo
 location: TODO.md
@@ -929,6 +1000,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-030]
 type: devex
 priority: medium
+p_level: P2
 component: tooling
 status: todo
 location: TODO.md
@@ -941,6 +1013,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-031]
 type: devex
 priority: medium
+p_level: P2
 component: tooling
 status: todo
 location: BACKLOG.md
@@ -953,6 +1026,7 @@ role: cost-optimization-cloud-economics
 [id:TASK-20260203-012]
 type: quality
 priority: medium
+p_level: P2
 component: repo
 status: in-progress
 location: TODO.md
@@ -992,9 +1066,36 @@ role: cost-optimization-cloud-economics
 <!-- AUTO-GENERATED: documentation-knowledge tasks -->
 
 ## index_entry_begin
+[id:TASK-20260204-291]
+type: docs
+priority: high
+p_level: P1
+component: documentation
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Update README to Clarify Current vs Future State
+role: documentation-knowledge
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-292]
+type: docs
+priority: medium
+p_level: P2
+component: api
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Document API Validation Patterns
+role: documentation-knowledge
+## index_entry_end
+
+## index_entry_begin
 [id:TASK-20260204-015]
 type: docs
 priority: high
+p_level: P1
 component: security
 status: todo
 location: BACKLOG.md
@@ -1007,6 +1108,7 @@ role: documentation-knowledge
 [id:TASK-20260204-016]
 type: docs
 priority: high
+p_level: P1
 component: security
 status: todo
 location: BACKLOG.md
@@ -1019,6 +1121,7 @@ role: documentation-knowledge
 [id:TASK-20260204-017]
 type: docs
 priority: high
+p_level: P1
 component: security
 status: todo
 location: BACKLOG.md
@@ -1031,6 +1134,7 @@ role: documentation-knowledge
 [id:TASK-20260204-018]
 type: docs
 priority: high
+p_level: P1
 component: security
 status: todo
 location: BACKLOG.md
@@ -1043,6 +1147,7 @@ role: documentation-knowledge
 [id:TASK-20260204-019]
 type: docs
 priority: high
+p_level: P1
 component: security
 status: todo
 location: BACKLOG.md
@@ -1055,6 +1160,7 @@ role: documentation-knowledge
 [id:TASK-20260204-020]
 type: docs
 priority: high
+p_level: P1
 component: security
 status: todo
 location: BACKLOG.md
@@ -1067,6 +1173,7 @@ role: documentation-knowledge
 [id:TASK-20260204-021]
 type: docs
 priority: high
+p_level: P1
 component: architecture
 status: todo
 location: BACKLOG.md
@@ -1079,6 +1186,7 @@ role: documentation-knowledge
 [id:TASK-20260204-022]
 type: docs
 priority: high
+p_level: P1
 component: architecture
 status: todo
 location: BACKLOG.md
@@ -1091,6 +1199,7 @@ role: documentation-knowledge
 [id:TASK-20260204-023]
 type: docs
 priority: high
+p_level: P1
 component: architecture
 status: todo
 location: BACKLOG.md
@@ -1103,6 +1212,7 @@ role: documentation-knowledge
 [id:TASK-20260204-024]
 type: docs
 priority: high
+p_level: P1
 component: architecture
 status: todo
 location: BACKLOG.md
@@ -1115,6 +1225,7 @@ role: documentation-knowledge
 [id:TASK-20260204-025]
 type: docs
 priority: high
+p_level: P1
 component: architecture
 status: todo
 location: BACKLOG.md
@@ -1127,6 +1238,7 @@ role: documentation-knowledge
 [id:TASK-20260204-026]
 type: docs
 priority: high
+p_level: P1
 component: data
 status: todo
 location: BACKLOG.md
@@ -1139,6 +1251,7 @@ role: documentation-knowledge
 [id:TASK-20260204-027]
 type: docs
 priority: high
+p_level: P1
 component: data
 status: todo
 location: BACKLOG.md
@@ -1151,6 +1264,7 @@ role: documentation-knowledge
 [id:TASK-20260204-028]
 type: docs
 priority: high
+p_level: P1
 component: data
 status: todo
 location: BACKLOG.md
@@ -1163,6 +1277,7 @@ role: documentation-knowledge
 [id:TASK-20260203-024]
 type: docs
 priority: high
+p_level: P1
 component: onboarding
 status: done
 location: ARCHIVE.md
@@ -1176,6 +1291,7 @@ role: documentation-knowledge
 [id:TASK-20260203-025]
 type: docs
 priority: high
+p_level: P1
 component: config
 status: done
 location: ARCHIVE.md
@@ -1189,6 +1305,97 @@ role: documentation-knowledge
 
 ### domain-development
 <!-- AUTO-GENERATED: domain-development tasks -->
+
+## index_entry_begin
+[id:TASK-20260204-281]
+type: dev
+priority: critical
+p_level: P0
+component: server
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Implement Backend Pagination
+role: domain-development
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-282]
+type: dev
+priority: critical
+p_level: P0
+component: server
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Add API Input Validation Middleware
+role: domain-development
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-283]
+type: dev
+priority: high
+p_level: P1
+component: server
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Begin Domain Module Extraction - CRM Domain
+role: domain-development
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-284]
+type: dev
+priority: high
+p_level: P1
+component: server
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Implement Activity Timeline System
+role: domain-development
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-285]
+type: dev
+priority: high
+p_level: P1
+component: server
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Add Client Portal Routes and Authentication
+role: domain-development
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-286]
+type: dev
+priority: medium
+p_level: P2
+component: architecture
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Design Workflow Engine Architecture
+role: domain-development
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-287]
+type: dev
+priority: medium
+p_level: P2
+component: architecture
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Plan Outbox Pattern Implementation
+role: domain-development
+## index_entry_end
 
 ---
 
@@ -1206,9 +1413,23 @@ role: documentation-knowledge
 <!-- AUTO-GENERATED: infrastructure-platform tasks -->
 
 ## index_entry_begin
+[id:TASK-20260204-288]
+type: infra
+priority: critical
+p_level: P0
+component: server
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Migrate Session Store to Redis
+role: infrastructure-platform
+## index_entry_end
+
+## index_entry_begin
 [id:TASK-20260203-004]
 type: infra
 priority: high
+p_level: P1
 component: server
 status: todo
 location: BACKLOG.md
@@ -1221,6 +1442,7 @@ role: infrastructure-platform
 [id:TASK-20260203-005]
 type: infra
 priority: high
+p_level: P1
 component: server
 status: todo
 location: BACKLOG.md
@@ -1233,6 +1455,7 @@ role: infrastructure-platform
 [id:TASK-20260203-019]
 type: infra
 priority: low
+p_level: P3
 component: dev
 status: todo
 location: BACKLOG.md
@@ -1282,9 +1505,36 @@ role: infrastructure-platform
 <!-- AUTO-GENERATED: quality-testing tasks -->
 
 ## index_entry_begin
+[id:TASK-20260204-289]
+type: test
+priority: high
+p_level: P1
+component: tests
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Add Pagination Integration Tests
+role: quality-testing
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-290]
+type: test
+priority: high
+p_level: P1
+component: tests
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Add Redis Session Store Integration Tests
+role: quality-testing
+## index_entry_end
+
+## index_entry_begin
 [id:TASK-20260203-029]
 type: test
 priority: high
+p_level: P1
 component: tooling
 status: todo
 location: TODO.md
@@ -1309,9 +1559,23 @@ role: quality-testing
 <!-- AUTO-GENERATED: security-compliance tasks -->
 
 ## index_entry_begin
+[id:TASK-20260204-293]
+type: security
+priority: medium
+p_level: P2
+component: server
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Implement Soft Deletes for Data Safety
+role: security-compliance
+## index_entry_end
+
+## index_entry_begin
 [id:TASK-20260204-001]
 type: security
 priority: critical
+p_level: P0
 component: server
 status: todo
 location: TODO.md
@@ -1324,6 +1588,7 @@ role: security-compliance
 [id:TASK-20260204-002]
 type: security
 priority: critical
+p_level: P0
 component: server
 status: todo
 location: TODO.md
@@ -1336,6 +1601,7 @@ role: security-compliance
 [id:TASK-20260204-003]
 type: security
 priority: critical
+p_level: P0
 component: server
 status: todo
 location: TODO.md
@@ -1348,6 +1614,7 @@ role: security-compliance
 [id:TASK-20260204-004]
 type: security
 priority: high
+p_level: P1
 component: server
 status: todo
 location: BACKLOG.md
@@ -1360,6 +1627,7 @@ role: security-compliance
 [id:TASK-20260204-005]
 type: security
 priority: high
+p_level: P1
 component: server
 status: todo
 location: BACKLOG.md
@@ -1372,6 +1640,7 @@ role: security-compliance
 [id:TASK-20260204-006]
 type: security
 priority: high
+p_level: P1
 component: server
 status: todo
 location: BACKLOG.md
@@ -1384,6 +1653,7 @@ role: security-compliance
 [id:TASK-20260204-007]
 type: security
 priority: high
+p_level: P1
 component: server
 status: todo
 location: BACKLOG.md
@@ -1396,6 +1666,7 @@ role: security-compliance
 [id:TASK-20260204-008]
 type: security
 priority: medium
+p_level: P2
 component: server
 status: todo
 location: BACKLOG.md
@@ -1408,6 +1679,7 @@ role: security-compliance
 [id:TASK-20260204-009]
 type: security
 priority: medium
+p_level: P2
 component: server
 status: todo
 location: BACKLOG.md
@@ -1420,6 +1692,7 @@ role: security-compliance
 [id:TASK-20260204-010]
 type: security
 priority: medium
+p_level: P2
 component: server
 status: todo
 location: BACKLOG.md
@@ -1432,6 +1705,7 @@ role: security-compliance
 [id:TASK-20260204-011]
 type: security
 priority: medium
+p_level: P2
 component: infra
 status: todo
 location: BACKLOG.md
@@ -1444,6 +1718,7 @@ role: security-compliance
 [id:TASK-20260204-012]
 type: security
 priority: medium
+p_level: P2
 component: ci
 status: todo
 location: BACKLOG.md
@@ -1456,6 +1731,7 @@ role: security-compliance
 [id:TASK-20260204-013]
 type: security
 priority: medium
+p_level: P2
 component: server
 status: todo
 location: BACKLOG.md
@@ -1468,6 +1744,7 @@ role: security-compliance
 [id:TASK-20260204-014]
 type: security
 priority: medium
+p_level: P2
 component: server
 status: todo
 location: BACKLOG.md
@@ -1480,6 +1757,7 @@ role: security-compliance
 [id:TASK-20260203-013]
 type: security
 priority: medium
+p_level: P2
 component: repo
 status: todo
 location: BACKLOG.md
@@ -1492,6 +1770,7 @@ role: security-compliance
 [id:TASK-20260203-014]
 type: security
 priority: medium
+p_level: P2
 component: repo
 status: todo
 location: BACKLOG.md
@@ -1510,35 +1789,74 @@ role: security-compliance
 ### ux-ui-design-systems
 <!-- AUTO-GENERATED: ux-ui-design-systems tasks -->
 
+## index_entry_begin
+[id:TASK-20260204-294]
+type: dev
+priority: medium
+p_level: P2
+component: client
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Implement Optimistic Updates in React Query
+role: ux-ui-design-systems
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-295]
+type: dev
+priority: medium
+p_level: P2
+component: client
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Add Domain-Level Frontend Code Organization
+role: ux-ui-design-systems
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-296]
+type: dev
+priority: medium
+p_level: P2
+component: client
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Extract Shared Form Schemas
+role: ux-ui-design-systems
+## index_entry_end
+
 ---
 
 
 
 ## 📈 Summary Statistics
 
-**Total Tasks:** 110
-**Roles with Tasks:** 8/30
+**Total Tasks:** 126
+**Roles with Tasks:** 10/30
 
 **By Status:**
-- todo: 94
+- todo: 110
 - done: 14
 - in-progress: 2
 
 **By Priority:**
-- critical: 8
-- high: 59
-- medium: 37
-- low: 6
+- critical (P0): 11
+- high (P1): 65
+- medium (P2): 44
+- low (P3): 6
 
 **By Type (Top 10):**
-- security: 32
-- docs: 32
+- docs: 34
+- security: 33
+- dev: 16
 - config: 14
 - quality: 8
+- infra: 7
 - ci: 6
-- infra: 6
-- dev: 6
-- test: 2
+- test: 4
 - devex: 2
 - reliability: 1
 
@@ -1551,8 +1869,27 @@ To find specific tasks:
 1. **By ID**: Search `[id:TASK-YYYYMMDD-NNN]`
 2. **By Type**: Search `type:security`, `type:config`, etc.
 3. **By Priority**: Search `priority:critical`, `priority:high`, etc.
-4. **By Status**: Search `status:todo`, `status:in-progress`, etc.
-5. **By Component**: Search `component:server`, `component:client`, etc.
+4. **By P-Level**: Search `p_level:P0`, `p_level:P1`, etc.
+5. **By Status**: Search `status:todo`, `status:in-progress`, etc.
+6. **By Component**: Search `component:server`, `component:client`, etc.
+
+### Priority System (P-Levels)
+
+**P0 (Production Blocker)** - `critical`
+- Security vulnerabilities, production outages, hard deadlines
+- Redis migration (deadline: 2026-03-04), pagination (scale blocker)
+
+**P1 (High Priority)** - `high`  
+- Core features, architectural improvements, high business value
+- Domain extraction, timeline system, portal access
+
+**P2 (Medium Priority)** - `medium`
+- Quality improvements, documentation, nice-to-haves
+- Workflow engine design, soft deletes, optimistic updates
+
+**P3 (Low Priority)** - `low`
+- Future enhancements, low-urgency improvements
+- Docker setup, versioning automation
 
 ---
 

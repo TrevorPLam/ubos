@@ -26,6 +26,34 @@ Rules:
 
 ---
 
+## index_entry_begin
+[id:TASK-20260204-289]
+type: test
+priority: high
+p_level: P1
+component: tests
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Add Pagination Integration Tests
+## index_entry_end
+
+---
+
+## index_entry_begin
+[id:TASK-20260204-290]
+type: test
+priority: high
+p_level: P1
+component: tests
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Add Redis Session Store Integration Tests
+## index_entry_end
+
+---
+
 
 
 

@@ -26,6 +26,34 @@ Rules:
 
 ---
 
+## index_entry_begin
+[id:TASK-20260204-291]
+type: docs
+priority: high
+p_level: P1
+component: documentation
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Update README to Clarify Current vs Future State
+## index_entry_end
+
+---
+
+## index_entry_begin
+[id:TASK-20260204-292]
+type: docs
+priority: medium
+p_level: P2
+component: api
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Document API Validation Patterns
+## index_entry_end
+
+---
+
 
 
 

@@ -20,6 +20,7 @@ interface TaskEntry {
   id: string;
   type: string;
   priority: string;
+  p_level?: string;
   component: string;
   status: string;
   location: string;
@@ -36,6 +37,16 @@ interface RoleTasks {
 
 const AGENTS_DIR = join(process.cwd(), 'agents', 'roles');
 const OUTPUT_FILE = join(process.cwd(), 'TASK_INDEX.md');
+
+function mapPriorityToPLevel(priority: string): string {
+  const mapping: Record<string, string> = {
+    'critical': 'P0',
+    'high': 'P1',
+    'medium': 'P2',
+    'low': 'P3'
+  };
+  return mapping[priority] || 'P2';
+}
 
 function parseTaskIndex(content: string, role: string): TaskEntry[] {
   const tasks: TaskEntry[] = [];
@@ -68,6 +79,8 @@ function parseTaskIndex(content: string, role: string): TaskEntry[] {
       currentTask.type = line.split(':')[1]?.trim() || '';
     } else if (line.startsWith('priority:')) {
       currentTask.priority = line.split(':')[1]?.trim() || '';
+    } else if (line.startsWith('p_level:')) {
+      currentTask.p_level = line.split(':')[1]?.trim() || '';
     } else if (line.startsWith('component:')) {
       currentTask.component = line.split(':')[1]?.trim() || '';
     } else if (line.startsWith('status:')) {
@@ -115,10 +128,12 @@ function generateMarkdown(roleTasks: RoleTasks[]): string {
 
     const taskEntries = rt.tasks.map(task => {
       const completed = task.completed ? `\ncompleted: ${task.completed}` : '';
+      const pLevel = task.p_level || mapPriorityToPLevel(task.priority);
       return `## index_entry_begin
 [id:${task.id}]
 type: ${task.type}
 priority: ${task.priority}
+p_level: ${pLevel}
 component: ${task.component}
 status: ${task.status}
 location: ${task.location}
@@ -186,8 +201,27 @@ To find specific tasks:
 1. **By ID**: Search \`[id:TASK-YYYYMMDD-NNN]\`
 2. **By Type**: Search \`type:security\`, \`type:config\`, etc.
 3. **By Priority**: Search \`priority:critical\`, \`priority:high\`, etc.
-4. **By Status**: Search \`status:todo\`, \`status:in-progress\`, etc.
-5. **By Component**: Search \`component:server\`, \`component:client\`, etc.
+4. **By P-Level**: Search \`p_level:P0\`, \`p_level:P1\`, etc.
+5. **By Status**: Search \`status:todo\`, \`status:in-progress\`, etc.
+6. **By Component**: Search \`component:server\`, \`component:client\`, etc.
+
+### Priority System (P-Levels)
+
+**P0 (Production Blocker)** - \`critical\`
+- Security vulnerabilities, production outages, hard deadlines
+- Redis migration (deadline: 2026-03-04), pagination (scale blocker)
+
+**P1 (High Priority)** - \`high\`  
+- Core features, architectural improvements, high business value
+- Domain extraction, timeline system, portal access
+
+**P2 (Medium Priority)** - \`medium\`
+- Quality improvements, documentation, nice-to-haves
+- Workflow engine design, soft deletes, optimistic updates
+
+**P3 (Low Priority)** - \`low\`
+- Future enhancements, low-urgency improvements
+- Docker setup, versioning automation
 
 ---
 
@@ -242,9 +276,15 @@ function generateStatistics(roleTasks: RoleTasks[]): string {
   });
 
   stats.push('\n**By Priority:**');
-  Object.entries(priorityCounts).forEach(([priority, count]) => {
-    stats.push(`- ${priority}: ${count}`);
-  });
+  Object.entries(priorityCounts)
+    .sort(([a], [b]) => {
+      const order = ['critical', 'high', 'medium', 'low'];
+      return order.indexOf(a) - order.indexOf(b);
+    })
+    .forEach(([priority, count]) => {
+      const pLevel = mapPriorityToPLevel(priority);
+      stats.push(`- ${priority} (${pLevel}): ${count}`);
+    });
 
   stats.push('\n**By Type (Top 10):**');
   Object.entries(typeCounts)

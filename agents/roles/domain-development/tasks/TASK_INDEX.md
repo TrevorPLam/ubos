@@ -26,6 +26,104 @@ Rules:
 
 ---
 
+## index_entry_begin
+[id:TASK-20260204-281]
+type: dev
+priority: critical
+p_level: P0
+component: server
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Implement Backend Pagination
+## index_entry_end
+
+---
+
+## index_entry_begin
+[id:TASK-20260204-282]
+type: dev
+priority: critical
+p_level: P0
+component: server
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Add API Input Validation Middleware
+## index_entry_end
+
+---
+
+## index_entry_begin
+[id:TASK-20260204-283]
+type: dev
+priority: high
+p_level: P1
+component: server
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Begin Domain Module Extraction - CRM Domain
+## index_entry_end
+
+---
+
+## index_entry_begin
+[id:TASK-20260204-284]
+type: dev
+priority: high
+p_level: P1
+component: server
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Implement Activity Timeline System
+## index_entry_end
+
+---
+
+## index_entry_begin
+[id:TASK-20260204-285]
+type: dev
+priority: high
+p_level: P1
+component: server
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Add Client Portal Routes and Authentication
+## index_entry_end
+
+---
+
+## index_entry_begin
+[id:TASK-20260204-286]
+type: dev
+priority: medium
+p_level: P2
+component: architecture
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Design Workflow Engine Architecture
+## index_entry_end
+
+---
+
+## index_entry_begin
+[id:TASK-20260204-287]
+type: dev
+priority: medium
+p_level: P2
+component: architecture
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Plan Outbox Pattern Implementation
+## index_entry_end
+
+---
+
 
 
 

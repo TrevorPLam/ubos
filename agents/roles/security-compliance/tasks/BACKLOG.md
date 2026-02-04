@@ -225,8 +225,32 @@ Global Rules:
 ## group_begin [type:security][priority:medium]
 ## ðŸ” Security â€” MEDIUM
 
-## task_begin
-### # [id:TASK-20260204-008][type:security][priority:medium][component:server] Implement MFA (Multi-Factor Authentication)
+## task_begin### # [id:TASK-20260204-293][type:security][priority:medium][p_level:P2][component:server] Implement Soft Deletes for Data Safety
+**Status:** todo  
+**Description:** Add soft delete functionality to prevent accidental data loss and support data recovery. Add deletedAt timestamp to all business entities and filter soft-deleted records in queries.  
+**Acceptance Criteria:**  
+- [ ] deletedAt timestamp added to all business entity tables
+- [ ] All queries filter out soft-deleted records (isNull(deletedAt))
+- [ ] Delete operations changed to UPDATE SET deletedAt = NOW()
+- [ ] Admin endpoint to permanently delete soft-deleted records (hard delete)
+- [ ] Tests for soft delete and recovery scenarios
+**Relevant Files:** `shared/schema.ts`, `server/storage.ts`, `server/routes.ts`  
+**Relevant Documentation:** `docs/data/10_current_state/RETENTION_AND_DELETION.md` — Deletion policies, `ANALYSIS.md` — Nice to have recommendations  
+**Plan:**  
+1. Add deletedAt timestamp to all business entity schemas
+2. Create database migration to add deletedAt columns
+3. Update all storage layer queries to filter isNull(deletedAt)
+4. Change delete methods to set deletedAt instead of hard delete
+5. Add recovery endpoint to restore soft-deleted records
+6. Add admin-only hard delete endpoint
+7. Write tests for soft delete scenarios
+8. Document soft delete patterns
+**Estimated Effort:** 1 week
+## task_end
+
+---
+
+## task_begin### # [id:TASK-20260204-008][type:security][priority:medium][component:server] Implement MFA (Multi-Factor Authentication)
 **Status:** todo  
 **Description:** Add MFA support for high-risk operations (admin actions, sensitive data access).  
 **Dependencies:** None  

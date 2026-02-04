@@ -26,6 +26,48 @@ Rules:
 
 ---
 
+## index_entry_begin
+[id:TASK-20260204-294]
+type: dev
+priority: medium
+p_level: P2
+component: client
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Implement Optimistic Updates in React Query
+## index_entry_end
+
+---
+
+## index_entry_begin
+[id:TASK-20260204-295]
+type: dev
+priority: medium
+p_level: P2
+component: client
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Add Domain-Level Frontend Code Organization
+## index_entry_end
+
+---
+
+## index_entry_begin
+[id:TASK-20260204-296]
+type: dev
+priority: medium
+p_level: P2
+component: client
+status: todo
+location: BACKLOG.md
+created: 2026-02-04
+title: Extract Shared Form Schemas
+## index_entry_end
+
+---
+
 
 
 
