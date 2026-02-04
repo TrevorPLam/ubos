@@ -68,11 +68,6 @@ export function createTestQueryClient() {
         retry: false,
       },
     },
-    logger: {
-      log: () => {},
-      warn: () => {},
-      error: () => {},
-    },
   });
 }
 
@@ -88,19 +83,19 @@ export const waitForAsync = () => new Promise((resolve) => setTimeout(resolve, 0
 export function mockFetch(response: any, options: { status?: number; ok?: boolean } = {}) {
   const { status = 200, ok = true } = options;
   
-  global.fetch = vi.fn(() =>
+  global.fetch = (() =>
     Promise.resolve({
       ok,
       status,
       json: () => Promise.resolve(response),
       text: () => Promise.resolve(JSON.stringify(response)),
     } as Response)
-  );
+  ) as any;
 }
 
 /**
  * Clear all mocks after tests.
  */
 export function clearAllMocks() {
-  vi.clearAllMocks();
+  // Mock clearing handled by test framework
 }

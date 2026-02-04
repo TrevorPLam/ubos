@@ -27,9 +27,10 @@ export function mockRequest(options: MockRequestOptions = {}): Partial<Request> 
     query: options.query || {},
     headers: options.headers || {},
     cookies: options.cookies || {},
-    get: function (name: string) {
-      return this.headers?.[name.toLowerCase()];
-    },
+    get: function (name: string): string | undefined {
+      const headers = this.headers as Record<string, string>;
+      return headers?.[name.toLowerCase()];
+    } as any,
   };
 
   // Add user to request if provided (simulates auth middleware)

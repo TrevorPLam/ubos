@@ -36,14 +36,14 @@ export const factories = {
   user: (overrides: Partial<UpsertUser> = {}): UpsertUser => ({
     id: uniqueId(),
     email: `user-${uniqueId()}@test.com`,
-    name: `Test User ${idCounter}`,
+    firstName: `Test`,
+    lastName: `User ${idCounter}`,
     ...overrides,
   }),
 
   clientCompany: (organizationId: string, overrides: Partial<InsertClientCompany> = {}): InsertClientCompany => ({
     organizationId,
     name: `Test Client ${uniqueId()}`,
-    status: 'active',
     ...overrides,
   }),
 
@@ -123,7 +123,6 @@ export const factories = {
     billNumber: `BILL-${uniqueId()}`,
     status: 'pending',
     amount: '500.00',
-    totalAmount: '500.00',
     ...overrides,
   }),
 
@@ -143,7 +142,6 @@ export const factories = {
   }),
 
   message: (organizationId: string, threadId: string, overrides: Partial<InsertMessage> = {}): InsertMessage => ({
-    organizationId,
     threadId,
     senderId: 'test-sender-id',
     content: `Test message content ${uniqueId()}`,

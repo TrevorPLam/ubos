@@ -14,6 +14,7 @@ describe('API Routes - Client Companies', () => {
       const res = mockResponse();
       const mockClients: any[] = [];
       
+      // @ts-expect-error - Test code doesn't need full Response implementation
       res.json(mockClients);
       
       expect(res.body).toEqual([]);
@@ -26,6 +27,7 @@ describe('API Routes - Client Companies', () => {
         { id: '2', organizationId: 'org-1', name: 'Client B', status: 'active' },
       ];
       
+      // @ts-expect-error - Test code doesn't need full Response implementation
       res.json(mockClients);
       
       expect(res.body).toHaveLength(2);
