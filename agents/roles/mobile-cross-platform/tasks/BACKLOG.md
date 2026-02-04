@@ -56,17 +56,78 @@ Global Rules:
 ## group_begin [type:dev][priority:high]
 ## ðŸš€ Development (Unscheduled) â€” High
 
+## task_begin
+### # [id:TASK-20260204-175][type:dev][priority:high][component:client] Implement Progressive Web App (PWA) Features
+**Status:** todo  
+**Description:** Transform the React application into a PWA with service workers, offline support, app manifest, and install prompts for mobile home screen installation.  
+**Acceptance Criteria:**  
+- [ ] Service worker with offline support
+- [ ] Web app manifest with icons
+- [ ] Install prompt for home screen
+- [ ] Offline fallback pages
+- [ ] PWA lighthouse score > 90
+**Relevant Files:** `client/`, `client/src/sw.js`, `client/public/manifest.json`  
+**Relevant Documentation:** `docs/user/README.md`, `docs/architecture/10_current_state/CURRENT_ARCHITECTURE_OVERVIEW.md`  
+**Plan:**  
+1. Create service worker with caching strategy
+2. Design and implement web app manifest
+3. Build install prompt component
+4. Create offline fallback UI
+5. Test PWA installation on mobile devices
+**Estimated Effort:** 3 days
+## task_end
 
+---
 
+## task_begin
+### # [id:TASK-20260204-176][type:dev][priority:high][component:client] Optimize Mobile User Experience
+**Status:** todo  
+**Description:** Optimize the application for mobile devices including responsive design, touch interactions, mobile navigation patterns, and performance optimization.  
+**Acceptance Criteria:**  
+- [ ] Fully responsive design for mobile viewports
+- [ ] Touch-friendly interactions (swipe, tap, long-press)
+- [ ] Mobile-optimized navigation (bottom nav, hamburger menu)
+- [ ] Fast mobile performance (TTI < 3s on 3G)
+- [ ] Mobile-specific accessibility features
+**Relevant Files:** `client/src/`, `client/src/components/`, `tailwind.config.ts`  
+**Relevant Documentation:** `docs/user/README.md`, `docs/architecture/30_cross_cutting/PERFORMANCE_AND_LIMITS.md`  
+**Plan:**  
+1. Audit and fix responsive design issues
+2. Implement touch-friendly interactions and gestures
+3. Create mobile navigation patterns
+4. Optimize bundle size and lazy loading
+5. Test on real mobile devices
+**Estimated Effort:** 4 days
+## task_end
 
+---
 ## group_end
 
 ## group_begin [type:dev][priority:medium]
 ## ðŸš€ Development (Unscheduled) â€” Medium
 
+## task_begin
+### # [id:TASK-20260204-177][type:dev][priority:medium][component:client] Implement Offline-First Data Synchronization
+**Status:** todo  
+**Description:** Build offline-first data layer using IndexedDB for local storage with background synchronization when connectivity is restored.  
+**Acceptance Criteria:**  
+- [ ] IndexedDB storage for offline data
+- [ ] Background sync API integration
+- [ ] Conflict resolution for offline changes
+- [ ] Sync status indicators in UI
+- [ ] Offline mode testing and validation
+**Relevant Files:** `client/src/`, `client/src/lib/offline/`, `client/src/hooks/`  
+**Relevant Documentation:** `docs/architecture/10_current_state/CURRENT_ARCHITECTURE_OVERVIEW.md`, `docs/api/README.md`  
+**Plan:**  
+1. Set up IndexedDB with Dexie.js
+2. Implement offline data layer with CRUD operations
+3. Build background sync when online
+4. Create conflict resolution strategy
+5. Add UI indicators for sync status
+**Estimated Effort:** 4 days
+## task_end
 
-
-
+---
 ## group_end
 
 ## group_begin [type:quality][priority:medium]

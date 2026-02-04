@@ -56,9 +56,51 @@ Global Rules:
 ## group_begin [type:dev][priority:high]
 ## ðŸš€ Development (Unscheduled) â€” High
 
+## task_begin
+### # [id:TASK-20260204-183][type:dev][priority:high][component:tooling] Build Task Prioritization Framework
+**Status:** todo  
+**Description:** Create systematic framework for prioritizing tasks based on business value, risk, effort, and dependencies with scoring and ranking algorithms.  
+**Acceptance Criteria:**  
+- [ ] Multi-factor prioritization model (value, risk, effort)
+- [ ] Task scoring algorithm and calculator
+- [ ] Dependency impact analysis
+- [ ] Priority visualization (matrix, charts)
+- [ ] Priority calibration workflow
+**Relevant Files:** `agents/roles/priority-calibration/`, `docs/`, `script/`  
+**Relevant Documentation:** `agents/roles/TASKS_MANAGER/`, `agents/CONSTITUTION.md`  
+**Plan:**  
+1. Research prioritization frameworks (WSJF, RICE, MoSCoW)
+2. Design multi-factor scoring model
+3. Implement task scoring calculator
+4. Build dependency impact analysis
+5. Create priority visualization tools
+**Estimated Effort:** 3 days
+## task_end
 
+---
 
+## task_begin
+### # [id:TASK-20260204-184][type:dev][priority:high][component:planning] Implement Roadmap Planning Tool
+**Status:** todo  
+**Description:** Build roadmap planning tool for visualizing and managing features across quarters with resource allocation and dependency tracking.  
+**Acceptance Criteria:**  
+- [ ] Quarterly roadmap visualization
+- [ ] Feature breakdown and epic management
+- [ ] Resource capacity planning
+- [ ] Dependency mapping between features
+- [ ] What-if scenario analysis
+**Relevant Files:** `agents/`, `docs/`, `agents/roles/priority-calibration/`  
+**Relevant Documentation:** `agents/roles/TASKS_MANAGER/`, `docs/architecture/60_gaps_and_roadmap/README.md`  
+**Plan:**  
+1. Design roadmap data model (quarters, epics, features)
+2. Build roadmap visualization interface
+3. Implement resource capacity tracking
+4. Create dependency mapping and visualization
+5. Add scenario analysis for priority changes
+**Estimated Effort:** 4 days
+## task_end
 
+---
 ## group_end
 
 ## group_begin [type:dev][priority:medium]

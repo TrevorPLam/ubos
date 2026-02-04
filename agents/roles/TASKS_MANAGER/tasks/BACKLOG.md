@@ -89,9 +89,51 @@ Global Rules:
 ## group_begin [type:dev][priority:high]
 ## ðŸš€ Development (Unscheduled) â€” High
 
+## task_begin
+### # [id:TASK-20260204-206][type:dev][priority:high][component:tooling] Build Task Dependency Visualization Tool
+**Status:** todo  
+**Description:** Create tool to visualize task dependencies, blockers, and critical paths to improve sprint planning and resource allocation.  
+**Acceptance Criteria:**  
+- [ ] Dependency graph visualization
+- [ ] Critical path identification
+- [ ] Blocker detection and alerting
+- [ ] Interactive dependency exploration
+- [ ] Export to common formats (PNG, SVG, PDF)
+**Relevant Files:** `agents/`, `agents/roles/TASKS_MANAGER/`, `script/`  
+**Relevant Documentation:** `agents/roles/TASKS_MANAGER/`, `agents/CONSTITUTION.md`  
+**Plan:**  
+1. Parse task files to extract dependencies
+2. Build dependency graph data structure
+3. Implement graph visualization (D3.js or similar)
+4. Add critical path calculation
+5. Create interactive exploration features
+**Estimated Effort:** 3 days
+## task_end
 
+---
 
+## task_begin
+### # [id:TASK-20260204-207][type:dev][priority:high][component:automation] Automate Sprint Planning and Task Assignment
+**Status:** todo  
+**Description:** Build automation for sprint planning including task selection based on priority, capacity, and skills with automatic assignment to agents/developers.  
+**Acceptance Criteria:**  
+- [ ] Capacity-based task selection
+- [ ] Skill-based task assignment
+- [ ] Sprint load balancing
+- [ ] Automatic TODO.md population
+- [ ] Sprint planning reports
+**Relevant Files:** `agents/`, `agents/roles/TASKS_MANAGER/`, `script/`  
+**Relevant Documentation:** `agents/roles/TASKS_MANAGER/`, `agents/roles/TASKS_MANAGER/tasks/TASKS.md`  
+**Plan:**  
+1. Design sprint planning algorithm
+2. Implement capacity and skills matching
+3. Build load balancing logic
+4. Automate TODO.md updates from BACKLOG.md
+5. Generate sprint planning reports
+**Estimated Effort:** 4 days
+## task_end
 
+---
 ## group_end
 
 ## group_begin [type:dev][priority:medium]

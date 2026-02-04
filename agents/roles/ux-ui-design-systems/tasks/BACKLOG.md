@@ -56,9 +56,51 @@ Global Rules:
 ## group_begin [type:dev][priority:high]
 ## ðŸš€ Development (Unscheduled) â€” High
 
+## task_begin
+### # [id:TASK-20260204-209][type:dev][priority:high][component:client] Build Design System Component Library
+**Status:** todo  
+**Description:** Create comprehensive design system component library with Radix UI primitives, consistent styling, and extensive documentation.  
+**Acceptance Criteria:**  
+- [ ] Core components (Button, Input, Select, Modal, etc.)
+- [ ] Consistent theming and variants
+- [ ] Component composition patterns
+- [ ] Accessibility built-in (WCAG AA)
+- [ ] Storybook documentation
+**Relevant Files:** `client/src/components/ui/`, `client/src/styles/`, `docs/`  
+**Relevant Documentation:** `docs/architecture/10_current_state/CURRENT_ARCHITECTURE_OVERVIEW.md`, `docs/user/README.md`  
+**Plan:**  
+1. Audit existing components and identify gaps
+2. Build missing core components with Radix UI
+3. Implement consistent theming system
+4. Ensure accessibility in all components
+5. Document in Storybook with examples
+**Estimated Effort:** 5 days
+## task_end
 
+---
 
+## task_begin
+### # [id:TASK-20260204-210][type:dev][priority:high][component:client] Implement Design Tokens System
+**Status:** todo  
+**Description:** Create design tokens system for colors, typography, spacing, and other design primitives with tooling for token generation and synchronization.  
+**Acceptance Criteria:**  
+- [ ] Design tokens defined (colors, typography, spacing, shadows)
+- [ ] Token generation from design files
+- [ ] CSS variable output
+- [ ] TypeScript type generation
+- [ ] Token documentation
+**Relevant Files:** `client/src/styles/`, `tailwind.config.ts`, `design-tokens/`  
+**Relevant Documentation:** `docs/architecture/10_current_state/CURRENT_ARCHITECTURE_OVERVIEW.md`, `docs/user/README.md`  
+**Plan:**  
+1. Define design token structure
+2. Extract tokens from current design
+3. Set up token generation tooling
+4. Generate CSS variables and TypeScript types
+5. Integrate tokens with Tailwind config
+**Estimated Effort:** 3 days
+## task_end
 
+---
 ## group_end
 
 ## group_begin [type:dev][priority:medium]

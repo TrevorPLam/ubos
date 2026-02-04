@@ -56,9 +56,51 @@ Global Rules:
 ## group_begin [type:dev][priority:high]
 ## ðŸš€ Development (Unscheduled) â€” High
 
+## task_begin
+### # [id:TASK-20260204-100][type:dev][priority:high][component:client] Implement WCAG 2.1 AA Keyboard Navigation
+**Status:** todo  
+**Description:** Ensure all interactive elements in the React application support full keyboard navigation per WCAG 2.1 AA standards. This includes proper focus management, skip links, focus indicators, and logical tab order across all pages and components.  
+**Acceptance Criteria:**  
+- [ ] All interactive elements are keyboard accessible (Tab, Enter, Space, Arrow keys)
+- [ ] Visible focus indicators on all focusable elements
+- [ ] Skip navigation links implemented on all pages
+- [ ] Focus trap implemented for modals and dialogs
+- [ ] Tab order follows logical reading flow
+**Relevant Files:** `client/src/components/*`, `client/src/pages/*`, `client/src/App.tsx`  
+**Relevant Documentation:** `docs/user/README.md`, `docs/architecture/30_cross_cutting/README.md`  
+**Plan:**  
+1. Audit all interactive components and pages for keyboard accessibility gaps
+2. Implement focus management utilities and hooks (useFocusTrap, useFocusVisible)
+3. Add skip navigation links to main layout component
+4. Update CSS to ensure visible focus indicators on all interactive elements
+5. Test keyboard navigation flow across all major user journeys
+**Estimated Effort:** 2 days
+## task_end
 
+---
 
+## task_begin
+### # [id:TASK-20260204-101][type:dev][priority:high][component:client] Add ARIA Labels and Landmarks to Core Components
+**Status:** todo  
+**Description:** Implement proper ARIA attributes (labels, roles, landmarks) throughout the application to improve screen reader compatibility. Focus on core navigation, forms, data tables, and dynamic content regions.  
+**Acceptance Criteria:**  
+- [ ] All navigation regions use appropriate ARIA landmarks (navigation, main, complementary)
+- [ ] Form inputs have associated labels or aria-label attributes
+- [ ] Dynamic content updates announce via aria-live regions
+- [ ] Data tables use proper ARIA table semantics
+- [ ] Icon buttons have aria-label for screen readers
+**Relevant Files:** `client/src/components/Layout.tsx`, `client/src/components/forms/*`, `client/src/components/ui/*`  
+**Relevant Documentation:** `docs/user/README.md`, `docs/architecture/30_cross_cutting/README.md`  
+**Plan:**  
+1. Audit component library for missing ARIA attributes using axe DevTools
+2. Add ARIA landmarks to layout components (header, nav, main, aside, footer)
+3. Update form components to ensure proper label associations
+4. Implement aria-live regions for toast notifications and dynamic content updates
+5. Validate with screen reader testing (NVDA/JAWS)
+**Estimated Effort:** 3 days
+## task_end
 
+---
 ## group_end
 
 ## group_begin [type:dev][priority:medium]

@@ -49,8 +49,51 @@ Global Rules:
 ## group_begin [type:infra][priority:high]
 ## ðŸ³ Infrastructure (Unscheduled) â€” High
 
+## task_begin
+### # [id:TASK-20260204-121][type:infra][priority:high][component:platform] Implement Database Connection Pooling Optimization
+**Status:** todo  
+**Description:** Optimize PostgreSQL connection pooling configuration to reduce database resource consumption and costs while maintaining performance and reliability.  
+**Acceptance Criteria:**  
+- [ ] Connection pool sizing analysis based on workload
+- [ ] pgBouncer or similar connection pooler configured
+- [ ] Connection pool monitoring and alerting
+- [ ] Idle connection timeout optimization
+- [ ] Connection pool metrics dashboard
+**Relevant Files:** `server/db/`, `server/index.ts`, `docs/architecture/`  
+**Relevant Documentation:** `docs/architecture/10_current_state/RUNTIME_COMPONENTS.md`, `docs/architecture/30_cross_cutting/PERFORMANCE_AND_LIMITS.md`  
+**Plan:**  
+1. Analyze current database connection patterns and resource usage
+2. Calculate optimal connection pool size based on workload
+3. Configure and deploy connection pooler (pgBouncer)
+4. Implement connection pool metrics and monitoring
+5. Test and tune configuration under load
+**Estimated Effort:** 2 days
+## task_end
 
+---
 
+## task_begin
+### # [id:TASK-20260204-122][type:infra][priority:high][component:platform] Implement Query Performance Monitoring and Optimization
+**Status:** todo  
+**Description:** Set up query performance monitoring to identify expensive queries and implement optimization strategies to reduce database costs.  
+**Acceptance Criteria:**  
+- [ ] Query performance monitoring enabled (pg_stat_statements)
+- [ ] Slow query identification and alerting
+- [ ] Query execution plan analysis tooling
+- [ ] Index recommendation system
+- [ ] Query optimization documentation
+**Relevant Files:** `server/db/`, `docs/architecture/`, `.github/workflows/`  
+**Relevant Documentation:** `docs/architecture/30_cross_cutting/PERFORMANCE_AND_LIMITS.md`, `docs/data/README.md`  
+**Plan:**  
+1. Enable and configure pg_stat_statements for query tracking
+2. Set up slow query log analysis and alerting
+3. Build query execution plan analysis workflow
+4. Implement automated index recommendations
+5. Document query optimization best practices
+**Estimated Effort:** 3 days
+## task_end
+
+---
 ## group_end
 
 ## group_begin [type:dev][priority:high]

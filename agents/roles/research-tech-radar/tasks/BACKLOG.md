@@ -56,9 +56,51 @@ Global Rules:
 ## group_begin [type:dev][priority:high]
 ## ðŸš€ Development (Unscheduled) â€” High
 
+## task_begin
+### # [id:TASK-20260204-193][type:dev][priority:high][component:research] Evaluate Modern React State Management Solutions
+**Status:** todo  
+**Description:** Research and evaluate modern React state management libraries (Zustand, Jotai, Recoil) to determine if migration from current approach would improve developer experience and performance.  
+**Acceptance Criteria:**  
+- [ ] Comparative analysis of state management options
+- [ ] Performance benchmarks
+- [ ] Developer experience assessment
+- [ ] Migration effort estimation
+- [ ] Recommendation with rationale
+**Relevant Files:** `docs/`, `docs/architecture/20_decisions/`  
+**Relevant Documentation:** `docs/architecture/10_current_state/CURRENT_ARCHITECTURE_OVERVIEW.md`, `docs/architecture/20_decisions/ADR_TEMPLATE.md`  
+**Plan:**  
+1. Research modern state management approaches
+2. Create proof-of-concept implementations
+3. Run performance benchmarks
+4. Assess developer experience and API design
+5. Document findings and recommendation
+**Estimated Effort:** 3 days
+## task_end
 
+---
 
+## task_begin
+### # [id:TASK-20260204-194][type:dev][priority:high][component:research] Investigate TypeScript 5.x Features and Migration Path
+**Status:** todo  
+**Description:** Research TypeScript 5.x new features and evaluate migration path from current version including breaking changes and benefits.  
+**Acceptance Criteria:**  
+- [ ] TypeScript 5.x feature analysis
+- [ ] Breaking changes assessment
+- [ ] Benefits quantification
+- [ ] Migration plan with risks
+- [ ] Recommendation document
+**Relevant Files:** `tsconfig.json`, `docs/architecture/`, `package.json`  
+**Relevant Documentation:** `docs/architecture/10_current_state/BUILD_AND_TOOLING.md`, `docs/architecture/20_decisions/README.md`  
+**Plan:**  
+1. Review TypeScript 5.x release notes and features
+2. Analyze breaking changes and compatibility
+3. Test new features in sandbox environment
+4. Quantify benefits (type safety, performance, DX)
+5. Create migration plan and recommendation
+**Estimated Effort:** 2 days
+## task_end
 
+---
 ## group_end
 
 ## group_begin [type:dev][priority:medium]

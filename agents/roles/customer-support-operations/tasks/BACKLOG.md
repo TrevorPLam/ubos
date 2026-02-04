@@ -56,9 +56,51 @@ Global Rules:
 ## group_begin [type:dev][priority:high]
 ## ðŸš€ Development (Unscheduled) â€” High
 
+## task_begin
+### # [id:TASK-20260204-125][type:dev][priority:high][component:server] Build Admin Support Dashboard for Customer Investigation
+**Status:** todo  
+**Description:** Create secure admin dashboard for support team to investigate customer issues including tenant data viewing, activity logs, and diagnostic tools.  
+**Acceptance Criteria:**  
+- [ ] Admin-only routes with strict RBAC enforcement
+- [ ] Tenant search and overview dashboard
+- [ ] Activity log viewer with filtering
+- [ ] User impersonation for troubleshooting (with audit trail)
+- [ ] Diagnostic tools (health checks, data integrity checks)
+**Relevant Files:** `server/routes/`, `client/src/pages/admin/`, `server/middleware/`  
+**Relevant Documentation:** `docs/architecture/30_cross_cutting/AUTH_AND_SESSION.md`, `docs/security/30-implementation-guides/ACCESS_CONTROL.md`  
+**Plan:**  
+1. Design admin dashboard architecture with strict access controls
+2. Implement tenant search and data viewing capabilities
+3. Build activity log viewer with filtering and export
+4. Add user impersonation with comprehensive audit logging
+5. Create diagnostic tools for common support scenarios
+**Estimated Effort:** 4 days
+## task_end
 
+---
 
+## task_begin
+### # [id:TASK-20260204-126][type:dev][priority:high][component:documentation] Create Customer Support Runbooks
+**Status:** todo  
+**Description:** Develop comprehensive support runbooks for common customer issues including troubleshooting steps, escalation procedures, and known workarounds.  
+**Acceptance Criteria:**  
+- [ ] Runbook for authentication and access issues
+- [ ] Data integrity and sync issues runbook
+- [ ] Performance degradation investigation guide
+- [ ] Billing and subscription issue procedures
+- [ ] Escalation paths and SLA definitions
+**Relevant Files:** `docs/user/`, `docs/security/50-incident-response/`  
+**Relevant Documentation:** `docs/security/50-incident-response/INCIDENT_RESPONSE.md`, `docs/architecture/README.md`  
+**Plan:**  
+1. Identify top customer support issue categories
+2. Create troubleshooting runbooks for each category
+3. Document diagnostic queries and tools for investigation
+4. Define escalation procedures and SLAs
+5. Create customer-facing communication templates
+**Estimated Effort:** 3 days
+## task_end
 
+---
 ## group_end
 
 ## group_begin [type:dev][priority:medium]

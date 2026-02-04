@@ -56,9 +56,51 @@ Global Rules:
 ## group_begin [type:dev][priority:high]
 ## ðŸš€ Development (Unscheduled) â€” High
 
+## task_begin
+### # [id:TASK-20260204-105][type:dev][priority:high][component:server] Implement Cross-Domain Conflict Resolution Framework
+**Status:** todo  
+**Description:** Build a framework for resolving conflicts when multiple domains have competing requirements or overlapping concerns. This includes dependency analysis, impact assessment, and decision documentation capabilities.  
+**Acceptance Criteria:**  
+- [ ] Conflict detection mechanism for cross-domain dependencies
+- [ ] Impact assessment workflow with stakeholder input
+- [ ] Decision documentation template integrated with ADR process
+- [ ] Tradeoff analysis tooling for technical decisions
+- [ ] Conflict resolution history tracking
+**Relevant Files:** `server/`, `docs/architecture/20_decisions/`  
+**Relevant Documentation:** `docs/architecture/20_decisions/ADR_INDEX.md`, `docs/architecture/README.md`  
+**Plan:**  
+1. Design conflict detection data model and API
+2. Implement decision documentation workflow integrated with ADR template
+3. Build impact assessment tools for analyzing cross-domain changes
+4. Create tradeoff analysis templates for common architectural decisions
+5. Develop conflict resolution tracking and reporting
+**Estimated Effort:** 4 days
+## task_end
 
+---
 
+## task_begin
+### # [id:TASK-20260204-106][type:dev][priority:high][component:workflow] Build Domain Boundary Violation Detection
+**Status:** todo  
+**Description:** Implement automated detection of domain boundary violations such as cross-domain database queries, direct imports between domains, and bypass of workflow engine for cross-domain operations.  
+**Acceptance Criteria:**  
+- [ ] Static analysis tool to detect cross-domain imports
+- [ ] Database query analyzer to flag cross-domain joins
+- [ ] CI pipeline integration for boundary violation checks
+- [ ] Violation reporting with remediation suggestions
+- [ ] Whitelist mechanism for approved cross-domain interactions
+**Relevant Files:** `server/`, `.github/workflows/`, `script/`  
+**Relevant Documentation:** `docs/architecture/10_current_state/CURRENT_ARCHITECTURE_OVERVIEW.md`, `docs/architecture/50_deployment/CI_CD.md`  
+**Plan:**  
+1. Build static analysis tool to scan for cross-domain imports
+2. Implement database query parser to detect cross-schema joins
+3. Create violation reporting format with actionable remediation steps
+4. Integrate checks into CI pipeline with fail-fast on violations
+5. Document approved cross-domain patterns and whitelist mechanism
+**Estimated Effort:** 3 days
+## task_end
 
+---
 ## group_end
 
 ## group_begin [type:dev][priority:medium]

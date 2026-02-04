@@ -56,17 +56,124 @@ Global Rules:
 ## group_begin [type:dev][priority:high]
 ## ðŸš€ Development (Unscheduled) â€” High
 
+## task_begin
+### # [id:TASK-20260204-147][type:dev][priority:high][component:server] Implement CRM Contact and Client Management APIs
+**Status:** todo  
+**Description:** Build core CRM functionality including contact and client CRUD operations, relationship management, custom fields, and activity tracking with proper tenant isolation.  
+**Acceptance Criteria:**  
+- [ ] Contact CRUD API with tenant scoping
+- [ ] Client (organization) CRUD API
+- [ ] Contact-Client relationship management
+- [ ] Custom field support for extensibility
+- [ ] Activity timeline integration
+**Relevant Files:** `server/routes/crm/`, `server/db/schema/crm/`, `shared/schema/crm/`  
+**Relevant Documentation:** `docs/api/crm/README.md`, `docs/data/20_entities/Contact.md`  
+**Plan:**  
+1. Design CRM schema with contacts, clients, and relationships
+2. Implement contact CRUD with tenant scoping and RLS
+3. Build client (organization) management APIs
+4. Add custom field support for flexible data model
+5. Integrate with timeline for activity tracking
+**Estimated Effort:** 4 days
+## task_end
 
+---
 
+## task_begin
+### # [id:TASK-20260204-148][type:dev][priority:high][component:server] Build Project Management Domain APIs
+**Status:** todo  
+**Description:** Implement project management functionality including projects, tasks, milestones, time tracking, and resource allocation with workflow integration.  
+**Acceptance Criteria:**  
+- [ ] Project CRUD API with tenant scoping
+- [ ] Task management with status workflows
+- [ ] Milestone tracking and dependencies
+- [ ] Time tracking and resource allocation
+- [ ] Integration with workflow engine for approvals
+**Relevant Files:** `server/routes/projects/`, `server/db/schema/projects/`, `shared/schema/projects/`  
+**Relevant Documentation:** `docs/api/projects/README.md`, `docs/data/20_entities/Task.md`  
+**Plan:**  
+1. Design project management schema (projects, tasks, milestones)
+2. Implement project CRUD with tenant isolation
+3. Build task management with customizable status workflows
+4. Add time tracking and resource allocation features
+5. Integrate with workflow engine for approval processes
+**Estimated Effort:** 5 days
+## task_end
 
+---
+
+## task_begin
+### # [id:TASK-20260204-149][type:dev][priority:high][component:server] Implement Revenue Management (AR/AP) APIs
+**Status:** todo  
+**Description:** Build revenue management functionality including invoices, bills, payments, and accounts receivable/payable tracking with proper financial controls.  
+**Acceptance Criteria:**  
+- [ ] Invoice CRUD with line items and tax calculations
+- [ ] Bill management for accounts payable
+- [ ] Payment tracking and reconciliation
+- [ ] Aging reports for AR/AP
+- [ ] Integration with accounting ledger
+**Relevant Files:** `server/routes/revenue/`, `server/db/schema/revenue/`, `shared/schema/revenue/`  
+**Relevant Documentation:** `docs/api/revenue/README.md`, `docs/data/20_entities/Invoice.md`, `docs/data/20_entities/Bill.md`  
+**Plan:**  
+1. Design revenue schema (invoices, bills, payments, line items)
+2. Implement invoice CRUD with tax calculation logic
+3. Build bill management and approval workflows
+4. Add payment tracking and reconciliation features
+5. Create aging reports and integrate with ledger
+**Estimated Effort:** 5 days
+## task_end
+
+---
 ## group_end
 
 ## group_begin [type:dev][priority:medium]
 ## ðŸš€ Development (Unscheduled) â€” Medium
 
+## task_begin
+### # [id:TASK-20260204-150][type:dev][priority:medium][component:server] Build Communications and Email Tracking Domain
+**Status:** todo  
+**Description:** Implement communications domain for email tracking, SMS, and internal messaging with contact history and workflow integration.  
+**Acceptance Criteria:**  
+- [ ] Email tracking with send/receive/open/click events
+- [ ] SMS messaging integration
+- [ ] Internal messaging and comments
+- [ ] Communication history on contact timeline
+- [ ] Template management for emails
+**Relevant Files:** `server/routes/communications/`, `server/db/schema/communications/`, `shared/schema/communications/`  
+**Relevant Documentation:** `docs/api/communications/README.md`, `docs/api/timeline/README.md`  
+**Plan:**  
+1. Design communications schema (emails, SMS, templates)
+2. Implement email tracking with event capture
+3. Build SMS messaging integration
+4. Add template management for common emails
+5. Integrate communication history with timeline
+**Estimated Effort:** 3 days
+## task_end
 
+---
 
+## task_begin
+### # [id:TASK-20260204-151][type:dev][priority:medium][component:server] Implement File Management and Document Storage
+**Status:** todo  
+**Description:** Build file management domain with secure file upload, storage in S3, presigned URLs, versioning, and access control.  
+**Acceptance Criteria:**  
+- [ ] File upload API with virus scanning
+- [ ] S3 storage integration with presigned URLs
+- [ ] File versioning and metadata
+- [ ] Access control and sharing permissions
+- [ ] File search and organization (folders/tags)
+**Relevant Files:** `server/routes/files/`, `server/db/schema/files/`, `shared/schema/files/`  
+**Relevant Documentation:** `docs/api/files/README.md`, `docs/security/30-implementation-guides/DATA_PROTECTION.md`  
+**Plan:**  
+1. Design file management schema with metadata and versions
+2. Implement secure file upload with virus scanning
+3. Integrate S3 storage with presigned URL generation
+4. Build access control and sharing features
+5. Add file search, organization, and lifecycle management
+**Estimated Effort:** 4 days
+## task_end
 
+---
 ## group_end
 
 ## group_begin [type:quality][priority:medium]
