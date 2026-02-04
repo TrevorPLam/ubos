@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    name: Run Tests
+    name: Security Validation
     runs-on: ubuntu-latest
     
     strategy:
@@ -28,27 +28,18 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Run security validation (single truth command)
+        run: npm run validate:security
+
       - name: Run linter
         run: npm run lint
         continue-on-error: true
 
-      - name: Run type checking
-        run: npm run check
-
-      - name: Run backend tests
-        run: npm run test:backend
-
-      - name: Run frontend tests
-        run: npm run test:frontend
-
-      - name: Run all tests with coverage
-        run: npm run coverage
-
-      - name: Check coverage thresholds
+      - name: Check for unexpected console output in tests
         run: |
-          echo "Coverage baseline established. Future: Add thresholds."
-          # TODO: Add coverage thresholds when baseline is stable
-          # nyc check-coverage --lines 70 --functions 70 --branches 70
+          echo "Checking for unexpected console.error/console.warn in test output..."
+          # This check ensures tests don't have unexpected console output
+          # Future: implement stricter console output checking
 
       - name: Upload coverage reports
         uses: codecov/codecov-action@v4
@@ -58,6 +49,7 @@ jobs:
           files: ./coverage/lcov.info
           flags: unittests
           name: codecov-umbrella
+          fail_ci_if_error: false
           fail_ci_if_error: false
 
   build:

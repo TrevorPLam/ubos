@@ -18,6 +18,8 @@
     "test:frontend": "vitest run --config vitest.config.client.ts",
     "test:ci": "vitest run --coverage",
     "coverage": "vitest run --coverage",
+    "validate:security": "npm run check && npm run test:backend && npm run test:frontend && npm run coverage && npm run build && npm run security:check-tests",
+    "security:check-tests": "node -e \"const fs=require('fs');const glob=require('glob');const files=glob.sync('tests/**/*.test.ts');let hasOnly=false;files.forEach(f=>{const content=fs.readFileSync(f,'utf8');if(/\\.(only|skip)\\(/.test(content)){console.error('ERROR: Found .only() or .skip() in '+f);hasOnly=true;}});if(hasOnly)process.exit(1);console.log('✓ No focused/skipped tests found');\"",
     "postinstall": "patch-package"
   },
   "dependencies": {
@@ -55,7 +57,9 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
+    "csurf": "^1.11.0",
     "date-fns": "^3.6.0",
     "drizzle-orm": "^0.39.3",
     "drizzle-zod": "^0.7.0",
