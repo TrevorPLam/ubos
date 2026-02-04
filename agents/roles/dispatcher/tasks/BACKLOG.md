@@ -56,9 +56,51 @@ Global Rules:
 ## group_begin [type:dev][priority:high]
 ## ðŸš€ Development (Unscheduled) â€” High
 
+## task_begin
+### # [id:TASK-20260204-139][type:dev][priority:high][component:server] Implement Outbox Pattern for Event-Driven Architecture
+**Status:** todo  
+**Description:** Build transactional outbox pattern for reliable event publishing ensuring events are never lost and domain events are decoupled from message delivery.  
+**Acceptance Criteria:**  
+- [ ] Outbox table schema and models
+- [ ] Domain event writing to outbox within transactions
+- [ ] Dispatcher worker to process outbox and publish events
+- [ ] At-least-once delivery guarantee
+- [ ] Dead letter queue for failed events
+**Relevant Files:** `server/db/`, `server/`, `docs/architecture/`  
+**Relevant Documentation:** `docs/architecture/40_interfaces/EVENTS_AND_JOBS.md`, `docs/data/README.md`  
+**Plan:**  
+1. Design outbox table schema with event metadata
+2. Implement event writing to outbox within domain transactions
+3. Build dispatcher worker to poll outbox and publish events
+4. Implement retry logic and dead letter queue
+5. Add monitoring for outbox processing latency
+**Estimated Effort:** 3 days
+## task_end
 
+---
 
+## task_begin
+### # [id:TASK-20260204-140][type:dev][priority:high][component:server] Build Background Job Queue System
+**Status:** todo  
+**Description:** Implement background job queue for async processing of long-running tasks including email sending, file processing, and scheduled jobs.  
+**Acceptance Criteria:**  
+- [ ] Job queue infrastructure (BullMQ or similar)
+- [ ] Job definition and scheduling API
+- [ ] Worker process for job execution
+- [ ] Job retry and failure handling
+- [ ] Job monitoring dashboard
+**Relevant Files:** `server/`, `server/db/`, `docs/architecture/`  
+**Relevant Documentation:** `docs/architecture/40_interfaces/EVENTS_AND_JOBS.md`, `docs/architecture/10_current_state/RUNTIME_COMPONENTS.md`  
+**Plan:**  
+1. Set up job queue infrastructure (BullMQ with Redis)
+2. Create job definition API and job types
+3. Implement worker process with job handlers
+4. Build retry logic with exponential backoff
+5. Create job monitoring dashboard and metrics
+**Estimated Effort:** 4 days
+## task_end
 
+---
 ## group_end
 
 ## group_begin [type:dev][priority:medium]

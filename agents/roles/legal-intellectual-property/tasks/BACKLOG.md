@@ -91,6 +91,76 @@ Global Rules:
 ## group_end
 
 ## group_begin [type:security][priority:medium]
+## task_begin
+### # [id:TASK-20260204-223][type:security][priority:medium][component:compliance] Conduct open source license compliance audit
+**Status:** todo  
+**Description:** Audit all dependencies for license compliance, identify GPL/AGPL risks, and create license attribution documentation.  
+**Acceptance Criteria:**  
+- [ ] Complete SBOM generated
+- [ ] All licenses documented
+- [ ] GPL/AGPL dependencies identified
+- [ ] License policy documented
+- [ ] Third-party attribution file created
+**Relevant Files:** `THIRD_PARTY_LICENSES.md`, `docs/standards/LICENSE_POLICY.md`, `package.json`  
+**Relevant Documentation:** `docs/security/40-compliance/LICENSE_COMPLIANCE.md` — License compliance, `docs/standards/LEGAL.md` — Legal guidelines  
+**Plan:**  
+1. Generate SBOM using npm ls or sbom-tool
+2. Audit all dependency licenses
+3. Identify copyleft and incompatible licenses
+4. Define acceptable license policy
+5. Create third-party attribution file
+6. Document license review process
+**Estimated Effort:** 1 week
+## task_end
+
+---
+
+## task_begin
+### # [id:TASK-20260204-224][type:docs][priority:low][component:legal] Create Contributor License Agreement (CLA) process
+**Status:** todo  
+**Description:** Establish CLA process for external contributions to protect intellectual property and ensure proper licensing.  
+**Acceptance Criteria:**  
+- [ ] CLA document created
+- [ ] CLA bot configured for PRs
+- [ ] Contributor guidelines updated
+- [ ] CLA signatures tracked
+- [ ] Legal review completed
+**Relevant Files:** `CLA.md`, `.github/workflows/cla.yml`, `CONTRIBUTING.md`  
+**Relevant Documentation:** `docs/standards/LEGAL.md` — Legal requirements, `CONTRIBUTING.md` — Contribution guide  
+**Plan:**  
+1. Draft CLA document (consult legal if needed)
+2. Set up CLA Assistant or similar tool
+3. Configure GitHub Action for CLA checking
+4. Update CONTRIBUTING.md with CLA requirements
+5. Test CLA workflow with sample PR
+**Estimated Effort:** 3-5 days
+## task_end
+
+---
+
+## task_begin
+### # [id:TASK-20260204-225][type:docs][priority:low][component:legal] Document intellectual property and patent policy
+**Status:** todo  
+**Description:** Create IP policy documenting ownership, invention disclosure, patent processes, and copyright assignment.  
+**Acceptance Criteria:**  
+- [ ] IP ownership policy documented
+- [ ] Invention disclosure process defined
+- [ ] Patent application procedures documented
+- [ ] Copyright notices standardized
+- [ ] Trade secret protection guidelines created
+**Relevant Files:** `docs/standards/IP_POLICY.md`, `docs/standards/COPYRIGHT.md`  
+**Relevant Documentation:** `docs/standards/LEGAL.md` — Legal framework, `docs/standards/IP_POLICY.md` — IP policy  
+**Plan:**  
+1. Define IP ownership policy (work-for-hire, assignments)
+2. Create invention disclosure procedure
+3. Document patent application process
+4. Standardize copyright notices across codebase
+5. Define trade secret protection guidelines
+**Estimated Effort:** 1 week
+## task_end
+
+---
+
 ## ðŸ” Security â€” MEDIUM
 
 

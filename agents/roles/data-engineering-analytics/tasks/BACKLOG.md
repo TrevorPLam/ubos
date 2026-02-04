@@ -49,16 +49,78 @@ Global Rules:
 ## group_begin [type:infra][priority:high]
 ## ðŸ³ Infrastructure (Unscheduled) â€” High
 
+## task_begin
+### # [id:TASK-20260204-130][type:infra][priority:high][component:platform] Set Up Data Lake for Raw Event Storage
+**Status:** todo  
+**Description:** Implement data lake infrastructure for storing raw event data with partitioning, compression, and query capabilities for exploratory analysis.  
+**Acceptance Criteria:**  
+- [ ] S3-compatible object storage configured
+- [ ] Event data partitioning strategy (by date/tenant)
+- [ ] Data compression and serialization format (Parquet/Avro)
+- [ ] Query interface for data lake (Presto/Athena)
+- [ ] Data retention and lifecycle policies
+**Relevant Files:** `server/`, `docs/architecture/`, `docs/data/`  
+**Relevant Documentation:** `docs/data/10_current_state/DATA_SOURCES.md`, `docs/architecture/50_deployment/DEPLOYMENT_TOPOLOGY.md`  
+**Plan:**  
+1. Design data lake architecture and storage structure
+2. Configure S3-compatible storage with partitioning strategy
+3. Implement event streaming to data lake with compression
+4. Set up query interface (Presto/Athena) for SQL access
+5. Configure data retention and lifecycle policies
+**Estimated Effort:** 3 days
+## task_end
 
-
+---
 ## group_end
 
 ## group_begin [type:dev][priority:high]
 ## ðŸš€ Development (Unscheduled) â€” High
 
+## task_begin
+### # [id:TASK-20260204-128][type:dev][priority:high][component:server] Build ETL Pipeline for Analytics Data Warehouse
+**Status:** todo  
+**Description:** Implement ETL pipeline to extract operational data, transform for analytics, and load into data warehouse for reporting and business intelligence.  
+**Acceptance Criteria:**  
+- [ ] ETL job scheduler and orchestration
+- [ ] Data extraction from operational database
+- [ ] Transformation logic for denormalization and aggregation
+- [ ] Data warehouse schema design and implementation
+- [ ] Incremental load and delta processing
+**Relevant Files:** `server/`, `server/db/`, `docs/data/`, `script/`  
+**Relevant Documentation:** `docs/data/README.md`, `docs/data/10_current_state/DATA_SOURCES.md`  
+**Plan:**  
+1. Design data warehouse schema for analytics (star/snowflake)
+2. Implement data extraction from operational schemas
+3. Build transformation logic for aggregations and denormalization
+4. Create incremental load mechanism with change data capture
+5. Set up job scheduling and error handling
+**Estimated Effort:** 5 days
+## task_end
 
+---
 
+## task_begin
+### # [id:TASK-20260204-129][type:dev][priority:high][component:server] Implement Business Metrics Collection and Aggregation
+**Status:** todo  
+**Description:** Build system for collecting and aggregating business metrics (revenue, engagement, conversion) with time-series storage for trending and dashboards.  
+**Acceptance Criteria:**  
+- [ ] Metrics definition framework
+- [ ] Time-series data collection and storage
+- [ ] Metric aggregation at multiple time granularities
+- [ ] Metric query API for dashboards
+- [ ] Historical metric retention policies
+**Relevant Files:** `server/`, `server/db/`, `docs/data/`  
+**Relevant Documentation:** `docs/data/README.md`, `docs/api/README.md`  
+**Plan:**  
+1. Define business metrics taxonomy and data model
+2. Implement metrics collection instrumentation in domain services
+3. Build time-series storage for metric data
+4. Create aggregation jobs for different time granularities
+5. Implement metric query API with filtering and grouping
+**Estimated Effort:** 4 days
+## task_end
 
+---
 ## group_end
 
 ## group_begin [type:dev][priority:medium]

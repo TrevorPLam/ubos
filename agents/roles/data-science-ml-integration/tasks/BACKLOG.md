@@ -56,9 +56,51 @@ Global Rules:
 ## group_begin [type:dev][priority:high]
 ## ðŸš€ Development (Unscheduled) â€” High
 
+## task_begin
+### # [id:TASK-20260204-132][type:dev][priority:high][component:server] Build ML Model Inference API Infrastructure
+**Status:** todo  
+**Description:** Create infrastructure for deploying and serving machine learning models via API including model versioning, A/B testing, and performance monitoring.  
+**Acceptance Criteria:**  
+- [ ] ML model serving framework (TensorFlow Serving or similar)
+- [ ] Model versioning and deployment pipeline
+- [ ] A/B testing framework for model experiments
+- [ ] Inference latency monitoring and alerting
+- [ ] Model performance metrics tracking
+**Relevant Files:** `server/`, `docs/architecture/40_interfaces/`, `.github/workflows/`  
+**Relevant Documentation:** `docs/architecture/40_interfaces/API_SURFACES.md`, `docs/architecture/30_cross_cutting/PERFORMANCE_AND_LIMITS.md`  
+**Plan:**  
+1. Design ML inference API architecture and endpoints
+2. Set up model serving infrastructure with versioning
+3. Implement A/B testing framework for model experiments
+4. Build inference monitoring with latency and accuracy metrics
+5. Create model deployment pipeline from training to production
+**Estimated Effort:** 4 days
+## task_end
 
+---
 
+## task_begin
+### # [id:TASK-20260204-133][type:dev][priority:high][component:server] Implement Feature Store for ML Features
+**Status:** todo  
+**Description:** Build feature store to manage, version, and serve ML features consistently across training and inference pipelines with low latency access.  
+**Acceptance Criteria:**  
+- [ ] Feature definition and registration system
+- [ ] Feature computation and materialization pipeline
+- [ ] Low-latency feature serving API
+- [ ] Feature versioning and lineage tracking
+- [ ] Feature monitoring and drift detection
+**Relevant Files:** `server/`, `server/db/`, `docs/data/`  
+**Relevant Documentation:** `docs/data/README.md`, `docs/api/README.md`  
+**Plan:**  
+1. Design feature store architecture and data model
+2. Implement feature definition and registration API
+3. Build feature computation and materialization jobs
+4. Create low-latency feature serving layer (Redis cache)
+5. Implement feature monitoring and drift detection
+**Estimated Effort:** 5 days
+## task_end
 
+---
 ## group_end
 
 ## group_begin [type:dev][priority:medium]

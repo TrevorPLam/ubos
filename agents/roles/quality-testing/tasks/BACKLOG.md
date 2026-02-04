@@ -129,6 +129,122 @@ Global Rules:
 
 ## group_end
 
+## task_begin
+### # [id:TASK-20260204-263][type:test][priority:high][component:tests] Establish comprehensive unit testing strategy
+**Status:** todo  
+**Description:** Implement systematic unit testing coverage for all business logic, service layers, and utilities with clear standards, mocking strategies, and coverage goals to ensure code correctness.  
+**Acceptance Criteria:**  
+- [ ] Unit test coverage >80% for server business logic (services, utilities)
+- [ ] Unit test coverage >75% for client components and hooks
+- [ ] Test naming conventions documented (describe/it patterns)
+- [ ] Mocking strategy established (DB mocks, API mocks, time mocks)
+- [ ] Fast test suite (<30s for unit tests)
+**Relevant Files:** `tests/backend/`, `tests/frontend/`, `vitest.config.ts`, `vitest.config.client.ts`  
+**Relevant Documentation:** `docs/tests/README.md` — Testing standards, `docs/tests/UNIT_TESTING.md` (new) — Unit test guidelines  
+**Plan:**  
+1. Audit existing unit test coverage and identify gaps
+2. Create unit test templates for common patterns (services, hooks, utilities)
+3. Implement mocking infrastructure (DB fixtures, API mocks)
+4. Write unit tests for uncovered business logic (target 80%+ coverage)
+5. Document unit testing standards and best practices
+**Estimated Effort:** 3 weeks
+## task_end
+
+---
+
+## task_begin
+### # [id:TASK-20260204-264][type:test][priority:high][component:tests] Build integration testing infrastructure
+**Status:** todo  
+**Description:** Establish integration testing infrastructure with test database management, API contract testing, and workflow validation to ensure components interact correctly.  
+**Acceptance Criteria:**  
+- [ ] Test database setup automated (migrations, seed data, teardown)
+- [ ] Integration tests for all API endpoints (happy path + error cases)
+- [ ] Workflow engine integration tests (multi-step processes)
+- [ ] External service mocking (email, payment, webhooks)
+- [ ] Integration test suite completes in <5 minutes
+**Relevant Files:** `tests/backend/integration/`, `tests/fixtures/`, `tests/utils/testDb.ts` (new)  
+**Relevant Documentation:** `docs/tests/README.md` — Testing infrastructure, `docs/tests/INTEGRATION_TESTING.md` (new) — Integration test guide  
+**Plan:**  
+1. Create test database setup/teardown utilities (Docker PostgreSQL)
+2. Build test data fixtures and seed scripts
+3. Write integration tests for all API endpoints (CRUD operations)
+4. Implement workflow integration tests (end-to-end processes)
+5. Document integration testing patterns and common pitfalls
+**Estimated Effort:** 3 weeks
+## task_end
+
+---
+
+## task_begin
+### # [id:TASK-20260204-265][type:test][priority:high][component:tests] Implement E2E testing with Playwright
+**Status:** todo  
+**Description:** Establish end-to-end testing infrastructure using Playwright to validate critical user journeys from UI through to database, ensuring the complete system works as expected.  
+**Acceptance Criteria:**  
+- [ ] Playwright configured for E2E testing (headless + headed modes)
+- [ ] E2E tests for critical user journeys (auth, CRM, projects, invoicing)
+- [ ] Test environment automation (start server, seed data, cleanup)
+- [ ] Visual regression testing integrated for key screens
+- [ ] E2E test suite completes in <10 minutes
+**Relevant Files:** `tests/e2e/` (new), `playwright.config.ts` (new), `package.json`  
+**Relevant Documentation:** `docs/tests/README.md` — Testing strategy, `docs/tests/E2E_TESTING.md` (new) — E2E test guide  
+**Plan:**  
+1. Install and configure Playwright (browsers, reporters)
+2. Create E2E test utilities (login helpers, page objects)
+3. Write E2E tests for critical user journeys (5-10 key flows)
+4. Integrate visual regression testing (Percy or Playwright screenshots)
+5. Document E2E testing patterns and debugging strategies
+**Estimated Effort:** 2 weeks
+## task_end
+
+---
+
+## task_begin
+### # [id:TASK-20260204-266][type:test][priority:high][component:repo] Establish test coverage goals and enforcement
+**Status:** todo  
+**Description:** Define test coverage targets, configure coverage reporting, and enforce coverage thresholds in CI to prevent regression and ensure all new code is adequately tested.  
+**Acceptance Criteria:**  
+- [ ] Coverage thresholds defined (80% lines, 75% branches, 70% functions)
+- [ ] Coverage reporting configured in CI with trend tracking
+- [ ] Coverage enforcement enabled (CI fails if below threshold)
+- [ ] Exclusion rules documented (auto-generated code, types, configs)
+- [ ] Coverage reports published and accessible (HTML report artifacts)
+**Relevant Files:** `vitest.config.ts`, `vitest.config.client.ts`, `.github/workflows/test.yml`  
+**Relevant Documentation:** `docs/tests/README.md` — Test coverage standards, `docs/tests/COVERAGE.md` (new) — Coverage guide  
+**Plan:**  
+1. Define coverage targets by component (server, client, shared)
+2. Configure vitest coverage reporter (v8 with HTML output)
+3. Add coverage thresholds to vitest configs (fail on < 80%)
+4. Configure CI to upload coverage reports as artifacts
+5. Document coverage strategy and how to improve coverage
+**Estimated Effort:** 1 week
+## task_end
+
+---
+
+## task_begin
+### # [id:TASK-20260204-267][type:test][priority:medium][component:tests] Implement contract testing for APIs
+**Status:** todo  
+**Description:** Establish contract testing using OpenAPI specs and Pact to ensure API contracts are maintained, validated, and versioned properly between frontend and backend teams.  
+**Acceptance Criteria:**  
+- [ ] OpenAPI 3.x specification generated from code (routes + schemas)
+- [ ] Contract validation tests ensure API matches spec (request/response shapes)
+- [ ] Contract tests run in CI (fail on breaking changes without version bump)
+- [ ] API versioning strategy documented (deprecation timeline)
+- [ ] Breaking change detection automated (OpenAPI diff tool)
+**Relevant Files:** `docs/api/openapi.yaml`, `tests/contract/` (new), `server/routes.ts`  
+**Relevant Documentation:** `docs/api/README.md` — API documentation, `docs/tests/CONTRACT_TESTING.md` (new) — Contract testing guide  
+**Plan:**  
+1. Generate OpenAPI spec from Zod schemas and Express routes
+2. Implement contract validation tests (request/response against spec)
+3. Add OpenAPI diff check in CI (detect breaking changes)
+4. Document API versioning and deprecation policies
+5. Create contract test templates for new endpoints
+**Estimated Effort:** 2 weeks
+## task_end
+
+---
+
+
 ## group_begin [type:devex][priority:medium]
 ## ðŸ§­ Developer Experience (Unscheduled) â€” Medium
 

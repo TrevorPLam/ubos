@@ -56,9 +56,51 @@ Global Rules:
 ## group_begin [type:dev][priority:high]
 ## ðŸš€ Development (Unscheduled) â€” High
 
+## task_begin
+### # [id:TASK-20260204-168][type:dev][priority:high][component:server] Implement Database Schema Migration Strategy
+**Status:** todo  
+**Description:** Establish robust database migration strategy using Drizzle migrations with rollback capabilities, versioning, and zero-downtime deployment support.  
+**Acceptance Criteria:**  
+- [ ] Drizzle migration setup with versioning
+- [ ] Migration scripts with up/down (rollback) support
+- [ ] Zero-downtime migration patterns (expand-contract)
+- [ ] Migration testing in staging environments
+- [ ] Migration documentation and runbooks
+**Relevant Files:** `server/db/`, `server/db/migrations/`, `docs/data/`  
+**Relevant Documentation:** `docs/data/README.md`, `docs/architecture/50_deployment/DEPLOYMENT_TOPOLOGY.md`  
+**Plan:**  
+1. Configure Drizzle migrations with versioning
+2. Document migration patterns (expand-contract for zero-downtime)
+3. Create migration templates and examples
+4. Set up migration testing workflow in staging
+5. Write migration runbook with rollback procedures
+**Estimated Effort:** 2 days
+## task_end
 
+---
 
+## task_begin
+### # [id:TASK-20260204-169][type:dev][priority:high][component:server] Build API Versioning Infrastructure
+**Status:** todo  
+**Description:** Implement API versioning strategy allowing multiple API versions to coexist for backward compatibility during migrations and deprecation cycles.  
+**Acceptance Criteria:**  
+- [ ] API versioning via URL path (/v1/, /v2/)
+- [ ] Version routing and controller organization
+- [ ] Deprecation warning headers for old versions
+- [ ] API version documentation and changelog
+- [ ] Version sunset policy and timeline
+**Relevant Files:** `server/routes/`, `server/`, `docs/api/`  
+**Relevant Documentation:** `docs/api/README.md`, `docs/api/changelog.md`  
+**Plan:**  
+1. Design API versioning strategy (URL-based)
+2. Implement version routing middleware
+3. Organize controllers by API version
+4. Add deprecation warning headers
+5. Document versioning policy and migration guides
+**Estimated Effort:** 3 days
+## task_end
 
+---
 ## group_end
 
 ## group_begin [type:dev][priority:medium]

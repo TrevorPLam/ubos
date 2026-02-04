@@ -76,6 +76,78 @@ Global Rules:
 ## group_end
 
 ## group_begin [type:security][priority:high]
+## task_begin
+### # [id:TASK-20260204-205][type:security][priority:high][component:compliance] Implement GDPR compliance controls and DSAR automation
+**Status:** todo  
+**Description:** Build GDPR compliance controls including data subject access requests (DSAR), right to erasure, data portability, and consent management.  
+**Acceptance Criteria:**  
+- [ ] DSAR API for data export implemented
+- [ ] Right to erasure workflow created
+- [ ] Data portability export in machine-readable format
+- [ ] Consent management system implemented
+- [ ] Privacy policy and terms integrated
+**Relevant Files:** `server/routes/privacy/`, `server/services/gdpr/`, `shared/schema/privacy/`  
+**Relevant Documentation:** `docs/security/40-compliance/GDPR.md` — GDPR requirements, `docs/api/privacy/README.md` — Privacy API  
+**Plan:**  
+1. Design DSAR workflow and data export format
+2. Implement data subject access request API
+3. Build right to erasure with cascade deletion
+4. Create data portability export functionality
+5. Implement consent management and audit trail
+6. Add privacy policy acceptance tracking
+**Estimated Effort:** 2-3 weeks
+## task_end
+
+---
+
+## task_begin
+### # [id:TASK-20260204-206][type:security][priority:high][component:compliance] Implement SOC 2 Type II compliance controls
+**Status:** todo  
+**Description:** Build technical controls for SOC 2 Type II compliance including access controls, change management, system operations, and monitoring.  
+**Acceptance Criteria:**  
+- [ ] Access control audit logs implemented
+- [ ] Change management workflow documented
+- [ ] System availability monitoring in place
+- [ ] Incident response procedures documented
+- [ ] Evidence collection automated
+**Relevant Files:** `server/middleware/audit.ts`, `server/services/compliance/`, `docs/security/40-compliance/SOC2.md`  
+**Relevant Documentation:** `docs/security/40-compliance/SOC2.md` — SOC 2 requirements, `docs/security/50-incident-response/INCIDENT_RESPONSE.md` — IR procedures  
+**Plan:**  
+1. Map SOC 2 Trust Services Criteria to technical controls
+2. Implement audit logging for all access and changes
+3. Set up system monitoring and alerting
+4. Document change management and incident response
+5. Create evidence collection automation
+6. Perform gap analysis and remediation
+**Estimated Effort:** 3-4 weeks
+## task_end
+
+---
+
+## task_begin
+### # [id:TASK-20260204-207][type:security][priority:high][component:compliance] Implement HIPAA compliance controls for PHI protection
+**Status:** todo  
+**Description:** Build HIPAA compliance controls for protected health information (PHI) including encryption, access controls, audit logs, and breach notification.  
+**Acceptance Criteria:**  
+- [ ] PHI encryption at rest and in transit
+- [ ] PHI access audit logs implemented
+- [ ] Minimum necessary access controls
+- [ ] Business Associate Agreements (BAA) workflow
+- [ ] Breach notification procedures documented
+**Relevant Files:** `server/middleware/phi.ts`, `server/services/encryption/`, `docs/security/40-compliance/HIPAA.md`  
+**Relevant Documentation:** `docs/security/40-compliance/HIPAA.md` — HIPAA requirements, `docs/security/10-controls/ENCRYPTION.md` — Encryption controls  
+**Plan:**  
+1. Identify all PHI data fields and flows
+2. Implement PHI encryption at rest and in transit
+3. Add PHI-specific access controls and logging
+4. Create minimum necessary access enforcement
+5. Document BAA workflow and breach notification
+6. Implement audit log retention (6 years)
+**Estimated Effort:** 3-4 weeks
+## task_end
+
+---
+
 ## ðŸ” Security â€” HIGH
 
 

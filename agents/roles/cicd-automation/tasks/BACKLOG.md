@@ -120,6 +120,78 @@ Global Rules:
 ## group_end
 
 ## group_begin [type:ci][priority:high]
+## task_begin
+### # [id:TASK-20260204-202][type:ci][priority:high][component:automation] Implement comprehensive CI pipeline with quality gates
+**Status:** todo  
+**Description:** Build complete CI pipeline with linting, type checking, testing, security scanning, and build verification with proper caching and parallelization.  
+**Acceptance Criteria:**  
+- [ ] Lint and typecheck jobs running in parallel
+- [ ] Backend and frontend tests run separately
+- [ ] Security scanning integrated (SAST, dependency audit)
+- [ ] Build artifacts cached between jobs
+- [ ] Status checks enforced on PRs
+**Relevant Files:** `.github/workflows/ci.yml`, `.github/workflows/security.yml`  
+**Relevant Documentation:** `docs/architecture/10_current_state/BUILD_AND_TOOLING.md` — Build system, `docs/tests/README.md` — Test execution  
+**Plan:**  
+1. Create CI workflow with job matrix
+2. Add lint, typecheck, and format check steps
+3. Configure test execution with coverage
+4. Integrate CodeQL and npm audit
+5. Set up caching for node_modules and build artifacts
+6. Configure branch protection rules
+**Estimated Effort:** 1 week
+## task_end
+
+---
+
+## task_begin
+### # [id:TASK-20260204-203][type:ci][priority:high][component:release] Implement automated release pipeline with semantic versioning
+**Status:** todo  
+**Description:** Create automated release workflow using conventional commits for semantic versioning, changelog generation, and GitHub releases.  
+**Acceptance Criteria:**  
+- [ ] Semantic versioning based on commit messages
+- [ ] Automated CHANGELOG.md generation
+- [ ] GitHub releases created automatically
+- [ ] Docker images tagged and pushed
+- [ ] Deployment triggered on release
+**Relevant Files:** `.github/workflows/release.yml`, `package.json`, `CHANGELOG.md`  
+**Relevant Documentation:** `docs/architecture/50_deployment/DEPLOYMENT.md` — Deployment process, `.github/workflows/README.md` — Workflow docs  
+**Plan:**  
+1. Configure semantic-release or release-please
+2. Set up conventional commits validation
+3. Create release workflow triggered on main branch push
+4. Generate and commit changelog automatically
+5. Build and push Docker images with version tags
+6. Create GitHub releases with release notes
+**Estimated Effort:** 1 week
+## task_end
+
+---
+
+## task_begin
+### # [id:TASK-20260204-204][type:ci][priority:medium][component:preview] Set up PR preview environments for testing
+**Status:** todo  
+**Description:** Implement ephemeral preview environments for pull requests to enable testing before merge with automated cleanup.  
+**Acceptance Criteria:**  
+- [ ] Preview URL generated for each PR
+- [ ] Database seeded with test data
+- [ ] Preview comment posted to PR
+- [ ] Automatic cleanup on PR close
+- [ ] Secure environment variable handling
+**Relevant Files:** `.github/workflows/preview.yml`, `script/preview-deploy.sh`  
+**Relevant Documentation:** `docs/architecture/50_deployment/DEPLOYMENT.md` — Deployment architecture, `.github/workflows/README.md` — Workflows  
+**Plan:**  
+1. Choose preview platform (Vercel, Railway, fly.io)
+2. Create preview deployment workflow
+3. Configure database provisioning per preview
+4. Add PR comment automation with preview URL
+5. Implement cleanup on PR close/merge
+6. Test preview environment workflow end-to-end
+**Estimated Effort:** 1-2 weeks
+## task_end
+
+---
+
 ## ðŸ§ª CI (Unscheduled) â€” High
 
 ## group_end

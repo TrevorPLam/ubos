@@ -56,9 +56,51 @@ Global Rules:
 ## group_begin [type:dev][priority:high]
 ## ðŸš€ Development (Unscheduled) â€” High
 
+## task_begin
+### # [id:TASK-20260204-152][type:dev][priority:high][component:server] Build OAuth 2.0 Integration Framework
+**Status:** todo  
+**Description:** Implement OAuth 2.0 provider and consumer infrastructure for third-party integrations including authorization flows, token management, and scope-based access control.  
+**Acceptance Criteria:**  
+- [ ] OAuth 2.0 authorization server implementation
+- [ ] OAuth client registration and management
+- [ ] Authorization code and refresh token flows
+- [ ] Scope-based access control
+- [ ] OAuth client SDKs and documentation
+**Relevant Files:** `server/routes/oauth/`, `server/auth/`, `docs/api/auth/`  
+**Relevant Documentation:** `docs/api/auth/README.md`, `docs/security/30-implementation-guides/ACCESS_CONTROL.md`  
+**Plan:**  
+1. Implement OAuth 2.0 authorization server endpoints
+2. Build client registration and management system
+3. Implement authorization code flow with PKCE
+4. Add refresh token support and rotation
+5. Create OAuth scope-based access control
+**Estimated Effort:** 5 days
+## task_end
 
+---
 
+## task_begin
+### # [id:TASK-20260204-153][type:dev][priority:high][component:server] Implement Webhook System for Event Notifications
+**Status:** todo  
+**Description:** Build webhook infrastructure allowing external systems to subscribe to platform events with delivery guarantees, retry logic, and signature verification.  
+**Acceptance Criteria:**  
+- [ ] Webhook subscription management API
+- [ ] Event delivery with retry and exponential backoff
+- [ ] Webhook signature verification (HMAC)
+- [ ] Delivery status tracking and logs
+- [ ] Webhook testing and debugging tools
+**Relevant Files:** `server/routes/webhooks/`, `server/`, `docs/api/platform/`  
+**Relevant Documentation:** `docs/api/platform/README.md`, `docs/architecture/40_interfaces/EVENTS_AND_JOBS.md`  
+**Plan:**  
+1. Design webhook subscription data model and API
+2. Implement webhook delivery system with retry logic
+3. Add HMAC signature generation and verification
+4. Build delivery tracking and logging
+5. Create webhook testing tools and documentation
+**Estimated Effort:** 4 days
+## task_end
 
+---
 ## group_end
 
 ## group_begin [type:dev][priority:medium]
