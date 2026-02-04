@@ -157,6 +157,52 @@ Global Rules:
 ## group_end
 
 ## group_begin [type:quality][priority:high]
+## task_begin
+### # [id:TASK-20260204-200][type:quality][priority:high][component:a11y] Implement color contrast validation and remediation
+**Status:** todo  
+**Description:** Audit and fix color contrast issues across the application to meet WCAG 2.2 AA standards (4.5:1 for normal text, 3:1 for large text and UI components).  
+**Acceptance Criteria:**  
+- [ ] Color contrast audit tool integrated
+- [ ] All text meets 4.5:1 contrast ratio
+- [ ] UI components meet 3:1 contrast ratio
+- [ ] Focus indicators meet 3:1 contrast
+- [ ] Automated CI check for contrast violations
+**Relevant Files:** `client/src/`, `tailwind.config.ts`, `.github/workflows/`  
+**Relevant Documentation:** `docs/standards/ACCESSIBILITY.md` — Accessibility standards, `docs/architecture/40_interfaces/UI_COMPONENTS.md` — Component styling  
+**Plan:**  
+1. Audit current color palette for contrast ratios
+2. Identify and fix all contrast violations in components
+3. Update Tailwind color configuration for accessible defaults
+4. Add automated contrast checking to CI pipeline
+5. Document accessible color combinations
+**Estimated Effort:** 1 week
+## task_end
+
+---
+
+## task_begin
+### # [id:TASK-20260204-201][type:quality][priority:high][component:a11y] Implement screen reader testing and ARIA best practices
+**Status:** todo  
+**Description:** Establish screen reader testing process with NVDA, JAWS, and VoiceOver, and implement ARIA best practices across all components.  
+**Acceptance Criteria:**  
+- [ ] Screen reader testing checklist created
+- [ ] All forms announce properly
+- [ ] Dynamic updates use aria-live appropriately
+- [ ] Error messages announced to screen readers
+- [ ] Data tables have proper headers and scope
+**Relevant Files:** `client/src/components/`, `tests/accessibility/`  
+**Relevant Documentation:** `docs/standards/ACCESSIBILITY.md` — ARIA patterns, `docs/tests/README.md` — Testing guidelines  
+**Plan:**  
+1. Create screen reader testing protocol
+2. Test all interactive components with NVDA, JAWS, VoiceOver
+3. Fix ARIA issues identified in testing
+4. Add aria-live regions for dynamic content
+5. Document screen reader testing process
+**Estimated Effort:** 2 weeks
+## task_end
+
+---
+
 ## âœ… Code Quality (Unscheduled) â€” High
 
 ## group_end

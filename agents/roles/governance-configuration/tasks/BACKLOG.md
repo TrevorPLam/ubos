@@ -44,6 +44,99 @@ Global Rules:
 ## ðŸ§° Config & Tooling â€” CRITICAL
 
 
+
+## task_begin
+### # [id:TASK-20260204-254][type:config][priority:critical][component:repo] Establish branch protection and merge policies
+**Status:** todo  
+**Description:** Configure GitHub branch protection rules, merge policies, and repository settings to enforce code quality gates, prevent direct commits to main, and ensure all changes are peer-reviewed.  
+**Acceptance Criteria:**  
+- [ ] Branch protection rules configured for main/develop branches (require PR, no force-push)
+- [ ] Required status checks enabled (lint, typecheck, tests, security scan)
+- [ ] Code review requirements enforced (minimum 1 approval, dismiss stale reviews)
+- [ ] Merge strategy standardized (squash merge for feature branches)
+- [ ] CODEOWNERS file created for automatic reviewer assignment by domain
+**Relevant Files:** `.github/CODEOWNERS` (new), `.github/settings.yml` (new)  
+**Relevant Documentation:** `docs/CONTRIBUTING.md` — Contribution workflow, `docs/CODE_REVIEW_GUIDE.md` — Review standards  
+**Plan:**  
+1. Document branch protection requirements and rationale
+2. Create CODEOWNERS file mapping code areas to teams/individuals
+3. Configure branch protection rules via GitHub settings or Terraform
+4. Enable required status checks (CI must pass before merge)
+5. Document merge workflow and rollback procedures
+**Estimated Effort:** 3 days
+## task_end
+
+---
+
+## task_begin
+### # [id:TASK-20260204-255][type:config][priority:critical][component:repo] Standardize development tooling configuration
+**Status:** todo  
+**Description:** Standardize and enforce consistent development tooling configuration across the team including editor settings, linters, formatters, and pre-commit hooks to reduce code review friction.  
+**Acceptance Criteria:**  
+- [ ] EditorConfig file created for consistent formatting (indent, line endings, charset)
+- [ ] Pre-commit hooks configured via Husky (lint, typecheck, format check)
+- [ ] Commit message linting enabled (conventional commits format)
+- [ ] VSCode recommended extensions and settings documented
+- [ ] Tooling setup documented in CONTRIBUTING.md with troubleshooting guide
+**Relevant Files:** `.editorconfig` (new), `.husky/` (new), `.vscode/extensions.json` (new), `.vscode/settings.json` (new)  
+**Relevant Documentation:** `docs/CONTRIBUTING.md` — Development environment setup, `docs/architecture/CONVENTIONS.md` — Coding standards  
+**Plan:**  
+1. Create EditorConfig file with formatting rules (2 spaces, UTF-8, LF)
+2. Install and configure Husky for Git hooks (pre-commit, commit-msg)
+3. Add commitlint for conventional commit message enforcement
+4. Create VSCode workspace settings and recommended extensions list
+5. Document tooling setup and common issues in CONTRIBUTING.md
+**Estimated Effort:** 2 days
+## task_end
+
+---
+
+## task_begin
+### # [id:TASK-20260204-256][type:config][priority:critical][component:repo] Implement configuration management strategy
+**Status:** todo  
+**Description:** Establish comprehensive configuration management strategy with environment-specific configs, secrets management, and validation to prevent configuration drift and production incidents.  
+**Acceptance Criteria:**  
+- [ ] Configuration schema defined with Zod validation (required vs optional vars)
+- [ ] Environment-specific config files created (development, staging, production)
+- [ ] Secrets management documented (how to store/rotate/access secrets)
+- [ ] Configuration validation runs on startup (fail fast if misconfigured)
+- [ ] Example .env.example file maintained with all required variables documented
+**Relevant Files:** `server/config.ts` (new), `.env.example`, `docs/ops/CONFIGURATION.md` (new)  
+**Relevant Documentation:** `docs/ops/RUNBOOK.md` — Operational procedures, `docs/security/10-controls/SECRETS_MANAGEMENT.md` — Secrets handling  
+**Plan:**  
+1. Define configuration schema with Zod (all env vars, types, defaults)
+2. Create config loader with validation (fail on missing required vars)
+3. Document all configuration options in .env.example with descriptions
+4. Implement secrets management guidelines (never in code, use vault/KMS)
+5. Add configuration validation tests and startup checks
+**Estimated Effort:** 1 week
+## task_end
+
+---
+
+## task_begin
+### # [id:TASK-20260204-257][type:config][priority:critical][component:repo] Establish repository governance policies
+**Status:** todo  
+**Description:** Define and document repository governance policies including contribution guidelines, release process, versioning strategy, and deprecation policies to ensure sustainable project maintenance.  
+**Acceptance Criteria:**  
+- [ ] CONTRIBUTING.md created with PR workflow, coding standards, testing requirements
+- [ ] Versioning strategy documented (SemVer with changelog automation)
+- [ ] Release process defined (release branches, tagging, deployment checklist)
+- [ ] Deprecation policy established (sunset timeline, migration guides)
+- [ ] GitHub issue/PR templates created for consistent communication
+**Relevant Files:** `CONTRIBUTING.md` (new), `.github/ISSUE_TEMPLATE/`, `.github/PULL_REQUEST_TEMPLATE.md` (new), `docs/RELEASE_PROCESS.md` (new)  
+**Relevant Documentation:** `docs/architecture/ADR/` — Architecture decisions, `docs/GOVERNANCE.md` — Project governance structure  
+**Plan:**  
+1. Create comprehensive CONTRIBUTING.md (setup, workflow, standards)
+2. Define SemVer strategy and changelog automation (conventional commits → release notes)
+3. Document release process (branches, versioning, deployment, rollback)
+4. Create issue templates (bug report, feature request, security vulnerability)
+5. Establish deprecation policy with timeline and communication plan
+**Estimated Effort:** 1 week
+## task_end
+
+---
+
 ## group_end
 
 ## group_begin [type:infra][priority:high]

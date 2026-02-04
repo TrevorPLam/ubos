@@ -76,6 +76,76 @@ Global Rules:
 ## group_end
 
 ## group_begin [type:security][priority:high]
+## task_begin
+### # [id:TASK-20260204-220][type:security][priority:high][component:dependencies] Implement automated dependency vulnerability scanning and remediation
+**Status:** todo  
+**Description:** Set up automated dependency scanning for CVEs with automated PR creation for security patches and dependency updates.  
+**Acceptance Criteria:**  
+- [ ] npm audit runs in CI with failure threshold
+- [ ] Automated security patch PRs created
+- [ ] Dependency update schedule established
+- [ ] CVE monitoring and alerting configured
+- [ ] Dependency lock file integrity verified
+**Relevant Files:** `.github/workflows/security.yml`, `.github/dependabot.yml`, `package.json`  
+**Relevant Documentation:** `docs/security/10-controls/DEPENDENCY_MANAGEMENT.md` — Dependency security, `docs/architecture/10_current_state/BUILD_AND_TOOLING.md` — Build tools  
+**Plan:**  
+1. Configure npm audit in CI with security thresholds
+2. Set up Dependabot or Renovate for automated updates
+3. Create PR template for dependency updates
+4. Configure CVE monitoring and Slack/email alerts
+5. Document dependency update and review process
+**Estimated Effort:** 3-5 days
+## task_end
+
+---
+
+## task_begin
+### # [id:TASK-20260204-221][type:infra][priority:medium][component:dependencies] Audit and update major dependency versions
+**Status:** todo  
+**Description:** Audit all dependencies, update to latest compatible versions, and remove unused dependencies to reduce attack surface.  
+**Acceptance Criteria:**  
+- [ ] All dependencies reviewed for updates
+- [ ] Major version updates tested
+- [ ] Unused dependencies removed
+- [ ] Breaking changes documented
+- [ ] Dependency update guide created
+**Relevant Files:** `package.json`, `package-lock.json`, `docs/architecture/10_current_state/DEPENDENCIES.md`  
+**Relevant Documentation:** `docs/architecture/10_current_state/BUILD_AND_TOOLING.md` — Build dependencies, `docs/architecture/10_current_state/DEPENDENCIES.md` — Dependency list  
+**Plan:**  
+1. Run npm outdated to identify update candidates
+2. Review changelog and breaking changes for major updates
+3. Update dependencies incrementally with testing
+4. Remove unused/duplicate dependencies
+5. Document migration steps for breaking changes
+**Estimated Effort:** 1 week
+## task_end
+
+---
+
+## task_begin
+### # [id:TASK-20260204-222][type:security][priority:medium][component:compliance] Implement license compliance auditing
+**Status:** todo  
+**Description:** Audit all dependency licenses for compliance, identify incompatible licenses, and establish license policy enforcement.  
+**Acceptance Criteria:**  
+- [ ] License audit tool integrated (license-checker)
+- [ ] All licenses documented in SBOM
+- [ ] Incompatible licenses identified
+- [ ] License policy defined and enforced
+- [ ] Attribution file generated
+**Relevant Files:** `.github/workflows/license-audit.yml`, `LICENSE_COMPLIANCE.md`, `THIRD_PARTY_LICENSES.md`  
+**Relevant Documentation:** `docs/security/40-compliance/LICENSE_COMPLIANCE.md` — License policy, `docs/standards/LEGAL.md` — Legal requirements  
+**Plan:**  
+1. Install and configure license-checker or similar tool
+2. Generate SBOM (Software Bill of Materials)
+3. Audit all licenses and identify incompatibilities
+4. Define acceptable license policy
+5. Add license checking to CI pipeline
+6. Generate third-party attribution file
+**Estimated Effort:** 3-5 days
+## task_end
+
+---
+
 ## ðŸ” Security â€” HIGH
 
 
