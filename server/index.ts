@@ -3,11 +3,19 @@
  *
  * Responsibilities:
  * - Create the Express app + HTTP server
+ * - Install security middleware (headers, rate limiting, CORS)
  * - Install request body parsers (including `rawBody` capture for signature/webhook use cases)
  * - Install API routes via `registerRoutes()`
  * - Install the client handler:
  *   - production: serve built static assets
  *   - development: proxy through Vite middleware + HMR
+ *
+ * Security:
+ * - Security headers (HSTS, CSP, X-Frame-Options, etc.) via Helmet
+ * - Rate limiting to prevent brute force and DoS attacks
+ * - CORS configuration for cross-origin requests
+ * - Request sanitization to prevent injection attacks
+ * - See docs/security/APPLICATION_SECURITY.md for details
  *
  * AI iteration notes:
  * - Add new API endpoints in `server/routes.ts` (keep auth + org scoping consistent).
@@ -17,6 +25,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
+import { setupSecurityMiddleware } from "./security";
 import { createServer } from "http";
 
 const app = express();
@@ -27,6 +36,11 @@ declare module "http" {
     rawBody: unknown;
   }
 }
+
+// Security middleware must be applied before body parsers
+// This includes CORS, security headers, and rate limiting
+// See server/security.ts for implementation details
+setupSecurityMiddleware(app);
 
 app.use(
   express.json({
@@ -84,8 +98,20 @@ app.use((req, res, next) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
 
-    res.status(status).json({ message });
-    throw err;
+    // Log full error details internally for debugging
+    // Never send stack traces or detailed errors to clients in production
+    if (process.env.NODE_ENV !== "production") {
+      log(`Error: ${message}\nStack: ${err.stack}`);
+    } else {
+      // In production, log errors but don't include sensitive details in response
+      log(`Error ${status}: ${message}`);
+    }
+
+    // Send sanitized error to client (no stack traces, internal details)
+    // Security: Prevent information disclosure (OWASP A01:2021)
+    res.status(status).json({ 
+      message: status >= 500 ? "Internal Server Error" : message 
+    });
   });
 
   // importantly only setup vite in development and after
