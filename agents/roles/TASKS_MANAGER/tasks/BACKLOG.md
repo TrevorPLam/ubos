@@ -90,7 +90,7 @@ Global Rules:
 ## ðŸš€ Development (Unscheduled) â€” High
 
 ## task_begin
-### # [id:TASK-20260204-206][type:dev][priority:high][component:tooling] Build Task Dependency Visualization Tool
+### # [id:TASK-20260204-278][type:dev][priority:high][component:tooling] Build Task Dependency Visualization Tool
 **Status:** todo  
 **Description:** Create tool to visualize task dependencies, blockers, and critical paths to improve sprint planning and resource allocation.  
 **Acceptance Criteria:**  
@@ -113,7 +113,7 @@ Global Rules:
 ---
 
 ## task_begin
-### # [id:TASK-20260204-207][type:dev][priority:high][component:automation] Automate Sprint Planning and Task Assignment
+### # [id:TASK-20260204-279][type:dev][priority:high][component:automation] Automate Sprint Planning and Task Assignment
 **Status:** todo  
 **Description:** Build automation for sprint planning including task selection based on priority, capacity, and skills with automatic assignment to agents/developers.  
 **Acceptance Criteria:**  

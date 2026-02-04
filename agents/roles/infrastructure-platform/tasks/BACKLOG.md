@@ -50,7 +50,7 @@ Global Rules:
 ## ðŸ³ Infrastructure (Unscheduled) â€” High
 
 ## task_begin
-### # [id:TASK-20260203-004][type:infra][priority:high][component:server] Implement Stage 0 foundation - Identity module
+### # [id:TASK-20260204-280][type:infra][priority:high][component:server] Implement Stage 0 foundation - Identity module
 **Status:** todo  
 **Description:** Implement identity domain module with tenant management, users, RBAC, sessions, and OIDC readiness.  
 **Acceptance Criteria:**  
