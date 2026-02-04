@@ -1,3 +1,13 @@
+// AI-META-BEGIN
+// AI-META: Module - eslint.config.js
+// OWNERSHIP: root
+// ENTRYPOINTS: various
+// DEPENDENCIES: check imports
+// DANGER: Review changes carefully
+// CHANGE-SAFETY: Review changes carefully - analyze imports and usage before modifying
+// TESTS: npm test
+// AI-META-END
+
 import js from "@eslint/js";
 import globals from "globals";
 import tseslint from "typescript-eslint";

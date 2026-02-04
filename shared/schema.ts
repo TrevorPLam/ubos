@@ -1,3 +1,14 @@
+// AI-META-BEGIN
+// AI-META: Shared module - schema.ts
+// OWNERSHIP: shared
+// ENTRYPOINTS: client and server
+// DEPENDENCIES: zod
+// DANGER: Breaking changes affect both sides
+// CHANGE-SAFETY: Review changes carefully - analyze imports and usage before modifying
+// TESTS: npm run check
+// AI-META-END
+
+// AI-NOTE: Drizzle schema definitions are shared between client/server; changes here require coordinated deployment to avoid type mismatches
 /**
  * Shared database schema + types.
  *

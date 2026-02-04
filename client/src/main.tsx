@@ -1,3 +1,13 @@
+// AI-META-BEGIN
+// AI-META: Client module - main.tsx
+// OWNERSHIP: client
+// ENTRYPOINTS: client code
+// DEPENDENCIES: react
+// DANGER: Review client logic
+// CHANGE-SAFETY: Review changes carefully - analyze imports and usage before modifying
+// TESTS: npm run test:frontend
+// AI-META-END
+
 /**
  * Client bootstrap.
  *

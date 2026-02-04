@@ -1,3 +1,13 @@
+// AI-META-BEGIN
+// AI-META: File storage with presigned URLs
+// OWNERSHIP: server/files
+// ENTRYPOINTS: API routes for files
+// DEPENDENCIES: cloud storage SDK
+// DANGER: Unauthorized file access
+// CHANGE-SAFETY: Review changes carefully - analyze imports and usage before modifying
+// TESTS: manual testing
+// AI-META-END
+
 /**
  * Storage/data-access layer.
  *

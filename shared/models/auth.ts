@@ -1,3 +1,13 @@
+// AI-META-BEGIN
+// AI-META: Shared module - auth.ts
+// OWNERSHIP: shared
+// ENTRYPOINTS: client and server
+// DEPENDENCIES: zod
+// DANGER: Breaking changes affect both sides
+// CHANGE-SAFETY: Review changes carefully - analyze imports and usage before modifying
+// TESTS: npm run check
+// AI-META-END
+
 import { sql } from "drizzle-orm";
 import { pgTable, timestamp, varchar } from "drizzle-orm/pg-core";
 

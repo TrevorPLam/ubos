@@ -1,3 +1,13 @@
+// AI-META-BEGIN
+// AI-META: API route registration and auth middleware
+// OWNERSHIP: server/api
+// ENTRYPOINTS: server/index.ts
+// DEPENDENCIES: express, session, csrf
+// DANGER: Authentication bypass risk
+// CHANGE-SAFETY: Review changes carefully - analyze imports and usage before modifying
+// TESTS: tests/backend/api-routes.test.ts
+// AI-META-END
+
 /**
  * API routes.
  *
@@ -62,6 +72,7 @@ function getUserIdFromRequest(req: Request): string | undefined {
   // In production, this authentication method MUST be disabled
   const isProduction = process.env.NODE_ENV === "production";
   
+  // AI-NOTE: Environment-based auth strategy - header auth in dev only; MUST block header auth in production to prevent impersonation
   if (!isProduction) {
     // Allow non-browser callers to impersonate a user via header (DEV ONLY).
     // This keeps development + automation simple without an external auth provider.

@@ -1,3 +1,13 @@
+// AI-META-BEGIN
+// AI-META: Page component - not-found.tsx
+// OWNERSHIP: client/pages
+// ENTRYPOINTS: app router
+// DEPENDENCIES: react, components
+// DANGER: Review data fetching logic
+// CHANGE-SAFETY: Review changes carefully - analyze imports and usage before modifying
+// TESTS: npm run test:frontend
+// AI-META-END
+
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
 

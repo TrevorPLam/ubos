@@ -1,3 +1,13 @@
+// AI-META-BEGIN
+// AI-META: Session management with Redis
+// OWNERSHIP: server/auth
+// ENTRYPOINTS: server/routes.ts
+// DEPENDENCIES: express-session, redis
+// DANGER: Session hijacking if misconfigured
+// CHANGE-SAFETY: Review changes carefully - analyze imports and usage before modifying
+// TESTS: tests/backend/auth-middleware.test.ts
+// AI-META-END
+
 /**
  * Session Management with Lifetime Controls
  * 

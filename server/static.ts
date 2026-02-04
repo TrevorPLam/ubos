@@ -1,3 +1,13 @@
+// AI-META-BEGIN
+// AI-META: Production static file serving
+// OWNERSHIP: server/static
+// ENTRYPOINTS: server/index.ts (prod)
+// DEPENDENCIES: express
+// DANGER: Directory traversal risk
+// CHANGE-SAFETY: Review changes carefully - analyze imports and usage before modifying
+// TESTS: manual testing
+// AI-META-END
+
 /**
  * Production static file server.
  *

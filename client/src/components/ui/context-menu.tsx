@@ -1,3 +1,13 @@
+// AI-META-BEGIN
+// AI-META: Radix UI component - context-menu.tsx
+// OWNERSHIP: client/ui
+// ENTRYPOINTS: imported by components
+// DEPENDENCIES: @radix-ui, react
+// DANGER: None - presentational
+// CHANGE-SAFETY: Review changes carefully - analyze imports and usage before modifying
+// TESTS: manual testing
+// AI-META-END
+
 import * as React from "react";
 import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 import { Check, ChevronRight, Circle } from "lucide-react";

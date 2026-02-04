@@ -1,3 +1,13 @@
+// AI-META-BEGIN
+// AI-META: Environment validation at startup
+// OWNERSHIP: server/config
+// ENTRYPOINTS: server/index.ts
+// DEPENDENCIES: zod
+// DANGER: Missing validation allows insecure deployment
+// CHANGE-SAFETY: Review changes carefully - analyze imports and usage before modifying
+// TESTS: tests/backend/config-validation.test.ts
+// AI-META-END
+
 /**
  * Configuration validation and startup checks.
  * 

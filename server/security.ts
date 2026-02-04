@@ -1,3 +1,13 @@
+// AI-META-BEGIN
+// AI-META: Security middleware - Helmet, rate limiting, CORS
+// OWNERSHIP: server/security
+// ENTRYPOINTS: server/index.ts
+// DEPENDENCIES: helmet, express-rate-limit
+// DANGER: Security controls - misconfiguration breaks app
+// CHANGE-SAFETY: Review changes carefully - analyze imports and usage before modifying
+// TESTS: tests/backend/security.test.ts
+// AI-META-END
+
 /**
  * Security middleware for the UBOS application.
  * 
@@ -45,6 +55,7 @@ export function setupSecurityHeaders(app: Express): void {
         preload: true,
       },
 
+      // AI-NOTE: CSP unsafe-inline is necessary for React/Tailwind; consider nonce-based CSP for stricter security
       // Content Security Policy - Prevent XSS and injection attacks
       // OWASP: A03:2021 - Injection
       contentSecurityPolicy: {

@@ -1,3 +1,13 @@
+// AI-META-BEGIN
+// AI-META: Radix UI component - select.tsx
+// OWNERSHIP: client/ui
+// ENTRYPOINTS: imported by components
+// DEPENDENCIES: @radix-ui, react
+// DANGER: None - presentational
+// CHANGE-SAFETY: Review changes carefully - analyze imports and usage before modifying
+// TESTS: manual testing
+// AI-META-END
+
 "use client";
 
 import * as React from "react";

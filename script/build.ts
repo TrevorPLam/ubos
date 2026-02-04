@@ -1,3 +1,13 @@
+// AI-META-BEGIN
+// AI-META: Build script - build.ts
+// OWNERSHIP: build
+// ENTRYPOINTS: npm run build
+// DEPENDENCIES: vite, esbuild
+// DANGER: Build failures block deployment
+// CHANGE-SAFETY: Review changes carefully - analyze imports and usage before modifying
+// TESTS: npm run build
+// AI-META-END
+
 import { build as esbuild } from "esbuild";
 import { build as viteBuild } from "vite";
 import { rm, readFile } from "fs/promises";

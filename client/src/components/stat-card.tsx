@@ -1,3 +1,13 @@
+// AI-META-BEGIN
+// AI-META: React component - stat-card.tsx
+// OWNERSHIP: client/components
+// ENTRYPOINTS: various pages/components
+// DEPENDENCIES: react, ui
+// DANGER: Review state management
+// CHANGE-SAFETY: Review changes carefully - analyze imports and usage before modifying
+// TESTS: npm run test:frontend
+// AI-META-END
+
 /**
  * Small KPI card used on dashboards and summary rows.
  *

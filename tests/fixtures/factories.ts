@@ -1,3 +1,13 @@
+// AI-META-BEGIN
+// AI-META: Test file for factories.ts
+// OWNERSHIP: testing
+// ENTRYPOINTS: test runner
+// DEPENDENCIES: vitest
+// DANGER: None - test code
+// CHANGE-SAFETY: Review changes carefully - analyze imports and usage before modifying
+// TESTS: self-testing
+// AI-META-END
+
 /**
  * Test data factories for generating consistent test entities.
  * 

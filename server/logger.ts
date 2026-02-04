@@ -1,3 +1,13 @@
+// AI-META-BEGIN
+// AI-META: Centralized logging with PII redaction
+// OWNERSHIP: server/observability
+// ENTRYPOINTS: All server modules
+// DEPENDENCIES: winston
+// DANGER: PII leakage if redaction bypassed
+// CHANGE-SAFETY: Review changes carefully - analyze imports and usage before modifying
+// TESTS: tests/backend/logger.test.ts
+// AI-META-END
+
 /**
  * Centralized logging with mandatory PII redaction.
  * 
