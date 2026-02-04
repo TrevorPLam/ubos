@@ -57,15 +57,17 @@ export const factories = {
 
   deal: (organizationId: string, overrides: Partial<InsertDeal> = {}): InsertDeal => ({
     organizationId,
-    title: `Test Deal ${uniqueId()}`,
+    ownerId: 'test-owner-id',
+    name: `Test Deal ${uniqueId()}`,
     stage: 'lead',
-    value: 10000,
+    value: '10000.00',
     ...overrides,
   }),
 
   proposal: (organizationId: string, overrides: Partial<InsertProposal> = {}): InsertProposal => ({
     organizationId,
-    title: `Test Proposal ${uniqueId()}`,
+    createdById: 'test-creator-id',
+    name: `Test Proposal ${uniqueId()}`,
     status: 'draft',
     content: { sections: [] },
     ...overrides,
@@ -73,7 +75,8 @@ export const factories = {
 
   contract: (organizationId: string, overrides: Partial<InsertContract> = {}): InsertContract => ({
     organizationId,
-    title: `Test Contract ${uniqueId()}`,
+    createdById: 'test-creator-id',
+    name: `Test Contract ${uniqueId()}`,
     status: 'draft',
     content: { terms: [] },
     ...overrides,
@@ -81,7 +84,8 @@ export const factories = {
 
   engagement: (organizationId: string, overrides: Partial<InsertEngagement> = {}): InsertEngagement => ({
     organizationId,
-    title: `Test Engagement ${uniqueId()}`,
+    ownerId: 'test-owner-id',
+    name: `Test Engagement ${uniqueId()}`,
     status: 'active',
     ...overrides,
   }),
@@ -97,25 +101,29 @@ export const factories = {
   task: (organizationId: string, projectId: string, overrides: Partial<InsertTask> = {}): InsertTask => ({
     organizationId,
     projectId,
-    title: `Test Task ${uniqueId()}`,
+    name: `Test Task ${uniqueId()}`,
     status: 'todo',
     priority: 'medium',
     ...overrides,
   }),
 
-  invoice: (organizationId: string, overrides: Partial<InsertInvoice> = {}): InsertInvoice => ({
+  invoice: (organizationId: string, engagementId: string, overrides: Partial<InsertInvoice> = {}): InsertInvoice => ({
     organizationId,
+    engagementId,
     invoiceNumber: `INV-${uniqueId()}`,
     status: 'draft',
-    totalAmount: 1000,
+    amount: '1000.00',
+    totalAmount: '1000.00',
     ...overrides,
   }),
 
   bill: (organizationId: string, overrides: Partial<InsertBill> = {}): InsertBill => ({
     organizationId,
+    createdById: 'test-creator-id',
     billNumber: `BILL-${uniqueId()}`,
     status: 'pending',
-    totalAmount: 500,
+    amount: '500.00',
+    totalAmount: '500.00',
     ...overrides,
   }),
 
@@ -125,8 +133,10 @@ export const factories = {
     ...overrides,
   }),
 
-  thread: (organizationId: string, overrides: Partial<InsertThread> = {}): InsertThread => ({
+  thread: (organizationId: string, engagementId: string, overrides: Partial<InsertThread> = {}): InsertThread => ({
     organizationId,
+    engagementId,
+    createdById: 'test-creator-id',
     subject: `Test Thread ${uniqueId()}`,
     type: 'internal',
     ...overrides,
@@ -135,6 +145,7 @@ export const factories = {
   message: (organizationId: string, threadId: string, overrides: Partial<InsertMessage> = {}): InsertMessage => ({
     organizationId,
     threadId,
+    senderId: 'test-sender-id',
     content: `Test message content ${uniqueId()}`,
     ...overrides,
   }),
