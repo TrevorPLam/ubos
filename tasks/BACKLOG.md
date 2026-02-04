@@ -32,7 +32,7 @@ Global Rules:
 ## 🧰 Config & Tooling (Unscheduled) — High
 
 ## task_begin
-### # [id:TASK-20260203-020][type:config][priority:high][component:repo] Create AGENTS governance pack
+### # [id:TASK-20260203-001][type:config][priority:high][component:repo] Create AGENTS governance pack
 **Status:** todo  
 **Description:** Create comprehensive governance pack including AGENTS.toon entrypoint, policies (TOOL_POLICY, SAFETY_POLICY, ARCHITECTURE_RULES, CODING_STANDARDS), and task management files.  
 **Acceptance Criteria:**  
@@ -44,7 +44,7 @@ Global Rules:
 ## task_end
 
 ## task_begin
-### # [id:TASK-20260203-021][type:config][priority:high][component:docs] Create system documentation
+### # [id:TASK-20260203-002][type:config][priority:high][component:docs] Create system documentation
 **Status:** todo  
 **Description:** Create comprehensive system documentation including architecture, domain contracts, runbook, and security specifications.  
 **Acceptance Criteria:**  
@@ -57,7 +57,7 @@ Global Rules:
 ## task_end
 
 ## task_begin
-### # [id:TASK-20260203-022][type:config][priority:high][component:repo] Create comprehensive implementation plan
+### # [id:TASK-20260203-003][type:config][priority:high][component:repo] Create comprehensive implementation plan
 **Status:** todo  
 **Description:** Produce detailed implementation plan with directory structure, module boundaries, schema plan, event list, API surface, and workflow engine specs.  
 **Acceptance Criteria:**  
@@ -76,7 +76,7 @@ Global Rules:
 ## 🐳 Infrastructure (Unscheduled) — High
 
 ## task_begin
-### # [id:TASK-20260203-023][type:infra][priority:high][component:server] Implement Stage 0 foundation - Identity module
+### # [id:TASK-20260203-004][type:infra][priority:high][component:server] Implement Stage 0 foundation - Identity module
 **Status:** todo  
 **Description:** Implement identity domain module with tenant management, users, RBAC, sessions, and OIDC readiness.  
 **Acceptance Criteria:**  
@@ -90,7 +90,7 @@ Global Rules:
 ## task_end
 
 ## task_begin
-### # [id:TASK-20260203-024][type:infra][priority:high][component:server] Implement Stage 0 foundation - Core infrastructure
+### # [id:TASK-20260203-005][type:infra][priority:high][component:server] Implement Stage 0 foundation - Core infrastructure
 **Status:** todo  
 **Description:** Implement core infrastructure including application shell, database migrations, outbox pattern, timeline, and workflow skeleton.  
 **Acceptance Criteria:**  
@@ -109,7 +109,7 @@ Global Rules:
 ## 🚀 Development (Unscheduled) — High
 
 ## task_begin
-### # [id:TASK-20260203-025][type:dev][priority:high][component:server] Implement Stage 1 vertical slice - CRM module
+### # [id:TASK-20260203-006][type:dev][priority:high][component:server] Implement Stage 1 vertical slice - CRM module
 **Status:** todo  
 **Description:** Implement CRM domain module as golden record with client/contact/relationship management, tags, and custom fields.  
 **Acceptance Criteria:**  
@@ -123,7 +123,7 @@ Global Rules:
 ## task_end
 
 ## task_begin
-### # [id:TASK-20260203-026][type:dev][priority:high][component:server] Implement Stage 1 vertical slice - Core modules
+### # [id:TASK-20260203-007][type:dev][priority:high][component:server] Implement Stage 1 vertical slice - Core modules
 **Status:** todo  
 **Description:** Implement Scheduling, Files, Portal, and Projects modules with proper domain boundaries.  
 **Acceptance Criteria:**  
@@ -137,7 +137,7 @@ Global Rules:
 ## task_end
 
 ## task_begin
-### # [id:TASK-20260203-027][type:dev][priority:high][component:client] Implement Stage 1 vertical slice - Frontend shell
+### # [id:TASK-20260203-008][type:dev][priority:high][component:client] Implement Stage 1 vertical slice - Frontend shell
 **Status:** todo  
 **Description:** Implement React SPA shell with auth screens, client profile hub, timeline view, and basic module interfaces.  
 **Acceptance Criteria:**  
@@ -157,7 +157,7 @@ Global Rules:
 ## 🚀 Development (Unscheduled) — Medium
 
 ## task_begin
-### # [id:TASK-20260203-028][type:dev][priority:medium][component:server] Implement Agreements and Revenue modules
+### # [id:TASK-20260203-009][type:dev][priority:medium][component:server] Implement Agreements and Revenue modules
 **Status:** todo  
 **Description:** Implement Agreements module (templates, proposals, contracts) and Revenue module (AR/AP orchestration).  
 **Acceptance Criteria:**  
@@ -171,7 +171,7 @@ Global Rules:
 ## task_end
 
 ## task_begin
-### # [id:TASK-20260203-029][type:dev][priority:medium][component:server] Implement flagship workflows
+### # [id:TASK-20260203-010][type:dev][priority:medium][component:server] Implement flagship workflows
 **Status:** todo  
 **Description:** Implement 6 flagship workflows as first-class workflow definitions with proper orchestration.  
 **Acceptance Criteria:**  
@@ -186,7 +186,7 @@ Global Rules:
 ## task_end
 
 ## task_begin
-### # [id:TASK-20260203-030][type:dev][priority:medium][component:server] Implement integration stubs and health
+### # [id:TASK-20260203-011][type:dev][priority:medium][component:server] Implement integration stubs and health
 **Status:** todo  
 **Description:** Implement integration stubs for email, ledger, e-sign, and object storage with health monitoring.  
 **Acceptance Criteria:**  
@@ -205,7 +205,7 @@ Global Rules:
 ## ✅ Code Quality (Unscheduled) — Medium
 
 ## task_begin
-### # [id:TASK-20260203-031][type:quality][priority:medium][component:repo] Harden and finalize implementation
+### # [id:TASK-20260203-012][type:quality][priority:medium][component:repo] Harden and finalize implementation
 **Status:** todo  
 **Description:** Complete hardening with comprehensive tests, observability, seed data, and security validation.  
 **Acceptance Criteria:**  

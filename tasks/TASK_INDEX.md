@@ -27,140 +27,133 @@ Rules:
 ## index_entry_begin
 [id:TASK-20260203-001]  
 type: config  
-priority: medium  
-component: tooling  
-status: done  
-location: ARCHIVE.md  
+priority: high  
+component: repo  
+status: todo  
+location: BACKLOG.md  
 created: 2026-02-03  
-completed: 2026-02-03  
-title: Type-check root config files  
+title: Create AGENTS governance pack  
 ## index_entry_end
 
 ## index_entry_begin
 [id:TASK-20260203-002]  
 type: config  
-priority: medium  
-component: css  
-status: done  
-location: ARCHIVE.md  
+priority: high  
+component: docs  
+status: todo  
+location: BACKLOG.md  
 created: 2026-02-03  
-completed: 2026-02-03  
-title: Stop suppressing the PostCSS warning in Vite  
+title: Create system documentation  
 ## index_entry_end
 
 ## index_entry_begin
 [id:TASK-20260203-003]  
 type: config  
-priority: medium  
-component: css  
-status: done  
-location: ARCHIVE.md  
+priority: high  
+component: repo  
+status: todo  
+location: BACKLOG.md  
 created: 2026-02-03  
-completed: 2026-02-03  
-title: Make PostCSS config compatible across tooling  
+title: Create comprehensive implementation plan  
 ## index_entry_end
 
 ## index_entry_begin
 [id:TASK-20260203-004]  
-type: config  
-priority: low  
-component: tooling  
+type: infra  
+priority: high  
+component: server  
 status: todo  
 location: BACKLOG.md  
 created: 2026-02-03  
-title: Declare supported Node.js versions  
+title: Implement Stage 0 foundation - Identity module  
 ## index_entry_end
 
 ## index_entry_begin
 [id:TASK-20260203-005]  
-type: docs  
+type: infra  
 priority: high  
-component: onboarding  
-status: done  
-location: ARCHIVE.md  
+component: server  
+status: todo  
+location: BACKLOG.md  
 created: 2026-02-03  
-completed: 2026-02-03  
-title: Add a production-quality README  
+title: Implement Stage 0 foundation - Core infrastructure  
 ## index_entry_end
 
 ## index_entry_begin
 [id:TASK-20260203-006]  
-type: docs  
+type: dev  
 priority: high  
-component: config  
-status: done  
-location: ARCHIVE.md  
+component: server  
+status: todo  
+location: BACKLOG.md  
 created: 2026-02-03  
-completed: 2026-02-03  
-title: Add .env.example and document required env vars  
+title: Implement Stage 1 vertical slice - CRM module  
 ## index_entry_end
 
 ## index_entry_begin
 [id:TASK-20260203-007]  
-type: quality  
+type: dev  
 priority: high  
-component: tooling  
-status: done  
-location: ARCHIVE.md  
+component: server  
+status: todo  
+location: BACKLOG.md  
 created: 2026-02-03  
-completed: 2026-02-03  
-title: Add ESLint configuration for TS + React  
+title: Implement Stage 1 vertical slice - Core modules  
 ## index_entry_end
 
 ## index_entry_begin
 [id:TASK-20260203-008]  
-type: quality  
+type: dev  
 priority: high  
-component: tooling  
-status: done  
-location: ARCHIVE.md  
+component: client  
+status: todo  
+location: BACKLOG.md  
 created: 2026-02-03  
-completed: 2026-02-03  
-title: Add Prettier formatting + CI format check  
+title: Implement Stage 1 vertical slice - Frontend shell  
 ## index_entry_end
 
 ## index_entry_begin
 [id:TASK-20260203-009]  
-type: ci  
-priority: high  
-component: automation  
+type: dev  
+priority: medium  
+component: server  
 status: todo  
-location: TODO.md  
+location: BACKLOG.md  
 created: 2026-02-03  
-title: Add GitHub Actions CI pipeline  
+title: Implement Agreements and Revenue modules  
 ## index_entry_end
 
 ## index_entry_begin
 [id:TASK-20260203-010]  
-type: test  
-priority: high  
-component: tooling  
+type: dev  
+priority: medium  
+component: server  
 status: todo  
-location: TODO.md  
+location: BACKLOG.md  
 created: 2026-02-03  
-title: Add a test runner (Vitest) and first smoke test  
+title: Implement flagship workflows  
 ## index_entry_end
 
 ## index_entry_begin
 [id:TASK-20260203-011]  
-type: devex  
+type: dev  
 priority: medium  
-component: tooling  
+component: server  
 status: todo  
-location: TODO.md  
+location: BACKLOG.md  
 created: 2026-02-03  
-title: Add .editorconfig for consistent formatting  
+title: Implement integration stubs and health  
 ## index_entry_end
 
 ## index_entry_begin
 [id:TASK-20260203-012]  
-type: devex  
+type: quality  
 priority: medium  
-component: tooling  
+component: repo  
 status: todo  
 location: BACKLOG.md  
 created: 2026-02-03  
-title: Pin package manager + document install expectations  
+title: Harden and finalize implementation  
 ## index_entry_end
 
 ## index_entry_begin
@@ -243,132 +236,151 @@ title: Add Docker + compose for local Postgres
 ## index_entry_begin
 [id:TASK-20260203-020]  
 type: config  
-priority: high  
-component: repo  
-status: todo  
-location: BACKLOG.md  
+priority: medium  
+component: tooling  
+status: done  
+location: ARCHIVE.md  
 created: 2026-02-03  
-title: Create AGENTS governance pack  
+completed: 2026-02-03  
+title: Type-check root config files  
 ## index_entry_end
 
 ## index_entry_begin
 [id:TASK-20260203-021]  
 type: config  
-priority: high  
-component: docs  
-status: todo  
-location: BACKLOG.md  
+priority: medium  
+component: css  
+status: done  
+location: ARCHIVE.md  
 created: 2026-02-03  
-title: Create system documentation  
+completed: 2026-02-03  
+title: Stop suppressing the PostCSS warning in Vite  
 ## index_entry_end
 
 ## index_entry_begin
 [id:TASK-20260203-022]  
 type: config  
-priority: high  
-component: repo  
-status: todo  
-location: BACKLOG.md  
+priority: medium  
+component: css  
+status: done  
+location: ARCHIVE.md  
 created: 2026-02-03  
-title: Create comprehensive implementation plan  
+completed: 2026-02-03  
+title: Make PostCSS config compatible across tooling  
 ## index_entry_end
 
 ## index_entry_begin
 [id:TASK-20260203-023]  
-type: infra  
-priority: high  
-component: server  
+type: config  
+priority: low  
+component: tooling  
 status: todo  
 location: BACKLOG.md  
 created: 2026-02-03  
-title: Implement Stage 0 foundation - Identity module  
+title: Declare supported Node.js versions  
 ## index_entry_end
 
 ## index_entry_begin
 [id:TASK-20260203-024]  
-type: infra  
+type: docs  
 priority: high  
-component: server  
-status: todo  
-location: BACKLOG.md  
+component: onboarding  
+status: done  
+location: ARCHIVE.md  
 created: 2026-02-03  
-title: Implement Stage 0 foundation - Core infrastructure  
+completed: 2026-02-03  
+title: Add a production-quality README  
 ## index_entry_end
 
 ## index_entry_begin
 [id:TASK-20260203-025]  
-type: dev  
+type: docs  
 priority: high  
-component: server  
-status: todo  
-location: BACKLOG.md  
+component: config  
+status: done  
+location: ARCHIVE.md  
 created: 2026-02-03  
-title: Implement Stage 1 vertical slice - CRM module  
+completed: 2026-02-03  
+title: Add .env.example and document required env vars  
 ## index_entry_end
 
 ## index_entry_begin
 [id:TASK-20260203-026]  
-type: dev  
+type: quality  
 priority: high  
-component: server  
-status: todo  
-location: BACKLOG.md  
+component: tooling  
+status: done  
+location: ARCHIVE.md  
 created: 2026-02-03  
-title: Implement Stage 1 vertical slice - Core modules  
+completed: 2026-02-03  
+title: Add ESLint configuration for TS + React  
 ## index_entry_end
 
 ## index_entry_begin
 [id:TASK-20260203-027]  
-type: dev  
+type: quality  
 priority: high  
-component: client  
-status: todo  
-location: BACKLOG.md  
+component: tooling  
+status: done  
+location: ARCHIVE.md  
 created: 2026-02-03  
-title: Implement Stage 1 vertical slice - Frontend shell  
+completed: 2026-02-03  
+title: Add Prettier formatting + CI format check  
 ## index_entry_end
 
 ## index_entry_begin
 [id:TASK-20260203-028]  
-type: dev  
-priority: medium  
-component: server  
+type: ci  
+priority: high  
+component: automation  
 status: todo  
-location: BACKLOG.md  
+location: TODO.md  
 created: 2026-02-03  
-title: Implement Agreements and Revenue modules  
+title: Add GitHub Actions CI pipeline  
 ## index_entry_end
 
 ## index_entry_begin
 [id:TASK-20260203-029]  
-type: dev  
-priority: medium  
-component: server  
+type: test  
+priority: high  
+component: tooling  
 status: todo  
-location: BACKLOG.md  
+location: TODO.md  
 created: 2026-02-03  
-title: Implement flagship workflows  
+title: Add a test runner (Vitest) and first smoke test  
 ## index_entry_end
 
 ## index_entry_begin
 [id:TASK-20260203-030]  
-type: dev  
+type: devex  
 priority: medium  
-component: server  
+component: tooling  
 status: todo  
-location: BACKLOG.md  
+location: TODO.md  
 created: 2026-02-03  
-title: Implement integration stubs and health  
+title: Add .editorconfig for consistent formatting  
 ## index_entry_end
 
 ## index_entry_begin
 [id:TASK-20260203-031]  
-type: quality  
+type: devex  
 priority: medium  
-component: repo  
+component: tooling  
 status: todo  
 location: BACKLOG.md  
 created: 2026-02-03  
+title: Pin package manager + document install expectations  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260203-012]  
+type: quality  
+priority: medium  
+component: repo  
+status: in-progress  
+location: TODO.md  
+created: 2026-02-03  
 title: Harden and finalize implementation  
 ## index_entry_end
+
 ---

@@ -1,3 +1,14 @@
+/**
+ * Landing page for unauthenticated users.
+ *
+ * AI Iteration Notes:
+ * - Marketing page showcasing UBOS features and benefits
+ * - Responsive design with mobile-first approach
+ * - Uses shadcn/ui components for consistent styling
+ * - All CTAs redirect to `/api/login` for authentication
+ * - TODO: Add analytics tracking for conversion optimization
+ */
+
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
