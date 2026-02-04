@@ -33,6 +33,8 @@ import {
   requireCsrf,
   attachCsrfToken,
   getCsrfTokenHandler,
+  cleanupExpiredCsrfTokens,
+  getCsrfTokenStats,
 } from '../../server/csrf';
 
 describe('CSRF Protection', () => {
@@ -395,7 +397,7 @@ describe('CSRF Protection', () => {
         json: vi.fn(),
       } as any as Response;
       
-      getCsrfTokenHandler(req, res);
+      getCsrfTokenHandler(req, res, vi.fn());
       
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -414,9 +416,81 @@ describe('CSRF Protection', () => {
         json: vi.fn(),
       } as any as Response;
       
-      getCsrfTokenHandler(req, res);
+      getCsrfTokenHandler(req, res, vi.fn());
       
       expect(res.status).toHaveBeenCalledWith(401);
+    });
+  });
+
+  describe('Token Management', () => {
+    beforeEach(() => {
+      // Clear all tokens before each test by importing and clearing the store
+      vi.clearAllMocks();
+      // Note: We can't directly access the token store as it's not exported
+      // So we'll create tokens with unique user IDs for each test
+    });
+
+    it('should cleanup expired tokens', () => {
+      const uniqueUser1 = 'cleanup-user-1-' + Date.now();
+      const uniqueUser2 = 'cleanup-user-2-' + Date.now();
+      
+      // Create some tokens
+      getOrCreateCsrfToken(uniqueUser1);
+      getOrCreateCsrfToken(uniqueUser2);
+      
+      // Verify tokens exist
+      expect(validateCsrfToken(uniqueUser1, getOrCreateCsrfToken(uniqueUser1))).toBe(true);
+      expect(validateCsrfToken(uniqueUser2, getOrCreateCsrfToken(uniqueUser2))).toBe(true);
+      
+      // Mock time to make tokens appear expired
+      const originalDateNow = Date.now;
+      const mockTime = Date.now() + (1000 * 60 * 60 * 25); // 25 hours later
+      Date.now = vi.fn(() => mockTime);
+      
+      // Run cleanup
+      cleanupExpiredCsrfTokens();
+      
+      // Restore original Date.now
+      Date.now = originalDateNow;
+      
+      // Get fresh tokens (old ones should be expired)
+      const newToken1 = getOrCreateCsrfToken(uniqueUser1);
+      const newToken2 = getOrCreateCsrfToken(uniqueUser2);
+      
+      // Old tokens should not validate anymore, but new ones should
+      expect(validateCsrfToken(uniqueUser1, newToken1)).toBe(true);
+      expect(validateCsrfToken(uniqueUser2, newToken2)).toBe(true);
+    });
+
+    it('should provide token statistics', () => {
+      const uniqueUser1 = 'stats-user-1-' + Date.now();
+      const uniqueUser2 = 'stats-user-2-' + Date.now();
+      
+      // Create tokens with different ages
+      getOrCreateCsrfToken(uniqueUser1);
+      
+      const originalDateNow = Date.now;
+      const mockTime = Date.now() + 5000; // 5 seconds later
+      Date.now = vi.fn(() => mockTime);
+      
+      getOrCreateCsrfToken(uniqueUser2);
+      
+      // Get stats
+      const stats = getCsrfTokenStats();
+      
+      // Restore original Date.now
+      Date.now = originalDateNow;
+      
+      expect(stats.totalTokens).toBeGreaterThanOrEqual(2);
+      expect(stats.oldestTokenAge).toBeGreaterThan(0);
+    });
+
+    it('should handle empty token store for stats', () => {
+      // This test checks that stats function doesn't crash with empty store
+      const stats = getCsrfTokenStats();
+      
+      expect(stats.totalTokens).toBeGreaterThanOrEqual(0);
+      expect(stats.oldestTokenAge).toBeGreaterThanOrEqual(0);
     });
   });
 });

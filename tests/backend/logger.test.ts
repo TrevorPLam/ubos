@@ -23,7 +23,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { logger, configureLogger, LogLevel } from "../../server/logger";
+import { logger, configureLogger, LogLevel, log } from "../../server/logger";
 
 describe("Centralized Logger with PII Redaction", () => {
   let consoleLogSpy: any;
@@ -268,6 +268,32 @@ describe("Centralized Logger with PII Redaction", () => {
       // Password in message should be redacted
       expect(logOutput).toContain('password="[REDACTED]"');
       expect(logOutput).not.toContain("secret123");
+    });
+  });
+
+  describe("Legacy Compatibility", () => {
+    it("should support legacy log function", () => {
+      // Clear previous logs
+      consoleLogSpy.mockClear();
+      
+      log("Test legacy log message", "LEGACY");
+      
+      expect(consoleLogSpy).toHaveBeenCalled();
+      const logOutput = consoleLogSpy.mock.calls[0][0];
+      expect(logOutput).toContain("Test legacy log message");
+      expect(logOutput).toContain("[LEGACY]");
+    });
+
+    it("should use default source in legacy log function", () => {
+      // Clear previous logs
+      consoleLogSpy.mockClear();
+      
+      log("Test message without source");
+      
+      expect(consoleLogSpy).toHaveBeenCalled();
+      const logOutput = consoleLogSpy.mock.calls[0][0];
+      expect(logOutput).toContain("Test message without source");
+      expect(logOutput).toContain("[app]");
     });
   });
 });
