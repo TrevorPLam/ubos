@@ -1,3 +1,13 @@
+// AI-META-BEGIN
+// AI-META: React hook - use-auth.ts
+// OWNERSHIP: client/hooks
+// ENTRYPOINTS: various components
+// DEPENDENCIES: react
+// DANGER: Review hook dependencies
+// CHANGE-SAFETY: Review changes carefully - analyze imports and usage before modifying
+// TESTS: npm run test:frontend
+// AI-META-END
+
 /**
  * Authentication hook.
  *

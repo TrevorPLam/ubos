@@ -1,3 +1,13 @@
+// AI-META-BEGIN
+// AI-META: CSRF token generation and validation
+// OWNERSHIP: server/security
+// ENTRYPOINTS: server/routes.ts
+// DEPENDENCIES: csurf
+// DANGER: CSRF protection critical
+// CHANGE-SAFETY: Review changes carefully - analyze imports and usage before modifying
+// TESTS: tests/backend/csrf.test.ts
+// AI-META-END
+
 /**
  * CSRF (Cross-Site Request Forgery) Protection
  * 

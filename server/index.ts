@@ -1,3 +1,13 @@
+// AI-META-BEGIN
+// AI-META: Express application entrypoint - bootstraps HTTP server with security middleware, API routes, and client serving
+// OWNERSHIP: server/core - application bootstrap layer
+// ENTRYPOINTS: npm run dev, npm start (production), process entry point
+// DEPENDENCIES: express, server/security, server/routes, server/static, server/vite (dev only)
+// DANGER: Critical security middleware setup order; trust proxy misconfiguration affects rate limiting/session security
+// CHANGE-SAFETY: Safe to add new middleware before routes; risky to reorder security middleware or change trust proxy logic
+// TESTS: npm run test:backend (server tests), npm run check (typecheck)
+// AI-META-END
+
 /**
  * Server entrypoint.
  *
@@ -42,11 +52,13 @@ const httpServer = createServer(app);
 const isProduction = process.env.NODE_ENV === "production";
 const isDevelopment = process.env.NODE_ENV === "development";
 
+// AI-NOTE: Configuration validation must happen synchronously at startup to fail fast on missing env vars
 // CRITICAL: Validate configuration before starting server
 // Fails fast if required security settings are missing
 // Evidence: config-validation.ts enforces OWASP ASVS requirements
 assertValidConfiguration();
 
+// AI-NOTE: Trust proxy setting affects X-Forwarded-* header parsing; misconfiguration allows IP spoofing for rate limit bypass
 // CRITICAL: Configure Express proxy trust for production deployments
 // Required for correct client IP extraction from X-Forwarded-For headers
 // This affects rate limiting, session binding, and security logging
@@ -89,6 +101,7 @@ declare module "http" {
 // See server/security.ts for implementation details
 setupSecurityMiddleware(app);
 
+// AI-NOTE: Body parser limits prevent JSON bomb DoS attacks; verify function captures rawBody for webhook signature validation
 // Request parsing with security limits
 // OWASP: Prevent JSON bombs and large payload DoS
 // THREAT_MODEL.md: T5.3 (JSON Bomb / Payload Attack)

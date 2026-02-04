@@ -1,3 +1,13 @@
+// AI-META-BEGIN
+// AI-META: Client module - App.tsx
+// OWNERSHIP: client
+// ENTRYPOINTS: client code
+// DEPENDENCIES: react
+// DANGER: Review client logic
+// CHANGE-SAFETY: Review changes carefully - analyze imports and usage before modifying
+// TESTS: npm run test:frontend
+// AI-META-END
+
 /**
  * Top-level app composition.
  *
@@ -24,6 +34,7 @@ import { AppHeader } from "@/components/app-header";
 import { useAuth } from "@/hooks/use-auth";
 import { Skeleton } from "@/components/ui/skeleton";
 
+// AI-NOTE: React.lazy enables code splitting - each page is a separate bundle loaded on demand to reduce initial bundle size
 // Route-level code splitting: keep initial bundle small.
 const LandingPage = lazy(() => import("@/pages/landing"));
 const DashboardPage = lazy(() => import("@/pages/dashboard"));

@@ -1,3 +1,13 @@
+// AI-META-BEGIN
+// AI-META: Test file for stat-card.test.tsx
+// OWNERSHIP: testing
+// ENTRYPOINTS: test runner
+// DEPENDENCIES: vitest
+// DANGER: None - test code
+// CHANGE-SAFETY: Review changes carefully - analyze imports and usage before modifying
+// TESTS: self-testing
+// AI-META-END
+
 /**
  * Tests for StatCard component.
  */

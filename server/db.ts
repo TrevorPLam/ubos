@@ -1,3 +1,13 @@
+// AI-META-BEGIN
+// AI-META: PostgreSQL connection via Drizzle ORM
+// OWNERSHIP: server/persistence
+// ENTRYPOINTS: All server DB access
+// DEPENDENCIES: drizzle-orm, pg
+// DANGER: Connection pool exhaustion, SQL injection
+// CHANGE-SAFETY: Review changes carefully - analyze imports and usage before modifying
+// TESTS: tests/backend/multi-tenant-isolation.test.ts
+// AI-META-END
+
 /**
  * Database initialization.
  *

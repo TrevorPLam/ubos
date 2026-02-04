@@ -1,3 +1,13 @@
+// AI-META-BEGIN
+// AI-META: React component - app-sidebar.tsx
+// OWNERSHIP: client/components
+// ENTRYPOINTS: various pages/components
+// DEPENDENCIES: react, ui
+// DANGER: Review state management
+// CHANGE-SAFETY: Review changes carefully - analyze imports and usage before modifying
+// TESTS: npm run test:frontend
+// AI-META-END
+
 /**
  * Application sidebar (primary navigation).
  *

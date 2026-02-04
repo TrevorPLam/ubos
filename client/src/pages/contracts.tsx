@@ -1,3 +1,13 @@
+// AI-META-BEGIN
+// AI-META: Page component - contracts.tsx
+// OWNERSHIP: client/pages
+// ENTRYPOINTS: app router
+// DEPENDENCIES: react, components
+// DANGER: Review data fetching logic
+// CHANGE-SAFETY: Review changes carefully - analyze imports and usage before modifying
+// TESTS: npm run test:frontend
+// AI-META-END
+
 /**
  * Contracts page.
  *

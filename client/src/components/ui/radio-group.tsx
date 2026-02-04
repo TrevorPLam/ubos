@@ -1,3 +1,13 @@
+// AI-META-BEGIN
+// AI-META: Radix UI component - radio-group.tsx
+// OWNERSHIP: client/ui
+// ENTRYPOINTS: imported by components
+// DEPENDENCIES: @radix-ui, react
+// DANGER: None - presentational
+// CHANGE-SAFETY: Review changes carefully - analyze imports and usage before modifying
+// TESTS: manual testing
+// AI-META-END
+
 import * as React from "react";
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 import { Circle } from "lucide-react";

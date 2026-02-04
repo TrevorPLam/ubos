@@ -1,3 +1,13 @@
+// AI-META-BEGIN
+// AI-META: Module - tailwind.config.ts
+// OWNERSHIP: root
+// ENTRYPOINTS: various
+// DEPENDENCIES: check imports
+// DANGER: Review changes carefully
+// CHANGE-SAFETY: Review changes carefully - analyze imports and usage before modifying
+// TESTS: npm test
+// AI-META-END
+
 import type { Config } from "tailwindcss";
 import animate from "tailwindcss-animate";
 import typography from "@tailwindcss/typography";

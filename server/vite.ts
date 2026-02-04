@@ -1,3 +1,13 @@
+// AI-META-BEGIN
+// AI-META: Dev Vite middleware for HMR
+// OWNERSHIP: server/dev
+// ENTRYPOINTS: server/index.ts (dev)
+// DEPENDENCIES: vite
+// DANGER: Dev-only, never in production
+// CHANGE-SAFETY: Review changes carefully - analyze imports and usage before modifying
+// TESTS: manual testing
+// AI-META-END
+
 /**
  * Development-only Vite integration.
  *

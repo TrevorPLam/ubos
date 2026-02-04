@@ -1,3 +1,13 @@
+// AI-META-BEGIN
+// AI-META: Security utility functions
+// OWNERSHIP: server/security
+// ENTRYPOINTS: server/index.ts
+// DEPENDENCIES: none
+// DANGER: PII leakage if sanitization incomplete
+// CHANGE-SAFETY: Review changes carefully - analyze imports and usage before modifying
+// TESTS: tests/backend/security-utils.test.ts
+// AI-META-END
+
 /**
  * Security utilities for data protection and sanitization.
  * 
