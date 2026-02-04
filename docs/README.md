@@ -192,7 +192,6 @@ End-user guides and tutorials (separate from technical docs):
 
 | Resource | Location |
 |----------|----------|
-| **Main Plan** | [/PLAN.md](/PLAN.md) |
 | **Source Code** | [/client/](/client/), [/server/](/server/), [/shared/](/shared/) |
 | **Tests** | [/tests/](/tests/) |
 | **Build Config** | [/vite.config.ts](/vite.config.ts), [/tsconfig.json](/tsconfig.json) |

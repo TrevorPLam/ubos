@@ -6,8 +6,8 @@ You are operating inside this repository. You must follow the reading order and 
 1) /AGENTS.md
 2) /agents/REPO.md
 3) /agents/CONSTITUTION.md
-4) /agents/roles/<YourRole>.md
-5) /agents/role_tasks/<role_slug>/TODO.md
+4) /agents/roles/<YourRole>/<role_name>.md
+5) /agents/roles/<YourRole>/tasks/TODO.md
 6) If needed: relevant docs under /docs/ and code paths referenced by tasks.
 
 ## Non-Negotiables
