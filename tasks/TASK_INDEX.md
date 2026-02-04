@@ -125,7 +125,7 @@ type: ci
 priority: high  
 component: automation  
 status: todo  
-location: BACKLOG.md  
+location: TODO.md  
 created: 2026-02-03  
 title: Add GitHub Actions CI pipeline  
 ## index_entry_end
@@ -136,7 +136,7 @@ type: test
 priority: high  
 component: tooling  
 status: todo  
-location: BACKLOG.md  
+location: TODO.md  
 created: 2026-02-03  
 title: Add a test runner (Vitest) and first smoke test  
 ## index_entry_end
@@ -147,7 +147,7 @@ type: devex
 priority: medium  
 component: tooling  
 status: todo  
-location: BACKLOG.md  
+location: TODO.md  
 created: 2026-02-03  
 title: Add .editorconfig for consistent formatting  
 ## index_entry_end
@@ -191,7 +191,7 @@ type: ci
 priority: medium  
 component: automation  
 status: todo  
-location: BACKLOG.md  
+location: TODO.md  
 created: 2026-02-03  
 title: Add dependency update automation (Dependabot/Renovate)  
 ## index_entry_end
@@ -202,7 +202,7 @@ type: ci
 priority: medium  
 component: automation  
 status: todo  
-location: BACKLOG.md  
+location: TODO.md  
 created: 2026-02-03  
 title: Add a basic security audit step to CI  
 ## index_entry_end
@@ -238,5 +238,137 @@ status: todo
 location: BACKLOG.md  
 created: 2026-02-03  
 title: Add Docker + compose for local Postgres  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260203-020]  
+type: config  
+priority: high  
+component: repo  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-03  
+title: Create AGENTS governance pack  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260203-021]  
+type: config  
+priority: high  
+component: docs  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-03  
+title: Create system documentation  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260203-022]  
+type: config  
+priority: high  
+component: repo  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-03  
+title: Create comprehensive implementation plan  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260203-023]  
+type: infra  
+priority: high  
+component: server  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-03  
+title: Implement Stage 0 foundation - Identity module  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260203-024]  
+type: infra  
+priority: high  
+component: server  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-03  
+title: Implement Stage 0 foundation - Core infrastructure  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260203-025]  
+type: dev  
+priority: high  
+component: server  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-03  
+title: Implement Stage 1 vertical slice - CRM module  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260203-026]  
+type: dev  
+priority: high  
+component: server  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-03  
+title: Implement Stage 1 vertical slice - Core modules  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260203-027]  
+type: dev  
+priority: high  
+component: client  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-03  
+title: Implement Stage 1 vertical slice - Frontend shell  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260203-028]  
+type: dev  
+priority: medium  
+component: server  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-03  
+title: Implement Agreements and Revenue modules  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260203-029]  
+type: dev  
+priority: medium  
+component: server  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-03  
+title: Implement flagship workflows  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260203-030]  
+type: dev  
+priority: medium  
+component: server  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-03  
+title: Implement integration stubs and health  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260203-031]  
+type: quality  
+priority: medium  
+component: repo  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-03  
+title: Harden and finalize implementation  
 ## index_entry_end
 ---
