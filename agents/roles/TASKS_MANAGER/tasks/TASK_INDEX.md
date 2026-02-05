@@ -58,7 +58,7 @@ status: done
 location: ARCHIVE.md  
 created: 2026-02-03  
 completed: 2026-02-05  
-title: Declare supported Node.js versions  
+title: Establish baseline supported Node.js versions policy  
 ## index_entry_end
 
 ## index_entry_begin
