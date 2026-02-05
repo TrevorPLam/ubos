@@ -114,10 +114,22 @@ function statusColor(status: TaskStatus): string {
   return '#ca8a04';
 }
 
+function escapeDotLabel(text: string): string {
+  return text
+    .replace(/\\/g, '\\\\')
+    .replace(/\r\n/g, '\\n')
+    .replace(/\r/g, '\\n')
+    .replace(/\n/g, '\\n')
+    .replace(/"/g, '\\"');
+}
+
 function toDot(graph: Graph): string {
   const lines = ['digraph Tasks {', '  rankdir=LR;', '  node [shape=box style="rounded,filled" fontname="Arial"];'];
   for (const task of graph.tasks.values()) {
-    lines.push(`  "${task.id}" [label="${task.id}\\n${task.title.replace(/"/g, '\\"')}" fillcolor="${statusColor(task.status)}" fontcolor="white"];`);
+    lines.push(
+      `  "${task.id}" [label="${escapeDotLabel(task.id)}\\n${escapeDotLabel(task.title)}" ` +
+      `fillcolor="${statusColor(task.status)}" fontcolor="white"];`
+    );
   }
   for (const task of graph.tasks.values()) {
     for (const dependency of task.dependencies) {
