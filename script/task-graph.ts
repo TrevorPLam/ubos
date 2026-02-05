@@ -57,6 +57,14 @@ function parseArgs(argv: string[]) {
 }
 
 function parseTaskBlocks(markdown: string, role: string, source: string): TaskNode[] {
+  const beginMarkers = markdown.match(/## task_begin/g) ?? [];
+  const endMarkers = markdown.match(/## task_end/g) ?? [];
+  if (beginMarkers.length !== endMarkers.length) {
+    console.warn(
+      `Warning: Found ${beginMarkers.length} '## task_begin' markers but ${endMarkers.length} '## task_end' markers in ${source} for role ${role}. ` +
+        'Some tasks may be malformed and were skipped during parsing.',
+    );
+  }
   const blocks = markdown.match(/## task_begin[\s\S]*?## task_end/g) ?? [];
   return blocks
     .map((block) => {
