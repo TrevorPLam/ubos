@@ -133,7 +133,8 @@ function chooseAgent(task: BacklogTask, capacities: Array<{ agent: string; remai
     })
     .sort((a, b) => b.score - a.score || b.capacity.remaining - a.capacity.remaining);
 
-  const pick = ranked[0]?.capacity;
+  // Pick the best agent who actually has enough remaining capacity for this task.
+  const pick = ranked.find(({ capacity }) => capacity.remaining >= task.effortHours)?.capacity;
   if (!pick) return 'unassigned';
   pick.remaining -= task.effortHours;
   return pick.agent;
