@@ -209,9 +209,15 @@ function main() {
 
     if (existsSync('/usr/bin/dot') || existsSync('/bin/dot')) {
       try {
-        execSync(`dot -Tsvg "${dotPath}" -o "${join(outDir, 'task-graph.svg')}"`);
-        execSync(`dot -Tpng "${dotPath}" -o "${join(outDir, 'task-graph.png')}"`);
-        execSync(`dot -Tpdf "${dotPath}" -o "${join(outDir, 'task-graph.pdf')}"`);
+        const escapeForShell = (value: string) => value.replace(/"/g, '\\"');
+        const dotPathEscaped = escapeForShell(dotPath);
+        const svgOut = escapeForShell(join(outDir, 'task-graph.svg'));
+        const pngOut = escapeForShell(join(outDir, 'task-graph.png'));
+        const pdfOut = escapeForShell(join(outDir, 'task-graph.pdf'));
+
+        execSync(`dot -Tsvg "${dotPathEscaped}" -o "${svgOut}"`);
+        execSync(`dot -Tpng "${dotPathEscaped}" -o "${pngOut}"`);
+        execSync(`dot -Tpdf "${dotPathEscaped}" -o "${pdfOut}"`);
       } catch {
         writeFileSync(join(outDir, 'task-graph.svg'), renderSimpleSvg(graph));
       }
