@@ -98,26 +98,54 @@ function parseBacklog(content: string): BacklogTask[] {
     }
 
     // For chunks with a task header, only treat a group_begin that appears before the header
-    // as the group for this task; group_begin lines after the task belong to the next group.
-    const headerText = blockMatch[0];
-    const headerIndex = chunk.indexOf(headerText);
-    const groupMatchBeforeHeader = chunk
-      .slice(0, headerIndex)
-      .match(/## group_begin \[type:([^\]]+)]\[priority:([^\]]+)]/);
-    if (groupMatchBeforeHeader) {
-      currentGroup = `${groupMatchBeforeHeader[1]}:${groupMatchBeforeHeader[2]}`;
-    }
+
+  // Pre-scan all group headers with their position so we can associate
+  // each task block with the closest preceding group.
+  const groupRegex = /## group_begin \[type:([^\]]+)]\[priority:([^\]]+)]/g;
+  const groups: Array<{ index: number; key: string }> = [];
+  let groupMatch: RegExpExecArray | null;
+  while ((groupMatch = groupRegex.exec(content)) !== null) {
+    const [, groupType, groupPriority] = groupMatch;
+    groups.push({
+      index: groupMatch.index,
+      key: `${groupType}:${groupPriority}`,
+    });
+  }
+
+  // Match complete task blocks, including both begin and end markers.
+  const taskBlockRegex = /## task_begin([\s\S]*?)## task_end/g;
+  let taskMatch: RegExpExecArray | null;
+  while ((taskMatch = taskBlockRegex.exec(content)) !== null) {
+    const fullBlock = taskMatch[0]; // includes both markers
+
+    const blockMatch = fullBlock.match(
+      /### # \[id:([^\]]+)]\[type:([^\]]+)]\[priority:([^\]]+)]\[component:([^\]]+)]\s*([^\n]+)/
+    );
+    if (!blockMatch) continue;
+
     const [, id, type, priority, component, title] = blockMatch;
-    const effort = chunk.match(/\*\*Estimated Effort:\*\*\s*([^\n]+)/)?.[1] ?? '1 day';
+    const effortText = fullBlock.match(/\*\*Estimated Effort:\*\*\s*([^\n]+)/)?.[1] ?? '1 day';
+
+    // Find the last group header that appears before this task block.
+    let groupKey = '';
+    for (const group of groups) {
+      if (group.index < taskMatch.index) {
+        groupKey = groupKey ? groupKey : group.key;
+        if (group.index > taskMatch.index) {
+          break;
+        }
+      }
+    }
+
     tasks.push({
       id,
       type,
       priority,
       component,
       title: title.trim(),
-      raw: `## task_begin${chunk.split('## task_end')[0]}## task_end`,
-      effortHours: effortToHours(effort),
-      groupKey: currentGroup,
+      raw: fullBlock,
+      effortHours: effortToHours(effortText),
+      groupKey,
     });
   }
   return tasks;
