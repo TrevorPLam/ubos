@@ -74,12 +74,51 @@ function parseArgs(argv: string[]) {
 
 function effortToHours(text: string): number {
   const lower = text.toLowerCase();
-  const hours = lower.match(/(\d+)\s*hour/);
-  if (hours) return Number(hours[1]);
-  const days = lower.match(/(\d+)\s*day/);
-  if (days) return Number(days[1]) * 8;
-  const weeks = lower.match(/(\d+)\s*week/);
-  if (weeks) return Number(weeks[1]) * 40;
+
+  // Helper to extract hours from a given unit, supporting ranges and decimals.
+  // Examples handled:
+  // - "2.5 hours" -> 2.5 * 1
+  // - "1-2 days" or "1 to 2 days" -> max(1, 2) * 8
+  function parseUnit(unitWord: string, unitToHours: number): number | null {
+    const numberPattern = '(\\d+(?:\\.\\d+)?)';
+    const rangeRegex = new RegExp(
+      `${numberPattern}\\s*(?:-|to)\\s*${numberPattern}\\s*${unitWord}s?\\b`
+    );
+    const singleRegex = new RegExp(
+      `${numberPattern}\\s*${unitWord}s?\\b`
+    );
+
+    const rangeMatch = lower.match(rangeRegex);
+    if (rangeMatch) {
+      const start = parseFloat(rangeMatch[1]);
+      const end = parseFloat(rangeMatch[2]);
+      const value = Math.max(start, end);
+      if (!Number.isNaN(value)) {
+        return value * unitToHours;
+      }
+    }
+
+    const singleMatch = lower.match(singleRegex);
+    if (singleMatch) {
+      const value = parseFloat(singleMatch[1]);
+      if (!Number.isNaN(value)) {
+        return value * unitToHours;
+      }
+    }
+
+    return null;
+  }
+
+  const hours = parseUnit('hour', 1);
+  if (hours !== null) return hours;
+
+  const days = parseUnit('day', 8);
+  if (days !== null) return days;
+
+  const weeks = parseUnit('week', 40);
+  if (weeks !== null) return weeks;
+
+  // Fallback when no recognizable effort is found: assume 1 day.
   return 8;
 }
 
