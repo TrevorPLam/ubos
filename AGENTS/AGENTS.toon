@@ -1,0 +1,17 @@
+# AGENTS Governance Entrypoint
+
+Purpose: Central entrypoint for governance artifacts required by task TASK-20260203-001.
+
+## Included Policies
+- `policies/TOOL_POLICY.md`
+- `policies/SAFETY_POLICY.md`
+- `policies/ARCHITECTURE_RULES.md`
+- `policies/CODING_STANDARDS.md`
+
+## Task Ledgers
+- `tasks/TODO.toon`
+- `tasks/BACKLOG.toon`
+- `tasks/ARCHIVE.toon`
+
+## Validation Notes
+- PLAN.md reference: UNKNOWN (file not present in repository root; verify source requirements externally).

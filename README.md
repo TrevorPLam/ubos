@@ -84,6 +84,18 @@ Documented in `.env.example`.
   - If you see an error about a missing build directory, run `npm run build`.
   - Ensure `dist/public/` exists and is deployed alongside `dist/index.cjs`.
 
+
+## Governance Pack
+
+- Governance entrypoint: `AGENTS/AGENTS.toon`
+- Policy set: `AGENTS/policies/`
+- Governance task ledgers: `AGENTS/tasks/*.toon`
+
+## Task Automation Tools
+
+- `npm run task:graph` — Generate task dependency graph/report artifacts.
+- `npm run task:sprint-plan` — Generate capacity/skills-based sprint plan report.
+
 ## Repo layout (high level)
 
 - `client/` — React app (Vite root)

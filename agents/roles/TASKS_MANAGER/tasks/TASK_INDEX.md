@@ -24,6 +24,76 @@ Rules:
 
 ## ðŸ—‚ Task Registry
 
+
+## index_entry_begin
+[id:TASK-20260204-278]  
+type: dev  
+priority: high  
+component: tooling  
+status: done  
+location: ARCHIVE.md  
+created: 2026-02-04  
+completed: 2026-02-05  
+title: Build Task Dependency Visualization Tool  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260204-279]  
+type: dev  
+priority: high  
+component: automation  
+status: done  
+location: ARCHIVE.md  
+created: 2026-02-04  
+completed: 2026-02-05  
+title: Automate Sprint Planning and Task Assignment  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260203-004]  
+type: config  
+priority: low  
+component: tooling  
+status: done  
+location: ARCHIVE.md  
+created: 2026-02-03  
+completed: 2026-02-05  
+title: Declare supported Node.js versions  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260205-280]  
+type: dev  
+priority: medium  
+component: tooling  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-05  
+title: Add web UI for task dependency graph exploration  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260205-281]  
+type: dev  
+priority: medium  
+component: automation  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-05  
+title: Implement safe TODO promotion with TASK_INDEX synchronization  
+## index_entry_end
+
+## index_entry_begin
+[id:TASK-20260205-282]  
+type: config  
+priority: medium  
+component: repo  
+status: todo  
+location: BACKLOG.md  
+created: 2026-02-05  
+title: Resolve PLAN.md source of truth for governance pack validation  
+## index_entry_end
+
 ---
 
 ## index_entry_begin
@@ -31,9 +101,10 @@ Rules:
 type: config  
 priority: critical  
 component: repo  
-status: todo  
-location: BACKLOG.md  
+status: done  
+location: ARCHIVE.md  
 created: 2026-02-03  
+completed: 2026-02-05  
 title: Create AGENTS governance pack  
 ## index_entry_end
 

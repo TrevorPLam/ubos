@@ -43,97 +43,7 @@ Global Rules:
 ## group_begin [type:config][priority:critical]
 ## ðŸ§° Config & Tooling â€” CRITICAL
 
-## task_begin
-### # [id:TASK-20260203-001][type:config][priority:critical][component:repo] Create AGENTS governance pack
-**Status:** todo  
-**Description:** Create comprehensive governance pack per PLAN.md requirements. This is the foundation for all other work and must be completed first per PLAN.md "Step 1: Inspect the repository and create governance pack if missing."  
-**Dependencies:** None (blocks all other work)
-**Acceptance Criteria:**  
-- [ ] /AGENTS/AGENTS.toon entrypoint created
-- [ ] /AGENTS/policies/TOOL_POLICY.md created
-- [ ] /AGENTS/policies/SAFETY_POLICY.md created
-- [ ] /AGENTS/policies/ARCHITECTURE_RULES.md created
-- [ ] /AGENTS/policies/CODING_STANDARDS.md created
-- [ ] /AGENTS/tasks/TODO.toon created
-- [ ] /AGENTS/tasks/BACKLOG.toon created
-- [ ] /AGENTS/tasks/ARCHIVE.toon created
-- [ ] Governance pack is enforceable and documented
-**Definition of Done:**  
-- [ ] All files created and validated
-- [ ] PLAN.md requirements satisfied
-- [ ] README.md links to governance pack
-**Relevant Files:** `/AGENTS/*` (all new), `README.md`, `PLAN.md`
-**Relevant Documentation:** `PLAN.md` â€” Agent governance requirements, `docs/standards/README.md` â€” Documentation standards to follow, `docs/architecture/README.md` â€” System architecture for ARCHITECTURE_RULES, `docs/security/00-overview/SECURITY_POLICY.md` â€” Security policy for SAFETY_POLICY
-**Plan:**  
-1. Create `/AGENTS/` directory structure
-2. Create AGENTS.toon entrypoint (references PLAN.md)
-3. Define TOOL_POLICY (tool usage guidelines)
-4. Define SAFETY_POLICY (security, PII, credentials)
-5. Define ARCHITECTURE_RULES (from PLAN.md: domain boundaries, no cross-domain reads, workflow orchestration)
-6. Define CODING_STANDARDS (TypeScript, testing, documentation)
-7. Create task management files (toon format)
-8. Link from README.md
-9. Validate against PLAN.md checklist
-**Estimated Effort:** 1 week
-## task_end
 
-## group_end
-
-## group_begin [type:infra][priority:high]
-## ðŸ³ Infrastructure (Unscheduled) â€” High
-
-
-
-## group_end
-
-## group_begin [type:dev][priority:high]
-## ðŸš€ Development (Unscheduled) â€” High
-
-## task_begin
-### # [id:TASK-20260204-278][type:dev][priority:high][component:tooling] Build Task Dependency Visualization Tool
-**Status:** todo  
-**Description:** Create tool to visualize task dependencies, blockers, and critical paths to improve sprint planning and resource allocation.  
-**Acceptance Criteria:**  
-- [ ] Dependency graph visualization
-- [ ] Critical path identification
-- [ ] Blocker detection and alerting
-- [ ] Interactive dependency exploration
-- [ ] Export to common formats (PNG, SVG, PDF)
-**Relevant Files:** `agents/`, `agents/roles/TASKS_MANAGER/`, `script/`  
-**Relevant Documentation:** `agents/roles/TASKS_MANAGER/`, `agents/CONSTITUTION.md`  
-**Plan:**  
-1. Parse task files to extract dependencies
-2. Build dependency graph data structure
-3. Implement graph visualization (D3.js or similar)
-4. Add critical path calculation
-5. Create interactive exploration features
-**Estimated Effort:** 3 days
-## task_end
-
----
-
-## task_begin
-### # [id:TASK-20260204-279][type:dev][priority:high][component:automation] Automate Sprint Planning and Task Assignment
-**Status:** todo  
-**Description:** Build automation for sprint planning including task selection based on priority, capacity, and skills with automatic assignment to agents/developers.  
-**Acceptance Criteria:**  
-- [ ] Capacity-based task selection
-- [ ] Skill-based task assignment
-- [ ] Sprint load balancing
-- [ ] Automatic TODO.md population
-- [ ] Sprint planning reports
-**Relevant Files:** `agents/`, `agents/roles/TASKS_MANAGER/`, `script/`  
-**Relevant Documentation:** `agents/roles/TASKS_MANAGER/`, `agents/roles/TASKS_MANAGER/tasks/TASKS.md`  
-**Plan:**  
-1. Design sprint planning algorithm
-2. Implement capacity and skills matching
-3. Build load balancing logic
-4. Automate TODO.md updates from BACKLOG.md
-5. Generate sprint planning reports
-**Estimated Effort:** 4 days
-## task_end
-
----
 ## group_end
 
 ## group_begin [type:dev][priority:medium]
@@ -317,23 +227,73 @@ Global Rules:
 ## group_begin [type:config][priority:low]
 ## ðŸ§° Config & Tooling (Unscheduled) â€” Low
 
-## task_begin
-### # [id:TASK-20260203-004][type:config][priority:low][component:tooling] Declare supported Node.js versions
-**Status:** todo  
-**Description:** Add a clear Node.js version requirement so installs/builds donâ€™t fail unexpectedly on older Node versions.  
-**Acceptance Criteria:**  
-- [ ] `package.json` declares `engines.node` (minimum supported version)
-- [ ] Local dev and CI use a compatible Node version
-**Relevant Files:** `package.json`
-**Relevant Documentation:** `docs/architecture/10_current_state/BUILD_AND_TOOLING.md` â€” Build requirements, `README.md` â€” Setup instructions
-**Plan:**  
-1. Determine minimum Node.js version (test with current dependencies)
-2. Add `engines.node` field to package.json
-3. Update .nvmrc if present
-4. Update CI to use specified Node version
-5. Document Node version in README
-**Estimated Effort:** 30 minutes
-## task_end
 
 ## group_end
 
+
+## group_begin [type:dev][priority:medium]
+## 🚀 Development (Unscheduled) — Medium (Follow-ups)
+
+## task_begin
+### # [id:TASK-20260205-280][type:dev][priority:medium][component:tooling] Add web UI for task dependency graph exploration
+**Status:** todo  
+**Description:** Extend the dependency graph tool with a browser-based interactive explorer for upstream/downstream traversal and blocker highlighting.  
+**Acceptance Criteria:**  
+- [ ] Browser-based graph visualization exists
+- [ ] Users can click a task and inspect direct dependencies/dependents
+- [ ] Blocked tasks are highlighted with status legend
+**Relevant Files:** `script/task-graph.ts`, `client/src/`, `docs/architecture/10_current_state/TASK_AUTOMATION_TOOLS.md`  
+**Relevant Documentation:** `docs/architecture/10_current_state/TASK_AUTOMATION_TOOLS.md` — Current CLI behavior and export outputs, `agents/CONSTITUTION.md` — verification and scope rules  
+**Plan:**  
+1. Expose graph JSON via a reusable output contract.
+2. Build a minimal client view using existing React stack for graph exploration.
+3. Add smoke tests for render and dependency navigation behavior.
+**Estimated Effort:** 2 days
+## task_end
+
+---
+
+## task_begin
+### # [id:TASK-20260205-281][type:dev][priority:medium][component:automation] Implement safe TODO promotion with TASK_INDEX synchronization
+**Status:** todo  
+**Description:** Improve sprint planner automation so TODO promotion moves blocks from BACKLOG, preserves ordering, and updates TASK_INDEX atomically.  
+**Acceptance Criteria:**  
+- [ ] Promoted tasks are removed from BACKLOG
+- [ ] TODO receives only one batch type and keeps source ordering
+- [ ] TASK_INDEX status/location updates are applied in same command
+**Relevant Files:** `script/sprint-planner.ts`, `agents/roles/TASKS_MANAGER/tasks/BACKLOG.md`, `agents/roles/TASKS_MANAGER/tasks/TODO.md`, `agents/roles/TASKS_MANAGER/tasks/TASK_INDEX.md`  
+**Relevant Documentation:** `agents/roles/TASKS_MANAGER/tasks/TASKS.md` — canonical promotion flow and index requirements, `agents/CONSTITUTION.md` — verification policy  
+**Plan:**  
+1. Add parser/updater helpers for BACKLOG/TODO/TASK_INDEX edits.
+2. Implement transactional write strategy with dry-run mode.
+3. Add regression tests for promotion ordering and index sync.
+**Estimated Effort:** 2 days
+## task_end
+
+---
+
+## group_end
+
+## group_begin [type:config][priority:medium]
+## 🧰 Config & Tooling — MEDIUM (Follow-ups)
+
+## task_begin
+### # [id:TASK-20260205-282][type:config][priority:medium][component:repo] Resolve PLAN.md source of truth for governance pack validation
+**Status:** todo  
+**Description:** Remove governance validation ambiguity by identifying and documenting the authoritative PLAN.md location referenced by task requirements.  
+**Acceptance Criteria:**  
+- [ ] Canonical PLAN.md path is documented
+- [ ] Governance pack validation note is updated to remove UNKNOWN
+- [ ] README or governance docs link to canonical plan source
+**Relevant Files:** `AGENTS/AGENTS.toon`, `README.md`, `agents/roles/TASKS_MANAGER/tasks/ARCHIVE.md`  
+**Relevant Documentation:** `agents/REPO.md` — repository structure conventions, `agents/CONSTITUTION.md` — unknown handling and verification policy  
+**Plan:**  
+1. Search repository and governance docs for authoritative planning source.
+2. Update governance entrypoint and references to canonical location.
+3. Verify references resolve and update task archive notes if needed.
+**Estimated Effort:** 3 hours
+## task_end
+
+---
+
+## group_end
