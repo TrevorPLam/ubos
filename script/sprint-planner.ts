@@ -193,7 +193,14 @@ function main() {
   const tasks = parseBacklog(backlog)
     .filter((task) => (!options.targetType || task.type === options.targetType) && (!options.targetPriority || task.priority === options.targetPriority));
 
-  const selected = tasks.slice(0, options.limit);
+  // By default, keep selection constrained to a single backlog group to respect batching rules.
+  const [firstTask] = tasks;
+  const groupScopedTasks =
+    firstTask && !options.targetType && !options.targetPriority
+      ? tasks.filter((task) => task.groupKey === firstTask.groupKey)
+      : tasks;
+
+  const selected = groupScopedTasks.slice(0, options.limit);
   const assignment = selected.map((task) => ({
     id: task.id,
     assignee: chooseAgent(task, options.capacities, options.skills),
