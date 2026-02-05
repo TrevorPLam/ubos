@@ -1,0 +1,20 @@
+# AGENTS Governance Entrypoint
+
+Purpose: Central entrypoint for governance artifacts required by task TASK-20260203-001.
+
+## Included Policies
+- `policies/TOOL_POLICY.md`
+- `policies/SAFETY_POLICY.md`
+- `policies/ARCHITECTURE_RULES.md`
+- `policies/CODING_STANDARDS.md`
+
+## Task Ledgers
+- `tasks/TODO.toon`
+- `tasks/BACKLOG.toon`
+- `tasks/ARCHIVE.toon`
+
+## Validation Notes
+- Planning documentation sources:
+  - `docs/architecture/PLAN.md` (architecture and system design requirements)
+  - `docs/data/PLAN.md` (data, schema, and related requirements)
+- Governance validation should use these documents in place of a non-existent root-level `PLAN.md`.
