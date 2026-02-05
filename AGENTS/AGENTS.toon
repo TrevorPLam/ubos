@@ -14,4 +14,7 @@ Purpose: Central entrypoint for governance artifacts required by task TASK-20260
 - `tasks/ARCHIVE.toon`
 
 ## Validation Notes
-- PLAN.md reference: UNKNOWN (file not present in repository root; verify source requirements externally).
+- Planning documentation sources:
+  - `docs/architecture/PLAN.md` (architecture and system design requirements)
+  - `docs/data/PLAN.md` (data, schema, and related requirements)
+- Governance validation should use these documents in place of a non-existent root-level `PLAN.md`.
