@@ -87,13 +87,26 @@ function parseBacklog(content: string): BacklogTask[] {
   const tasks: BacklogTask[] = [];
   let currentGroup = '';
   for (const chunk of content.split(/## task_begin/)) {
-    const groupMatch = chunk.match(/## group_begin \[type:([^\]]+)]\[priority:([^\]]+)]/);
-    if (groupMatch) {
-      currentGroup = `${groupMatch[1]}:${groupMatch[2]}`;
+    // If this chunk has no task header, it may still introduce a new group for subsequent tasks.
+    const blockMatch = chunk.match(/### # \[id:([^\]]+)]\[type:([^\]]+)]\[priority:([^\]]+)]\[component:([^\]]+)]\s*([^\n]+)/);
+    if (!blockMatch) {
+      const groupOnlyMatch = chunk.match(/## group_begin \[type:([^\]]+)]\[priority:([^\]]+)]/);
+      if (groupOnlyMatch) {
+        currentGroup = `${groupOnlyMatch[1]}:${groupOnlyMatch[2]}`;
+      }
+      continue;
     }
 
-    const blockMatch = chunk.match(/### # \[id:([^\]]+)]\[type:([^\]]+)]\[priority:([^\]]+)]\[component:([^\]]+)]\s*([^\n]+)/);
-    if (!blockMatch) continue;
+    // For chunks with a task header, only treat a group_begin that appears before the header
+    // as the group for this task; group_begin lines after the task belong to the next group.
+    const headerText = blockMatch[0];
+    const headerIndex = chunk.indexOf(headerText);
+    const groupMatchBeforeHeader = chunk
+      .slice(0, headerIndex)
+      .match(/## group_begin \[type:([^\]]+)]\[priority:([^\]]+)]/);
+    if (groupMatchBeforeHeader) {
+      currentGroup = `${groupMatchBeforeHeader[1]}:${groupMatchBeforeHeader[2]}`;
+    }
     const [, id, type, priority, component, title] = blockMatch;
     const effort = chunk.match(/\*\*Estimated Effort:\*\*\s*([^\n]+)/)?.[1] ?? '1 day';
     tasks.push({
