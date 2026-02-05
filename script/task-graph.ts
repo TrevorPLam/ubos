@@ -207,7 +207,16 @@ function main() {
     const dotPath = join(outDir, 'task-graph.dot');
     writeFileSync(dotPath, dot);
 
-    if (existsSync('/usr/bin/dot') || existsSync('/bin/dot')) {
+    let dotAvailable = false;
+    try {
+      // Check if `dot` is available in PATH in a portable way.
+      execSync('dot -V', { stdio: 'ignore' });
+      dotAvailable = true;
+    } catch {
+      dotAvailable = false;
+    }
+
+    if (dotAvailable) {
       try {
         const escapeForShell = (value: string) => value.replace(/"/g, '\\"');
         const dotPathEscaped = escapeForShell(dotPath);
