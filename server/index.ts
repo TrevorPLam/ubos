@@ -32,6 +32,10 @@
  * - Anything that must run before the Vite/static catch-all should be mounted before that block.
  */
 
+// Load environment variables from .env file BEFORE any other imports
+import { config } from "dotenv";
+config();
+
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
@@ -246,7 +250,7 @@ export function startServer(server: any) {
 }
 
 // Bootstrap the application if this file is run directly
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   (async () => {
     const { app, server } = createApp();
     await setupApplication(app, server);
