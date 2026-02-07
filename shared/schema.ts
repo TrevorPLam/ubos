@@ -688,6 +688,32 @@ export const activityEvents = pgTable(
   ],
 );
 
+// ==================== OUTBOX (Event Bus) ====================
+export const outbox = pgTable(
+  "outbox",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    organizationId: varchar("organization_id")
+      .references(() => organizations.id, { onDelete: "cascade" })
+      .notNull(),
+    eventType: varchar("event_type", { length: 255 }).notNull(),
+    version: integer("version").default(1).notNull(),
+    payload: jsonb("payload").notNull(),
+    metadata: jsonb("metadata"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    processedAt: timestamp("processed_at"),
+    retryCount: integer("retry_count").default(0).notNull(),
+    lastError: text("last_error"),
+  },
+  (table) => [
+    // Index for finding unprocessed events quickly (FIFO)
+    index("idx_outbox_unprocessed").on(table.createdAt).where(sql`processed_at IS NULL`),
+    index("idx_outbox_org").on(table.organizationId),
+  ],
+);
+
 // ==================== CLIENT PORTAL ACCESS ====================
 export const clientPortalAccess = pgTable(
   "client_portal_access",
@@ -862,6 +888,13 @@ export const insertActivityEventSchema = createInsertSchema(activityEvents).omit
   id: true,
   createdAt: true,
 });
+export const insertOutboxSchema = createInsertSchema(outbox).omit({
+  id: true,
+  createdAt: true,
+  processedAt: true,
+  retryCount: true,
+  lastError: true,
+});
 export const insertProjectTemplateSchema = createInsertSchema(projectTemplates).omit({
   id: true,
   createdAt: true,
@@ -907,6 +940,8 @@ export type InsertFileObject = z.infer<typeof insertFileObjectSchema>;
 export type FileObject = typeof fileObjects.$inferSelect;
 export type InsertActivityEvent = z.infer<typeof insertActivityEventSchema>;
 export type ActivityEvent = typeof activityEvents.$inferSelect;
+export type InsertOutboxEvent = z.infer<typeof insertOutboxSchema>;
+export type OutboxEvent = typeof outbox.$inferSelect;
 export type InsertProjectTemplate = z.infer<typeof insertProjectTemplateSchema>;
 export type ProjectTemplate = typeof projectTemplates.$inferSelect;
 export type InsertInvoiceSchedule = z.infer<typeof insertInvoiceScheduleSchema>;

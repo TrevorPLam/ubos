@@ -31,6 +31,7 @@
 import { randomUUID } from "crypto";
 import type { Request, Response, NextFunction, RequestHandler } from "express";
 import { logger } from "./logger";
+import { redisClient, isRedisConnected } from "./redis";
 
 /**
  * Session data structure.
@@ -74,14 +75,10 @@ export const DEFAULT_SESSION_CONFIG: SessionConfig = {
 };
 
 /**
- * In-memory session store.
- * 
- * In production, replace with Redis or similar persistent store.
- * 
- * Key: sessionId (UUID)
- * Value: SessionData
+ * In-memory session store fallback.
+ * Used when Redis is not available.
  */
-const sessionStore = new Map<string, SessionData>();
+const memoryStore = new Map<string, SessionData>();
 
 /**
  * Session configuration (can be overridden at startup).
@@ -105,7 +102,7 @@ export function configureSession(config: Partial<SessionConfig>): void {
  * 
  * Session lifecycle:
  * 1. Created on login with randomUUID()
- * 2. Stored in session store with timestamps
+ * 2. Stored in Redis (or memory) with timestamps
  * 3. Cookie set on response (HttpOnly, Secure, SameSite)
  * 4. Validated on each request
  * 5. Expired based on TTL or idle timeout
@@ -115,7 +112,7 @@ export function configureSession(config: Partial<SessionConfig>): void {
  * @param req - Express request (for IP/UA tracking)
  * @returns Session ID
  */
-export function createSession(userId: string, req: Request): string {
+export async function createSession(userId: string, req: Request): Promise<string> {
   const sessionId = randomUUID();
   const now = Date.now();
   
@@ -128,7 +125,17 @@ export function createSession(userId: string, req: Request): string {
     userAgent: req.get("user-agent"),
   };
   
-  sessionStore.set(sessionId, session);
+  if (isRedisConnected()) {
+    // Store in Redis with TTL equal to absoluteTTL
+    // We serialize the session object to JSON
+    await redisClient.set(
+      `session:${sessionId}`, 
+      JSON.stringify(session), 
+      { PX: sessionConfig.absoluteTTL }
+    );
+  } else {
+    memoryStore.set(sessionId, session);
+  }
   
   logger.info(`Created session for user ${userId}`, { 
     source: "SESSION", 
@@ -153,12 +160,27 @@ export function createSession(userId: string, req: Request): string {
  * @param req - Express request (for IP/UA validation)
  * @returns SessionData if valid, null if invalid/expired
  */
-export function getSession(sessionId: string | undefined, req: Request): SessionData | null {
+export async function getSession(sessionId: string | undefined, req: Request): Promise<SessionData | null> {
   if (!sessionId) {
     return null;
   }
   
-  const session = sessionStore.get(sessionId);
+  let session: SessionData | null | undefined;
+
+  if (isRedisConnected()) {
+    const data = await redisClient.get(`session:${sessionId}`);
+    if (data) {
+      try {
+        session = JSON.parse(data);
+      } catch (e) {
+        logger.error("Failed to parse session data", { sessionId, error: String(e) });
+        return null;
+      }
+    }
+  } else {
+    session = memoryStore.get(sessionId);
+  }
+  
   if (!session) {
     return null;
   }
@@ -172,7 +194,7 @@ export function getSession(sessionId: string | undefined, req: Request): Session
       sessionId: sessionId.slice(0, 8),
       ageSeconds: Math.floor((now - session.createdAt) / 1000)
     });
-    sessionStore.delete(sessionId);
+    await destroySession(sessionId);
     return null;
   }
   
@@ -183,7 +205,7 @@ export function getSession(sessionId: string | undefined, req: Request): Session
       sessionId: sessionId.slice(0, 8),
       idleSeconds: Math.floor((now - session.lastActivity) / 1000)
     });
-    sessionStore.delete(sessionId);
+    await destroySession(sessionId);
     return null;
   }
   
@@ -210,10 +232,39 @@ export function getSession(sessionId: string | undefined, req: Request): Session
  * 
  * @param sessionId - Session identifier
  */
-export function touchSession(sessionId: string): void {
-  const session = sessionStore.get(sessionId);
-  if (session) {
-    session.lastActivity = Date.now();
+export async function touchSession(sessionId: string): Promise<void> {
+  if (isRedisConnected()) {
+    const data = await redisClient.get(`session:${sessionId}`);
+    if (data) {
+      try {
+        const session = JSON.parse(data) as SessionData;
+        session.lastActivity = Date.now();
+        // Update Redis, resetting TTL to absoluteTTL (or remaining time?)
+        // Usually we want to keep the absolute TTL constraint, so we should NOT extend the key TTL beyond original absoluteTTL.
+        // However, redis SET resets TTL unless KEEPTTL is used.
+        // But we want to enforce absoluteTTL.
+        // Calculate remaining TTL
+        const now = Date.now();
+        const remainingTTL = Math.max(0, sessionConfig.absoluteTTL - (now - session.createdAt));
+        
+        if (remainingTTL > 0) {
+            await redisClient.set(
+                `session:${sessionId}`, 
+                JSON.stringify(session), 
+                { PX: remainingTTL }
+            );
+        } else {
+            await destroySession(sessionId);
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+  } else {
+    const session = memoryStore.get(sessionId);
+    if (session) {
+      session.lastActivity = Date.now();
+    }
   }
 }
 
@@ -236,8 +287,18 @@ export function touchSession(sessionId: string): void {
  * @param req - Express request
  * @returns New session ID, or null if old session invalid
  */
-export function rotateSession(oldSessionId: string, req: Request): string | null {
-  const session = sessionStore.get(oldSessionId);
+export async function rotateSession(oldSessionId: string, req: Request): Promise<string | null> {
+  let session: SessionData | null | undefined;
+
+  if (isRedisConnected()) {
+    const data = await redisClient.get(`session:${oldSessionId}`);
+    if (data) {
+       session = JSON.parse(data);
+    }
+  } else {
+    session = memoryStore.get(oldSessionId);
+  }
+
   if (!session) {
     return null;
   }
@@ -251,11 +312,26 @@ export function rotateSession(oldSessionId: string, req: Request): string | null
     rotatedAt: Date.now(),
   };
   
-  // Store under new ID
-  sessionStore.set(newSessionId, newSession);
-  
-  // Delete old ID
-  sessionStore.delete(oldSessionId);
+  if (isRedisConnected()) {
+      // Calculate remaining TTL
+      const now = Date.now();
+      const remainingTTL = Math.max(0, sessionConfig.absoluteTTL - (now - session.createdAt));
+      
+      if (remainingTTL > 0) {
+        await redisClient.set(
+            `session:${newSessionId}`, 
+            JSON.stringify(newSession), 
+            { PX: remainingTTL }
+        );
+        await redisClient.del(`session:${oldSessionId}`);
+      } else {
+          // expired
+          return null;
+      }
+  } else {
+      memoryStore.set(newSessionId, newSession);
+      memoryStore.delete(oldSessionId);
+  }
   
   logger.info("Session rotated", {
     source: "SESSION",
@@ -274,16 +350,21 @@ export function rotateSession(oldSessionId: string, req: Request): string | null
  * 
  * @param sessionId - Session identifier to destroy
  */
-export function destroySession(sessionId: string): void {
-  const session = sessionStore.get(sessionId);
-  if (session) {
-    logger.info("Session destroyed", {
-      source: "SESSION",
-      sessionId: sessionId.slice(0, 8),
-      userId: session.userId
-    });
-    sessionStore.delete(sessionId);
+export async function destroySession(sessionId: string): Promise<void> {
+  if (isRedisConnected()) {
+      // We also might want to log who destroyed it, but we don't have the session data here easily unless we fetch it first.
+      // For performance, just delete.
+      await redisClient.del(`session:${sessionId}`);
+  } else {
+      const session = memoryStore.get(sessionId);
+      if (session) {
+        memoryStore.delete(sessionId);
+      }
   }
+  logger.info("Session destroyed", {
+      source: "SESSION",
+      sessionId: sessionId.slice(0, 8)
+  });
 }
 
 /**
@@ -293,10 +374,16 @@ export function destroySession(sessionId: string): void {
  * In production with Redis, use Redis TTL instead.
  */
 export function cleanupExpiredSessions(): void {
+  // If using Redis, TTL handles cleanup automatically.
+  // If using memory store, we still need this.
+  if (isRedisConnected()) {
+      return; 
+  }
+
   const now = Date.now();
   const expired: string[] = [];
   
-  for (const [sessionId, session] of sessionStore.entries()) {
+  for (const [sessionId, session] of memoryStore.entries()) {
     const age = now - session.createdAt;
     const idle = now - session.lastActivity;
     
@@ -305,17 +392,17 @@ export function cleanupExpiredSessions(): void {
     }
   }
   
-  expired.forEach(sessionId => sessionStore.delete(sessionId));
+  expired.forEach(sessionId => memoryStore.delete(sessionId));
   
   if (expired.length > 0) {
-    logger.debug("Cleaned up expired sessions", {
+    logger.debug("Cleaned up expired sessions (memory)", {
       source: "SESSION",
       count: expired.length
     });
   }
 }
 
-// Schedule cleanup every 5 minutes
+// Schedule cleanup every 5 minutes (mostly for memory fallback)
 setInterval(cleanupExpiredSessions, 5 * 60 * 1000);
 
 /**
@@ -323,16 +410,28 @@ setInterval(cleanupExpiredSessions, 5 * 60 * 1000);
  * 
  * @returns Object with session metrics
  */
-export function getSessionStats(): {
+export async function getSessionStats(): Promise<{
   totalSessions: number;
   oldestSessionAge: number;
   averageIdle: number;
-} {
+}> {
+  if (isRedisConnected()) {
+      // Redis specific stats - tough to get exact "oldest age" without scanning all keys.
+      // We can just return total count.
+      // Use DBSIZE
+      const size = await redisClient.dbSize();
+      return {
+          totalSessions: size,
+          oldestSessionAge: 0, // Not easily available
+          averageIdle: 0 // Not easily available
+      };
+  }
+
   const now = Date.now();
   let totalIdle = 0;
   let oldestAge = 0;
   
-  for (const session of sessionStore.values()) {
+  for (const session of memoryStore.values()) {
     const age = now - session.createdAt;
     const idle = now - session.lastActivity;
     
@@ -343,9 +442,9 @@ export function getSessionStats(): {
   }
   
   return {
-    totalSessions: sessionStore.size,
+    totalSessions: memoryStore.size,
     oldestSessionAge: Math.floor(oldestAge / 1000), // seconds
-    averageIdle: sessionStore.size > 0 ? Math.floor(totalIdle / sessionStore.size / 1000) : 0,
+    averageIdle: memoryStore.size > 0 ? Math.floor(totalIdle / memoryStore.size / 1000) : 0,
   };
 }
 
@@ -367,7 +466,7 @@ export function getSessionStats(): {
  * @param res - Express response
  * @param next - Express next function
  */
-export const sessionMiddleware: RequestHandler = (req: Request, res: Response, next: NextFunction) => {
+export const sessionMiddleware: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
   // Extract session ID from cookie
   const cookies = parseCookies(req.header("cookie"));
   const sessionId = cookies[sessionConfig.cookieName];
@@ -378,7 +477,7 @@ export const sessionMiddleware: RequestHandler = (req: Request, res: Response, n
   }
   
   // Validate session
-  const session = getSession(sessionId, req);
+  const session = await getSession(sessionId, req);
   if (!session) {
     // Session invalid/expired, clear cookie
     res.setHeader(
@@ -389,12 +488,12 @@ export const sessionMiddleware: RequestHandler = (req: Request, res: Response, n
   }
   
   // Update activity timestamp
-  touchSession(sessionId);
+  await touchSession(sessionId);
   
   // Check if session needs rotation
   const now = Date.now();
   if (now - session.rotatedAt > sessionConfig.rotationInterval) {
-    const newSessionId = rotateSession(sessionId, req);
+    const newSessionId = await rotateSession(sessionId, req);
     if (newSessionId) {
       // Set new session cookie
       setSessionCookie(res, newSessionId);

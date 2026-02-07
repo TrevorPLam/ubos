@@ -48,6 +48,9 @@ import {
 import { logger, log } from "./logger";
 import { assertValidConfiguration } from "./config-validation";
 import { createServer } from "http";
+import { connectRedis } from "./redis";
+import { eventDispatcher } from "./services/event-dispatcher";
+import { workflowEngine } from "./domains/workflows/engine";
 
 declare module "http" {
   interface IncomingMessage {
@@ -252,6 +255,15 @@ export function startServer(server: any) {
 // Bootstrap the application if this file is run directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   (async () => {
+    // Connect to Redis (optional, but recommended for production)
+    await connectRedis();
+
+    // Start Event Dispatcher (background worker)
+    eventDispatcher.start();
+
+    // Initialize Workflows
+    workflowEngine.initialize();
+
     const { app, server } = createApp();
     await setupApplication(app, server);
     startServer(server);

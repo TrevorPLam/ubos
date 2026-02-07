@@ -24,7 +24,7 @@
  *   3) call those methods from `server/routes.ts`
  */
 
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, isNull, asc, sql } from "drizzle-orm";
 import { db } from "./db";
 import {
   users,
@@ -46,6 +46,7 @@ import {
   vendors,
   fileObjects,
   activityEvents,
+  outbox,
   projectTemplates,
   invoiceSchedules,
   type User,
@@ -80,6 +81,10 @@ import {
   type InsertVendor,
   type ActivityEvent,
   type InsertActivityEvent,
+  type OutboxEvent,
+  type InsertOutboxEvent,
+  type InsertFileObject,
+  type FileObject,
 } from "@shared/schema";
 
 export interface IStorage {
@@ -184,6 +189,10 @@ export interface IStorage {
 
   getVendors(orgId: string): Promise<Vendor[]>;
   createVendor(data: InsertVendor): Promise<Vendor>;
+
+  createFileObject(data: InsertFileObject): Promise<FileObject>;
+  getFileObject(id: string): Promise<FileObject | undefined>;
+  getFileObjects(orgId: string, engagementId?: string): Promise<FileObject[]>;
 
   createActivityEvent(data: InsertActivityEvent): Promise<ActivityEvent>;
   getActivityEvents(orgId: string, engagementId?: string): Promise<ActivityEvent[]>;
@@ -339,6 +348,12 @@ export class DatabaseStorage implements IStorage {
 
   async createDeal(data: InsertDeal): Promise<Deal> {
     const [deal] = await db.insert(deals).values(data).returning();
+    await this.createOutboxEvent({
+      organizationId: deal.organizationId,
+      eventType: "deal.created",
+      payload: deal,
+      metadata: { source: "storage" },
+    });
     return deal;
   }
 
@@ -352,6 +367,15 @@ export class DatabaseStorage implements IStorage {
       .set({ ...data, updatedAt: new Date() })
       .where(and(eq(deals.id, id), eq(deals.organizationId, orgId)))
       .returning();
+    
+    if (deal) {
+      await this.createOutboxEvent({
+        organizationId: orgId,
+        eventType: "deal.updated",
+        payload: deal,
+        metadata: { source: "storage" },
+      });
+    }
     return deal;
   }
 
@@ -699,6 +723,36 @@ export class DatabaseStorage implements IStorage {
     return vendor;
   }
 
+  async createFileObject(data: InsertFileObject): Promise<FileObject> {
+    const [file] = await db.insert(fileObjects).values(data).returning();
+    return file;
+  }
+
+  async getFileObject(id: string): Promise<FileObject | undefined> {
+    const [file] = await db.select().from(fileObjects).where(eq(fileObjects.id, id));
+    return file;
+  }
+
+  async getFileObjects(orgId: string, engagementId?: string): Promise<FileObject[]> {
+    if (engagementId) {
+      return db
+        .select()
+        .from(fileObjects)
+        .where(
+          and(
+            eq(fileObjects.organizationId, orgId),
+            eq(fileObjects.engagementId, engagementId),
+          ),
+        )
+        .orderBy(desc(fileObjects.createdAt));
+    }
+    return db
+      .select()
+      .from(fileObjects)
+      .where(eq(fileObjects.organizationId, orgId))
+      .orderBy(desc(fileObjects.createdAt));
+  }
+
   async createActivityEvent(data: InsertActivityEvent): Promise<ActivityEvent> {
     const [event] = await db.insert(activityEvents).values(data).returning();
     return event;
@@ -722,6 +776,37 @@ export class DatabaseStorage implements IStorage {
       .from(activityEvents)
       .where(eq(activityEvents.organizationId, orgId))
       .orderBy(desc(activityEvents.createdAt));
+  }
+
+  async createOutboxEvent(data: InsertOutboxEvent): Promise<OutboxEvent> {
+    const [event] = await db.insert(outbox).values(data).returning();
+    return event;
+  }
+
+  async getUnprocessedEvents(limit = 50): Promise<OutboxEvent[]> {
+    return db
+      .select()
+      .from(outbox)
+      .where(isNull(outbox.processedAt))
+      .orderBy(asc(outbox.createdAt))
+      .limit(limit);
+  }
+
+  async markEventProcessed(id: string): Promise<void> {
+    await db
+      .update(outbox)
+      .set({ processedAt: new Date() })
+      .where(eq(outbox.id, id));
+  }
+
+  async updateEventRetry(id: string, error: string): Promise<void> {
+    await db
+      .update(outbox)
+      .set({
+        lastError: error,
+        retryCount: sql`${outbox.retryCount} + 1`,
+      })
+      .where(eq(outbox.id, id));
   }
 }
 

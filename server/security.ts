@@ -28,9 +28,11 @@
 
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
+import { RedisStore } from "rate-limit-redis";
 import cors from "cors";
 import type { Express, Request, Response, NextFunction } from "express";
 import { logger } from "./logger";
+import { redisClient } from "./redis";
 
 /**
  * Configure security headers using Helmet.
