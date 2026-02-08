@@ -172,7 +172,7 @@ This implementation plan extends the existing Client Companies CRUD endpoints in
     - Ensure updatedAt timestamp is automatically updated
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6_
   
-  - [-] 7.2 Write unit tests for PUT /api/clients/:id
+  - [x] 7.2 Write unit tests for PUT /api/clients/:id
     - Test successful update with partial data
     - Test successful update with all fields
     - Test update non-existent client
@@ -183,11 +183,11 @@ This implementation plan extends the existing Client Companies CRUD endpoints in
     - Test 200 status code
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6_
   
-  - [~] 7.3 Write property test for update preserves organization
+  - [x] 7.3 Write property test for update preserves organization
     - **Property 9: Update Preserves Organization**
     - **Validates: Requirements 4.1**
   
-  - [~] 7.4 Write property test for input validation on update
+  - [x] 7.4 Write property test for input validation on update
     - **Property 7: Input Validation** (applies to PUT as well)
     - **Validates: Requirements 4.2, 4.3, 8.1, 8.2**
 
