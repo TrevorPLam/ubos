@@ -1,6 +1,8 @@
 import { Router, Request, Response } from "express";
 import { storage } from "../../storage";
 import { requireAuth, getUserIdFromRequest, getOrCreateOrg, AuthenticatedRequest } from "../../middleware/auth";
+import { clientListQuerySchema, updateClientCompanySchema } from "@shared/client-schemas";
+import { insertClientCompanySchema } from "@shared/schema";
 
 export const crmRoutes = Router();
 
@@ -10,11 +12,65 @@ crmRoutes.get("/api/clients", requireAuth, async (req: Request, res: Response) =
   try {
     const userId = getUserIdFromRequest(req)!;
     const orgId = await getOrCreateOrg(userId);
-    const clients = await storage.getClientCompanies(orgId);
-    res.json(clients);
+    
+    // Parse and validate query parameters
+    const validation = clientListQuerySchema.safeParse(req.query);
+    if (!validation.success) {
+      return res.status(400).json({
+        error: "Validation failed",
+        details: validation.error.errors.map(err => ({
+          field: err.path.join('.'),
+          message: err.message
+        }))
+      });
+    }
+    
+    // Extract pagination parameters with defaults
+    const { page, limit, search, industry, city, state, country } = validation.data;
+    
+    // Call storage method with pagination and filter options
+    const result = await storage.getClientCompaniesPaginated(orgId, {
+      page,
+      limit,
+      search,
+      industry,
+      city,
+      state,
+      country
+    });
+    
+    // Return paginated response with data and pagination metadata
+    res.json(result);
   } catch (error) {
     console.error("Get clients error:", error);
     res.status(500).json({ error: "Failed to fetch clients" });
+  }
+});
+
+crmRoutes.get("/api/clients/:id", requireAuth, async (req: Request, res: Response) => {
+  try {
+    const userId = getUserIdFromRequest(req)!;
+    const orgId = await getOrCreateOrg(userId);
+    
+    // Validate id parameter (basic check - UUID format handled by database)
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ error: "Client ID is required" });
+    }
+    
+    // Call storage method to get client with relations
+    const client = await storage.getClientCompanyWithRelations(id, orgId);
+    
+    // Return 404 if client not found or belongs to different org
+    if (!client) {
+      return res.status(404).json({ error: "Client not found" });
+    }
+    
+    // Return client with all relations
+    res.json(client);
+  } catch (error) {
+    console.error("Get client by ID error:", error);
+    res.status(500).json({ error: "Failed to fetch client" });
   }
 });
 
@@ -22,7 +78,29 @@ crmRoutes.post("/api/clients", requireAuth, async (req: Request, res: Response) 
   try {
     const userId = getUserIdFromRequest(req)!;
     const orgId = await getOrCreateOrg(userId);
-    const client = await storage.createClientCompany({ ...req.body, organizationId: orgId });
+    
+    // Validate request body using insertClientCompanySchema
+    const validation = insertClientCompanySchema.safeParse(req.body);
+    if (!validation.success) {
+      return res.status(400).json({
+        error: "Validation failed",
+        details: validation.error.errors.map(err => ({
+          field: err.path.join('.'),
+          message: err.message
+        }))
+      });
+    }
+    
+    // Ensure organizationId is set from authenticated user (ignore request body value)
+    const clientData = {
+      ...validation.data,
+      organizationId: orgId
+    };
+    
+    // Call storage.createClientCompany with validated data
+    const client = await storage.createClientCompany(clientData);
+    
+    // Return created client with 201 status
     res.status(201).json(client);
   } catch (error) {
     console.error("Create client error:", error);
@@ -30,22 +108,46 @@ crmRoutes.post("/api/clients", requireAuth, async (req: Request, res: Response) 
   }
 });
 
-crmRoutes.patch(
-  "/api/clients/:id",
-  requireAuth,
-  async (req: Request, res: Response) => {
-    try {
-      const userId = (req as AuthenticatedRequest).user!.claims.sub;
-      const orgId = await getOrCreateOrg(userId);
-      const client = await storage.updateClientCompany(req.params.id, orgId, req.body);
-      if (!client) return res.status(404).json({ error: "Client not found" });
-      res.json(client);
-    } catch (error) {
-      console.error("Update client error:", error);
-      res.status(500).json({ error: "Failed to update client" });
+crmRoutes.put("/api/clients/:id", requireAuth, async (req: Request, res: Response) => {
+  try {
+    const userId = getUserIdFromRequest(req)!;
+    const orgId = await getOrCreateOrg(userId);
+    
+    // Validate id parameter
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ error: "Client ID is required" });
     }
-  },
-);
+    
+    // Validate request body using updateClientCompanySchema
+    const validation = updateClientCompanySchema.safeParse(req.body);
+    if (!validation.success) {
+      return res.status(400).json({
+        error: "Validation failed",
+        details: validation.error.errors.map(err => ({
+          field: err.path.join('.'),
+          message: err.message
+        }))
+      });
+    }
+    
+    // Call storage.updateClientCompany with id, orgId, and validated data
+    // Note: organizationId cannot be changed (omitted from schema)
+    const client = await storage.updateClientCompany(id, orgId, validation.data);
+    
+    // Return 404 if client not found or belongs to different org
+    if (!client) {
+      return res.status(404).json({ error: "Client not found" });
+    }
+    
+    // Return updated client with 200 status
+    // updatedAt timestamp is automatically updated by the storage layer
+    res.status(200).json(client);
+  } catch (error) {
+    console.error("Update client error:", error);
+    res.status(500).json({ error: "Failed to update client" });
+  }
+});
 
 crmRoutes.delete(
   "/api/clients/:id",

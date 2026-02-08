@@ -24,7 +24,7 @@
  *   3) call those methods from `server/routes.ts`
  */
 
-import { eq, and, desc, isNull, asc, sql } from "drizzle-orm";
+import { eq, and, desc, isNull, asc, sql, or, ilike, count } from "drizzle-orm";
 import { db } from "./db";
 import {
   users,
@@ -86,6 +86,14 @@ import {
   type InsertFileObject,
   type FileObject,
 } from "@shared/schema";
+import type {
+  PaginationOptions,
+  FilterOptions,
+  PaginatedResult,
+  ClientCompanyWithRelations,
+  DependencyCheckResult,
+  ClientCompanyStats,
+} from "@shared/client-schemas";
 
 export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
@@ -95,6 +103,19 @@ export interface IStorage {
 
   getClientCompanies(orgId: string): Promise<ClientCompany[]>;
   getClientCompany(id: string, orgId: string): Promise<ClientCompany | undefined>;
+  getClientCompaniesPaginated(
+    orgId: string,
+    options: PaginationOptions & FilterOptions,
+  ): Promise<PaginatedResult<ClientCompany>>;
+  getClientCompanyWithRelations(
+    id: string,
+    orgId: string,
+  ): Promise<ClientCompanyWithRelations | undefined>;
+  checkClientCompanyDependencies(
+    id: string,
+    orgId: string,
+  ): Promise<DependencyCheckResult>;
+  getClientCompanyStats(orgId: string): Promise<ClientCompanyStats>;
   createClientCompany(data: InsertClientCompany): Promise<ClientCompany>;
   updateClientCompany(
     id: string,
@@ -263,6 +284,73 @@ export class DatabaseStorage implements IStorage {
     return client;
   }
 
+  async getClientCompaniesPaginated(
+    orgId: string,
+    options: PaginationOptions & FilterOptions,
+  ): Promise<PaginatedResult<ClientCompany>> {
+    const { page, limit, search, industry, city, state, country } = options;
+
+    // Build WHERE conditions
+    const conditions = [eq(clientCompanies.organizationId, orgId)];
+
+    // Add search condition (case-insensitive across multiple fields)
+    if (search) {
+      conditions.push(
+        or(
+          ilike(clientCompanies.name, `%${search}%`),
+          ilike(clientCompanies.website, `%${search}%`),
+          ilike(clientCompanies.industry, `%${search}%`),
+          ilike(clientCompanies.city, `%${search}%`),
+          ilike(clientCompanies.country, `%${search}%`),
+        )!,
+      );
+    }
+
+    // Add filter conditions
+    if (industry) {
+      conditions.push(eq(clientCompanies.industry, industry));
+    }
+    if (city) {
+      conditions.push(eq(clientCompanies.city, city));
+    }
+    if (state) {
+      conditions.push(eq(clientCompanies.state, state));
+    }
+    if (country) {
+      conditions.push(eq(clientCompanies.country, country));
+    }
+
+    // Get total count for pagination metadata
+    const [{ total }] = await db
+      .select({ total: count() })
+      .from(clientCompanies)
+      .where(and(...conditions));
+
+    // Get paginated data
+    const data = await db
+      .select()
+      .from(clientCompanies)
+      .where(and(...conditions))
+      .orderBy(desc(clientCompanies.createdAt))
+      .limit(limit)
+      .offset((page - 1) * limit);
+
+    // Calculate pagination metadata
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      data,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrev: page > 1,
+      },
+    };
+  }
+
   async createClientCompany(data: InsertClientCompany): Promise<ClientCompany> {
     const [client] = await db.insert(clientCompanies).values(data).returning();
     return client;
@@ -287,6 +375,200 @@ export class DatabaseStorage implements IStorage {
       .delete(clientCompanies)
       .where(and(eq(clientCompanies.id, id), eq(clientCompanies.organizationId, orgId)));
     return (result.rowCount ?? 0) > 0;
+  }
+
+  async getClientCompanyWithRelations(
+    id: string,
+    orgId: string,
+  ): Promise<ClientCompanyWithRelations | undefined> {
+    // Fetch client and related entities in parallel
+    const [clientResult, clientContacts, clientDeals, clientEngagements] = await Promise.all([
+      db
+        .select()
+        .from(clientCompanies)
+        .where(and(eq(clientCompanies.id, id), eq(clientCompanies.organizationId, orgId)))
+        .limit(1),
+      db
+        .select()
+        .from(contacts)
+        .where(and(eq(contacts.clientCompanyId, id), eq(contacts.organizationId, orgId))),
+      db
+        .select()
+        .from(deals)
+        .where(and(eq(deals.clientCompanyId, id), eq(deals.organizationId, orgId))),
+      db
+        .select()
+        .from(engagements)
+        .where(and(eq(engagements.clientCompanyId, id), eq(engagements.organizationId, orgId))),
+    ]);
+
+    const client = clientResult[0];
+    if (!client) {
+      return undefined;
+    }
+
+    // Calculate activeEngagementsCount (status = 'active')
+    const activeEngagementsCount = clientEngagements.filter(
+      (e) => e.status === "active",
+    ).length;
+
+    // Calculate totalDealsValue (sum of deal values)
+    const totalDealsValue = clientDeals
+      .reduce((sum, deal) => {
+        const value = deal.value ? parseFloat(deal.value) : 0;
+        return sum + value;
+      }, 0)
+      .toFixed(2);
+
+    return {
+      ...client,
+      contacts: clientContacts,
+      deals: clientDeals,
+      engagements: clientEngagements,
+      activeEngagementsCount,
+      totalDealsValue,
+    };
+  }
+
+  async checkClientCompanyDependencies(
+    id: string,
+    orgId: string,
+  ): Promise<DependencyCheckResult> {
+    // Count related entities in parallel
+    const [
+      contactsCount,
+      dealsCount,
+      engagementsCount,
+      contractsCount,
+      proposalsCount,
+      invoicesCount,
+    ] = await Promise.all([
+      db
+        .select({ count: count() })
+        .from(contacts)
+        .where(and(eq(contacts.clientCompanyId, id), eq(contacts.organizationId, orgId)))
+        .then((r) => r[0]?.count ?? 0),
+      db
+        .select({ count: count() })
+        .from(deals)
+        .where(and(eq(deals.clientCompanyId, id), eq(deals.organizationId, orgId)))
+        .then((r) => r[0]?.count ?? 0),
+      db
+        .select({ count: count() })
+        .from(engagements)
+        .where(and(eq(engagements.clientCompanyId, id), eq(engagements.organizationId, orgId)))
+        .then((r) => r[0]?.count ?? 0),
+      db
+        .select({ count: count() })
+        .from(contracts)
+        .where(and(eq(contracts.clientCompanyId, id), eq(contracts.organizationId, orgId)))
+        .then((r) => r[0]?.count ?? 0),
+      db
+        .select({ count: count() })
+        .from(proposals)
+        .where(and(eq(proposals.clientCompanyId, id), eq(proposals.organizationId, orgId)))
+        .then((r) => r[0]?.count ?? 0),
+      db
+        .select({ count: count() })
+        .from(invoices)
+        .where(and(eq(invoices.clientCompanyId, id), eq(invoices.organizationId, orgId)))
+        .then((r) => r[0]?.count ?? 0),
+    ]);
+
+    const dependencies = {
+      contacts: contactsCount,
+      deals: dealsCount,
+      engagements: engagementsCount,
+      contracts: contractsCount,
+      proposals: proposalsCount,
+      invoices: invoicesCount,
+    };
+
+    const hasDependencies =
+      contactsCount > 0 ||
+      dealsCount > 0 ||
+      engagementsCount > 0 ||
+      contractsCount > 0 ||
+      proposalsCount > 0 ||
+      invoicesCount > 0;
+
+    return {
+      hasDependencies,
+      dependencies,
+    };
+  }
+
+  async getClientCompanyStats(orgId: string): Promise<ClientCompanyStats> {
+    // Calculate date 30 days ago
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    // Get all clients for the organization
+    const allClients = await db
+      .select()
+      .from(clientCompanies)
+      .where(eq(clientCompanies.organizationId, orgId));
+
+    // Calculate total count
+    const total = allClients.length;
+
+    // Calculate recently added (last 30 days)
+    const recentlyAdded = allClients.filter(
+      (client) => client.createdAt >= thirtyDaysAgo,
+    ).length;
+
+    // Group by industry
+    const byIndustry: Record<string, number> = {};
+    allClients.forEach((client) => {
+      if (client.industry) {
+        byIndustry[client.industry] = (byIndustry[client.industry] || 0) + 1;
+      }
+    });
+
+    // Group by country
+    const byCountry: Record<string, number> = {};
+    allClients.forEach((client) => {
+      if (client.country) {
+        byCountry[client.country] = (byCountry[client.country] || 0) + 1;
+      }
+    });
+
+    // Count clients with active engagements
+    const clientsWithActiveEngagements = await db
+      .select({ clientCompanyId: engagements.clientCompanyId })
+      .from(engagements)
+      .where(
+        and(eq(engagements.organizationId, orgId), eq(engagements.status, "active")),
+      );
+
+    const uniqueClientsWithActiveEngagements = new Set(
+      clientsWithActiveEngagements
+        .map((e) => e.clientCompanyId)
+        .filter((id): id is string => id !== null),
+    );
+    const withActiveEngagements = uniqueClientsWithActiveEngagements.size;
+
+    // Count clients without contacts
+    const clientsWithContacts = await db
+      .select({ clientCompanyId: contacts.clientCompanyId })
+      .from(contacts)
+      .where(eq(contacts.organizationId, orgId));
+
+    const uniqueClientsWithContacts = new Set(
+      clientsWithContacts
+        .map((c) => c.clientCompanyId)
+        .filter((id): id is string => id !== null),
+    );
+    const withoutContacts = total - uniqueClientsWithContacts.size;
+
+    return {
+      total,
+      recentlyAdded,
+      byIndustry,
+      byCountry,
+      withActiveEngagements,
+      withoutContacts,
+    };
   }
 
   async getContacts(orgId: string): Promise<Contact[]> {
