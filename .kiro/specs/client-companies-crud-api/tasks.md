@@ -160,8 +160,8 @@ This implementation plan extends the existing Client Companies CRUD endpoints in
     - **Property 8: Automatic Timestamp Management**
     - **Validates: Requirements 3.6, 4.5**
 
-- [-] 7. Implement enhanced PUT /api/clients/:id endpoint
-  - [x] 7.1 Update PUT /api/clients/:id route in `server/domains/crm/routes.ts`
+- [ ] 7. Implement enhanced PUT /api/clients/:id endpoint
+  - [ ] 7.1 Update PUT /api/clients/:id route in `server/domains/crm/routes.ts`
     - Replace existing PATCH endpoint with PUT endpoint
     - Validate request body using updateClientCompanySchema
     - Ensure organizationId cannot be changed (omit from schema)
@@ -172,7 +172,7 @@ This implementation plan extends the existing Client Companies CRUD endpoints in
     - Ensure updatedAt timestamp is automatically updated
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6_
   
-  - [x] 7.2 Write unit tests for PUT /api/clients/:id
+  - [ ]* 7.2 Write unit tests for PUT /api/clients/:id
     - Test successful update with partial data
     - Test successful update with all fields
     - Test update non-existent client
@@ -183,11 +183,11 @@ This implementation plan extends the existing Client Companies CRUD endpoints in
     - Test 200 status code
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6_
   
-  - [x] 7.3 Write property test for update preserves organization
+  - [ ]* 7.3 Write property test for update preserves organization
     - **Property 9: Update Preserves Organization**
     - **Validates: Requirements 4.1**
   
-  - [x] 7.4 Write property test for input validation on update
+  - [ ]* 7.4 Write property test for input validation on update
     - **Property 7: Input Validation** (applies to PUT as well)
     - **Validates: Requirements 4.2, 4.3, 8.1, 8.2**
 
@@ -307,8 +307,8 @@ This implementation plan extends the existing Client Companies CRUD endpoints in
     - Test search performance with various query lengths
     - Note: These are optional performance validation tests
 
-- [ ]* 13. Add integration tests (optional)
-  - [ ]* 13.1 Write end-to-end CRUD flow test
+- [ ] 13. Add integration tests (optional)
+  - [ ] 13.1 Write end-to-end CRUD flow test
     - Create client → Read client → Update client → Delete client
     - Verify data consistency throughout flow
     - Test with authentication middleware
@@ -316,7 +316,7 @@ This implementation plan extends the existing Client Companies CRUD endpoints in
     - Verify organization isolation throughout flow
     - _Requirements: 1.1, 2.1, 3.1, 4.1, 5.1_
   
-  - [ ]* 13.2 Write pagination integration test
+  - [ ] 13.2 Write pagination integration test
     - Create 150 clients across multiple pages
     - Paginate through all pages sequentially
     - Verify all clients are returned exactly once
@@ -325,7 +325,7 @@ This implementation plan extends the existing Client Companies CRUD endpoints in
     - Test with different page sizes (10, 50, 100)
     - _Requirements: 1.2, 1.4_
   
-  - [ ]* 13.3 Write search and filter integration test
+  - [ ] 13.3 Write search and filter integration test
     - Create clients with various industries and locations
     - Test search across multiple fields (name, website, industry, city, country)
     - Test filter combinations (industry + city, state + country, etc.)
@@ -334,7 +334,7 @@ This implementation plan extends the existing Client Companies CRUD endpoints in
     - Test case-insensitive matching
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6_
   
-  - [ ]* 13.4 Write cascade delete integration test
+  - [ ] 13.4 Write cascade delete integration test
     - Create client with contacts, deals, engagements, contracts, proposals, invoices
     - Attempt to delete client (should fail with 409)
     - Remove all dependencies one by one
@@ -342,7 +342,7 @@ This implementation plan extends the existing Client Companies CRUD endpoints in
     - Verify client is actually deleted
     - _Requirements: 5.1, 5.2, 5.3_
 
-- [ ] 14. Update API documentation
+- [x] 14. Update API documentation
   - Create or update `docs/api/crm.md` with client companies endpoints
   - Document GET /api/clients with all query parameters (page, limit, search, industry, city, state, country)
   - Document GET /api/clients/:id with relations response structure
