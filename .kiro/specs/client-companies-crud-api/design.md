@@ -2,74 +2,125 @@
 
 ## Overview
 
-The Client Companies CRUD API provides comprehensive REST endpoints for managing client company records within the UBOS CRM domain. This design extends the existing basic CRUD operations in `server/domains/crm/routes.ts` to include advanced features such as pagination, filtering, search, statistics, and soft delete with cascade checks.
+The Client Companies CRUD API provides comprehensive management of client company records within the UBOS platform. This API serves as the foundation of the CRM domain, enabling users to create, read, update, and delete client companies with full support for pagination, search, filtering, and statistics.
 
-The API follows the established patterns in the UBOS codebase:
-- Organization-scoped queries via the storage layer
-- Zod schema validation for all inputs
-- Express middleware for authentication and security
-- Consistent error handling and response formats
-- Integration with the existing multi-tenant architecture
+**Key Features:**
+- Full CRUD operations with RESTful endpoints
+- Paginated list view with search and filtering
+- Organization-level multi-tenancy isolation
+- Relationship loading (contacts, deals, engagements)
+- Aggregate statistics for dashboard views
+- Cascade dependency checking for safe deletion
+- Comprehensive input validation with Zod schemas
 
-This design maintains backward compatibility with existing client company endpoints while adding new capabilities required for a production-ready CRM system.
+**Technology Stack:**
+- Express 4 REST API endpoints
+- Drizzle ORM for PostgreSQL database access
+- Zod schemas for request/response validation
+- Organization-scoped storage layer for multi-tenancy
+- Structured error handling with security logging
+
+**Design Philosophy:**
+This API follows UBOS's modular monolith architecture with strict domain boundaries. All operations enforce organization-level isolation to ensure multi-tenant security. The design prioritizes security-by-default with comprehensive validation, structured error handling, and audit logging.
 
 ## Architecture
 
-### Layered Architecture
-
-The implementation follows a three-layer architecture consistent with the existing UBOS structure:
+### High-Level Architecture
 
 ```
-┌─────────────────────────────────────┐
-│   API Layer (Express Routes)        │
-│   - Request validation               │
-│   - Authentication/Authorization     │
-│   - Response formatting              │
-└─────────────────────────────────────┘
-              ↓
-┌─────────────────────────────────────┐
-│   Storage Layer (DatabaseStorage)   │
-│   - Organization scoping             │
-│   - Database queries (Drizzle ORM)   │
-│   - Transaction management           │
-└─────────────────────────────────────┘
-              ↓
-┌─────────────────────────────────────┐
-│   Database (PostgreSQL)              │
-│   - Multi-tenant data isolation      │
-│   - Referential integrity            │
-└─────────────────────────────────────┘
+┌─────────────────┐
+│  Client/Browser │
+└────────┬────────┘
+         │ HTTP/JSON
+         ▼
+┌─────────────────────────────────────────┐
+│         Express Middleware Stack        │
+│  ┌────────────────────────────────────┐ │
+│  │  Security (Helmet, Rate Limit)     │ │
+│  └────────────────────────────────────┘ │
+│  ┌────────────────────────────────────┐ │
+│  │  Authentication (requireAuth)      │ │
+│  └────────────────────────────────────┘ │
+│  ┌────────────────────────────────────┐ │
+│  │  CSRF Protection                   │ │
+│  └────────────────────────────────────┘ │
+└────────┬────────────────────────────────┘
+         │
+         ▼
+┌─────────────────────────────────────────┐
+│      CRM Routes (server/domains/crm)    │
+│  ┌────────────────────────────────────┐ │
+│  │  GET    /api/clients               │ │
+│  │  GET    /api/clients/stats         │ │
+│  │  GET    /api/clients/:id           │ │
+│  │  POST   /api/clients               │ │
+│  │  PUT    /api/clients/:id           │ │
+│  │  DELETE /api/clients/:id           │ │
+│  └────────────────────────────────────┘ │
+│  ┌────────────────────────────────────┐ │
+│  │  Request Validation (Zod)          │ │
+│  │  Error Handling                    │ │
+│  │  Response Formatting               │ │
+│  └────────────────────────────────────┘ │
+└────────┬────────────────────────────────┘
+         │
+         ▼
+┌─────────────────────────────────────────┐
+│      Storage Layer (server/storage.ts)  │
+│  ┌────────────────────────────────────┐ │
+│  │  Organization Scoping (enforced)   │ │
+│  │  Drizzle ORM Query Building        │ │
+│  │  Relationship Loading              │ │
+│  │  Dependency Checking               │ │
+│  └────────────────────────────────────┘ │
+└────────┬────────────────────────────────┘
+         │
+         ▼
+┌─────────────────────────────────────────┐
+│      PostgreSQL Database                │
+│  ┌────────────────────────────────────┐ │
+│  │  client_companies table            │ │
+│  │  contacts table                    │ │
+│  │  deals table                       │ │
+│  │  engagements table                 │ │
+│  └────────────────────────────────────┘ │
+└─────────────────────────────────────────┘
 ```
 
 ### Request Flow
 
-1. **Authentication**: `requireAuth` middleware validates the user session
-2. **Organization Resolution**: `getOrCreateOrg` retrieves the user's organization ID
-3. **Input Validation**: Zod schemas validate request body/query parameters
-4. **Storage Operation**: Storage layer executes org-scoped database query
-5. **Response Formatting**: Results are serialized to JSON with consistent structure
-6. **Error Handling**: Errors are caught, logged, and returned with appropriate status codes
+1. **Authentication**: `requireAuth` middleware validates session and extracts user ID
+2. **Organization Resolution**: `getOrCreateOrg(userId)` retrieves user's organization ID
+3. **Validation**: Zod schemas validate query parameters and request body
+4. **Storage Access**: Organization-scoped storage methods query database
+5. **Response**: Consistent JSON response with camelCase field names
+6. **Error Handling**: Structured error handlers with security logging
 
 ### Multi-Tenancy Enforcement
 
-All operations enforce organization-level isolation through:
-- Storage layer methods that require `orgId` parameter
-- Database queries that include `WHERE organizationId = ?` clauses
-- Validation that prevents cross-organization data access
+Organization isolation is enforced at multiple layers:
+
+- **Authentication Layer**: User session contains organization membership
+- **Route Layer**: Every route resolves `orgId` before storage access
+- **Storage Layer**: All queries include `WHERE organizationId = ?` clause
+- **Database Layer**: Foreign key constraints and indexes on `organizationId`
+
+This defense-in-depth approach ensures no cross-organization data leakage.
 
 ## Components and Interfaces
 
 ### API Endpoints
 
 #### GET /api/clients
-Lists client companies with pagination, filtering, and search.
 
-**Query Parameters:**
+**Purpose**: List client companies with pagination, search, and filtering
+
+**Query Parameters**:
 ```typescript
 {
-  page?: number;        // Page number (default: 1)
-  limit?: number;       // Items per page (default: 50, max: 100)
-  search?: string;      // Search across name, website, industry, city, country
+  page?: number;        // Page number (default: 1, min: 1)
+  limit?: number;       // Items per page (default: 50, min: 1, max: 100)
+  search?: string;      // Text search across multiple fields
   industry?: string;    // Filter by industry
   city?: string;        // Filter by city
   state?: string;       // Filter by state
@@ -77,7 +128,7 @@ Lists client companies with pagination, filtering, and search.
 }
 ```
 
-**Response:**
+**Response**:
 ```typescript
 {
   data: ClientCompany[];
@@ -88,197 +139,263 @@ Lists client companies with pagination, filtering, and search.
     totalPages: number;
     hasNext: boolean;
     hasPrev: boolean;
-  }
+  };
 }
 ```
 
-#### GET /api/clients/:id
-Retrieves a single client company with related entities.
+**Behavior**:
+- Returns only clients belonging to authenticated user's organization
+- Search performs case-insensitive partial match on: name, website, industry, city, country
+- Filters use AND logic (all specified filters must match)
+- Results ordered by `createdAt DESC` (newest first)
 
-**Response:**
+#### GET /api/clients/stats
+
+**Purpose**: Aggregate statistics for dashboard views
+
+**Response**:
 ```typescript
 {
-  ...ClientCompany,
+  total: number;
+  recentlyAdded: number;              // Last 30 days
+  byIndustry: Record<string, number>;
+  byCountry: Record<string, number>;
+  withActiveEngagements: number;
+  withoutContacts: number;
+}
+```
+
+**Behavior**:
+- All statistics scoped to authenticated user's organization
+- `recentlyAdded` counts clients created in last 30 days
+- `byIndustry` and `byCountry` group counts by non-null values
+- `withActiveEngagements` counts clients with at least one active engagement
+- `withoutContacts` counts clients with zero associated contacts
+
+#### GET /api/clients/:id
+
+**Purpose**: Retrieve single client with related entities
+
+**Response**:
+```typescript
+{
+  id: string;
+  organizationId: string;
+  name: string;
+  website: string | null;
+  industry: string | null;
+  address: string | null;
+  city: string | null;
+  state: string | null;
+  zipCode: string | null;
+  country: string | null;
+  notes: string | null;
+  createdAt: Date;
+  updatedAt: Date;
   contacts: Contact[];
   deals: Deal[];
   engagements: Engagement[];
   activeEngagementsCount: number;
-  totalDealsValue: number;
+  totalDealsValue: string;
 }
 ```
 
-#### POST /api/clients
-Creates a new client company.
+**Behavior**:
+- Returns 404 if client not found or belongs to different organization
+- Loads all related contacts, deals, and engagements
+- Calculates `activeEngagementsCount` (status = 'active')
+- Calculates `totalDealsValue` (sum of all deal values)
 
-**Request Body:**
+#### POST /api/clients
+
+**Purpose**: Create new client company
+
+**Request Body**:
 ```typescript
 {
-  name: string;              // Required
+  name: string;              // Required, max 255 chars
   website?: string | null;
-  industry?: string | null;
+  industry?: string | null;  // Max 100 chars
   address?: string | null;
-  city?: string | null;
-  state?: string | null;
-  zipCode?: string | null;
-  country?: string | null;
+  city?: string | null;      // Max 100 chars
+  state?: string | null;     // Max 100 chars
+  zipCode?: string | null;   // Max 20 chars
+  country?: string | null;   // Max 100 chars
   notes?: string | null;
 }
 ```
 
-**Response:** Created ClientCompany with 201 status
+**Response**: Created client company (201 status)
+
+**Behavior**:
+- `organizationId` automatically set from authenticated user (request body value ignored)
+- `id`, `createdAt`, `updatedAt` automatically generated
+- Returns 400 if validation fails with field-level error details
 
 #### PUT /api/clients/:id
-Updates an existing client company.
 
-**Request Body:** Same as POST (all fields optional)
+**Purpose**: Update existing client company
 
-**Response:** Updated ClientCompany with 200 status
+**Request Body**: Same as POST, but all fields optional
+
+**Response**: Updated client company (200 status)
+
+**Behavior**:
+- Returns 404 if client not found or belongs to different organization
+- `organizationId` cannot be changed (omitted from update schema)
+- `updatedAt` automatically updated
+- Partial updates supported (only provided fields updated)
 
 #### DELETE /api/clients/:id
-Soft deletes a client company after cascade checks.
 
-**Response:**
-- 204 No Content (success)
-- 409 Conflict with details about dependent entities
+**Purpose**: Delete client company with dependency checking
 
-#### GET /api/clients/stats
-Retrieves aggregate statistics about client companies.
+**Response**: 204 No Content on success
 
-**Response:**
+**Behavior**:
+- Returns 404 if client not found or belongs to different organization
+- Performs cascade dependency check before deletion
+- Returns 409 Conflict if dependencies exist:
+  ```typescript
+  {
+    error: string;
+    dependencies: {
+      contacts: number;
+      deals: number;
+      engagements: number;
+      contracts: number;
+      proposals: number;
+      invoices: number;
+    };
+  }
+  ```
+- Soft delete: Sets `deletedAt` timestamp (not implemented yet, currently hard delete)
+
+### Storage Layer Methods
+
+The storage layer (`server/storage.ts`) provides organization-scoped data access:
+
 ```typescript
-{
-  total: number;
-  recentlyAdded: number;        // Last 30 days
-  byIndustry: Record<string, number>;
-  byCountry: Record<string, number>;
-  withActiveEngagements: number;
-  withoutContacts: number;
-}
-```
-
-### Storage Layer Extensions
-
-The storage layer (`server/storage.ts`) will be extended with new methods:
-
-```typescript
-interface IStorage {
-  // Existing methods
-  getClientCompanies(orgId: string): Promise<ClientCompany[]>;
-  getClientCompany(id: string, orgId: string): Promise<ClientCompany | undefined>;
-  createClientCompany(data: InsertClientCompany): Promise<ClientCompany>;
-  updateClientCompany(id: string, orgId: string, data: Partial<InsertClientCompany>): Promise<ClientCompany | undefined>;
-  deleteClientCompany(id: string, orgId: string): Promise<boolean>;
-  
-  // New methods to add
+interface StorageLayer {
+  // List with pagination and filtering
   getClientCompaniesPaginated(
     orgId: string,
-    options: PaginationOptions & FilterOptions
+    options: {
+      page: number;
+      limit: number;
+      search?: string;
+      industry?: string;
+      city?: string;
+      state?: string;
+      country?: string;
+    }
   ): Promise<PaginatedResult<ClientCompany>>;
-  
+
+  // Get single client with relations
   getClientCompanyWithRelations(
     id: string,
     orgId: string
-  ): Promise<ClientCompanyWithRelations | undefined>;
-  
+  ): Promise<ClientCompanyWithRelations | null>;
+
+  // Create new client
+  createClientCompany(
+    data: InsertClientCompany
+  ): Promise<ClientCompany>;
+
+  // Update existing client
+  updateClientCompany(
+    id: string,
+    orgId: string,
+    data: Partial<UpdateClientCompany>
+  ): Promise<ClientCompany | null>;
+
+  // Check dependencies before delete
   checkClientCompanyDependencies(
     id: string,
     orgId: string
   ): Promise<DependencyCheckResult>;
-  
-  getClientCompanyStats(orgId: string): Promise<ClientCompanyStats>;
+
+  // Delete client
+  deleteClientCompany(
+    id: string,
+    orgId: string
+  ): Promise<boolean>;
+
+  // Get aggregate statistics
+  getClientCompanyStats(
+    orgId: string
+  ): Promise<ClientCompanyStats>;
 }
 ```
 
-### Data Types
+### Error Handling
+
+Structured error handlers in `server/domains/crm/error-handlers.ts`:
 
 ```typescript
-interface PaginationOptions {
-  page: number;
-  limit: number;
-}
+// Validation errors (400)
+handleValidationError(
+  res: Response,
+  error: ZodError,
+  context: ErrorContext
+): void;
 
-interface FilterOptions {
-  search?: string;
-  industry?: string;
-  city?: string;
-  state?: string;
-  country?: string;
-}
+// Not found errors (404)
+handleNotFoundError(
+  res: Response,
+  resourceType: string,
+  context: ErrorContext
+): void;
 
-interface PaginatedResult<T> {
-  data: T[];
-  pagination: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-    hasNext: boolean;
-    hasPrev: boolean;
-  };
-}
+// Dependency errors (409)
+handleDependencyError(
+  res: Response,
+  message: string,
+  dependencies: DependencyCheckResult['dependencies'],
+  context: ErrorContext
+): void;
 
-interface ClientCompanyWithRelations extends ClientCompany {
-  contacts: Contact[];
-  deals: Deal[];
-  engagements: Engagement[];
-  activeEngagementsCount: number;
-  totalDealsValue: number;
-}
-
-interface DependencyCheckResult {
-  hasDependencies: boolean;
-  dependencies: {
-    contacts: number;
-    deals: number;
-    engagements: number;
-    contracts: number;
-    proposals: number;
-    invoices: number;
-  };
-}
-
-interface ClientCompanyStats {
-  total: number;
-  recentlyAdded: number;
-  byIndustry: Record<string, number>;
-  byCountry: Record<string, number>;
-  withActiveEngagements: number;
-  withoutContacts: number;
-}
+// Server errors (500)
+handleServerError(
+  res: Response,
+  error: unknown,
+  context: ErrorContext
+): void;
 ```
 
-### Validation Schemas
-
-Extend the existing Zod schemas in `shared/schema.ts`:
-
-```typescript
-// Query parameter validation
-const paginationQuerySchema = z.object({
-  page: z.coerce.number().int().positive().default(1),
-  limit: z.coerce.number().int().positive().max(100).default(50),
-});
-
-const clientFilterQuerySchema = z.object({
-  search: z.string().optional(),
-  industry: z.string().optional(),
-  city: z.string().optional(),
-  state: z.string().optional(),
-  country: z.string().optional(),
-});
-
-const clientListQuerySchema = paginationQuerySchema.merge(clientFilterQuerySchema);
-
-// Update schema (all fields optional)
-const updateClientCompanySchema = insertClientCompanySchema.partial().omit({
-  organizationId: true,
-});
-```
+All error handlers:
+- Log errors with structured context (operation, userId, orgId, resourceId)
+- Redact sensitive information from logs
+- Return consistent JSON error responses
+- Include appropriate HTTP status codes
 
 ## Data Models
 
 ### Database Schema
 
-The existing `clientCompanies` table in `shared/schema.ts` already provides the necessary structure:
+```sql
+CREATE TABLE client_companies (
+  id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+  organization_id VARCHAR NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+  name VARCHAR(255) NOT NULL,
+  website TEXT,
+  industry VARCHAR(100),
+  address TEXT,
+  city VARCHAR(100),
+  state VARCHAR(100),
+  zip_code VARCHAR(20),
+  country VARCHAR(100),
+  notes TEXT,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_clients_org ON client_companies(organization_id);
+CREATE INDEX idx_clients_industry ON client_companies(industry);
+CREATE INDEX idx_clients_country ON client_companies(country);
+```
+
+### Drizzle Schema Definition
 
 ```typescript
 export const clientCompanies = pgTable(
@@ -300,144 +417,77 @@ export const clientCompanies = pgTable(
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
-  (table) => [index("idx_clients_org").on(table.organizationId)],
+  (table) => [
+    index("idx_clients_org").on(table.organizationId),
+    index("idx_clients_industry").on(table.industry),
+    index("idx_clients_country").on(table.country),
+  ]
 );
 ```
 
-### Indexes for Performance
+### Validation Schemas
 
-Additional indexes should be added to support filtering and search operations:
-
+**Insert Schema** (POST /api/clients):
 ```typescript
-// Add to clientCompanies table definition
-index("idx_clients_industry").on(table.industry),
-index("idx_clients_country").on(table.country),
-index("idx_clients_created_at").on(table.createdAt),
+export const insertClientCompanySchema = z.object({
+  organizationId: z.string(),  // Set by server, not from request
+  name: z.string().max(255),
+  website: z.string().nullable().optional(),
+  industry: z.string().max(100).nullable().optional(),
+  address: z.string().nullable().optional(),
+  city: z.string().max(100).nullable().optional(),
+  state: z.string().max(100).nullable().optional(),
+  zipCode: z.string().max(20).nullable().optional(),
+  country: z.string().max(100).nullable().optional(),
+  notes: z.string().nullable().optional(),
+});
 ```
 
-For full-text search across multiple fields, we'll use SQL ILIKE queries with OR conditions. For production scale, consider adding a PostgreSQL full-text search index or using a dedicated search service.
+**Update Schema** (PUT /api/clients/:id):
+```typescript
+export const updateClientCompanySchema = z.object({
+  name: z.string().max(255).optional(),
+  website: z.string().nullable().optional(),
+  industry: z.string().max(100).nullable().optional(),
+  address: z.string().nullable().optional(),
+  city: z.string().max(100).nullable().optional(),
+  state: z.string().max(100).nullable().optional(),
+  zipCode: z.string().max(20).nullable().optional(),
+  country: z.string().max(100).nullable().optional(),
+  notes: z.string().nullable().optional(),
+});
+// Note: organizationId omitted - cannot be changed
+```
+
+**Query Schema** (GET /api/clients):
+```typescript
+export const clientListQuerySchema = z.object({
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().positive().max(100).default(50),
+  search: z.string().optional(),
+  industry: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  country: z.string().optional(),
+});
+```
 
 ### Relationships
 
-Client companies have the following relationships (already defined in schema):
-
-- **One-to-Many with Contacts**: A client company can have multiple contacts
-- **One-to-Many with Deals**: A client company can have multiple deals
-- **One-to-Many with Engagements**: A client company can have multiple engagements
-- **One-to-Many with Contracts**: A client company can have multiple contracts (via deals)
-- **One-to-Many with Proposals**: A client company can have multiple proposals (via deals)
-- **One-to-Many with Invoices**: A client company can have multiple invoices (via engagements)
-
-### Soft Delete Strategy
-
-Instead of implementing a traditional soft delete with a `deletedAt` column, this design uses a **cascade check and hard delete** approach:
-
-1. Check for dependent entities before deletion
-2. If dependencies exist, return 409 Conflict with details
-3. If no dependencies, perform hard delete
-4. User must manually remove dependencies before deleting the client company
-
-This approach:
-- Maintains referential integrity
-- Prevents orphaned data
-- Provides clear feedback to users about why deletion failed
-- Avoids complexity of filtering out soft-deleted records in all queries
-
-**Alternative:** If soft delete is required, add a `deletedAt` timestamp column and update all queries to filter `WHERE deletedAt IS NULL`.
-
-## Data Models
-
-### Query Patterns
-
-#### Paginated List with Filters
-
 ```typescript
-// Drizzle query structure
-const query = db
-  .select()
-  .from(clientCompanies)
-  .where(
-    and(
-      eq(clientCompanies.organizationId, orgId),
-      search ? or(
-        ilike(clientCompanies.name, `%${search}%`),
-        ilike(clientCompanies.website, `%${search}%`),
-        ilike(clientCompanies.industry, `%${search}%`),
-        ilike(clientCompanies.city, `%${search}%`),
-        ilike(clientCompanies.country, `%${search}%`)
-      ) : undefined,
-      industry ? eq(clientCompanies.industry, industry) : undefined,
-      city ? eq(clientCompanies.city, city) : undefined,
-      state ? eq(clientCompanies.state, state) : undefined,
-      country ? eq(clientCompanies.country, country) : undefined
-    )
-  )
-  .orderBy(desc(clientCompanies.createdAt))
-  .limit(limit)
-  .offset((page - 1) * limit);
+export const clientCompaniesRelations = relations(clientCompanies, ({ one, many }) => ({
+  organization: one(organizations, {
+    fields: [clientCompanies.organizationId],
+    references: [organizations.id],
+  }),
+  contacts: many(contacts),
+  deals: many(deals),
+  engagements: many(engagements),
+  proposals: many(proposals),
+  contracts: many(contracts),
+  invoices: many(invoices),
+}));
 ```
-
-#### Client with Relations
-
-```typescript
-// Use Promise.all for parallel queries
-const [client, contacts, deals, engagements] = await Promise.all([
-  db.select().from(clientCompanies).where(
-    and(
-      eq(clientCompanies.id, id),
-      eq(clientCompanies.organizationId, orgId)
-    )
-  ).limit(1),
-  db.select().from(contacts).where(
-    and(
-      eq(contacts.clientCompanyId, id),
-      eq(contacts.organizationId, orgId)
-    )
-  ),
-  db.select().from(deals).where(
-    and(
-      eq(deals.clientCompanyId, id),
-      eq(deals.organizationId, orgId)
-    )
-  ),
-  db.select().from(engagements).where(
-    and(
-      eq(engagements.clientCompanyId, id),
-      eq(engagements.organizationId, orgId)
-    )
-  )
-]);
-```
-
-#### Dependency Check
-
-```typescript
-// Count related entities
-const [contactsCount, dealsCount, engagementsCount, contractsCount, proposalsCount, invoicesCount] = await Promise.all([
-  db.select({ count: count() }).from(contacts).where(eq(contacts.clientCompanyId, id)),
-  db.select({ count: count() }).from(deals).where(eq(deals.clientCompanyId, id)),
-  db.select({ count: count() }).from(engagements).where(eq(engagements.clientCompanyId, id)),
-  db.select({ count: count() }).from(contracts).where(eq(contracts.clientCompanyId, id)),
-  db.select({ count: count() }).from(proposals).where(eq(proposals.clientCompanyId, id)),
-  db.select({ count: count() }).from(invoices).where(eq(invoices.clientCompanyId, id))
-]);
-```
-
-#### Statistics Aggregation
-
-```typescript
-// Use SQL aggregation functions
-const stats = await db
-  .select({
-    total: count(),
-    industry: clientCompanies.industry,
-    country: clientCompanies.country,
-  })
-  .from(clientCompanies)
-  .where(eq(clientCompanies.organizationId, orgId))
-  .groupBy(clientCompanies.industry, clientCompanies.country);
-```
-
 
 ## Correctness Properties
 
@@ -445,359 +495,183 @@ const stats = await db
 
 ### Property 1: Organization Isolation
 
-*For any* API request to any client company endpoint, the response SHALL only include client companies and related entities that belong to the authenticated user's organization, never exposing data from other organizations.
+*For any* API operation (list, get, create, update, delete, stats) and any two different organizations, users from organization A should never be able to access, modify, or see data from organization B.
 
-**Validates: Requirements 1.5, 2.5, 5.6, 7.6**
+**Validates: Requirements 1.1, 1.12**
 
 ### Property 2: Pagination Correctness
 
-*For any* valid pagination parameters (page, limit) and any set of client companies, the API SHALL return exactly the correct slice of data corresponding to the requested page, with the number of items not exceeding the specified limit.
+*For any* dataset of client companies and any valid pagination parameters (page, limit), the returned data should contain exactly the correct slice of results, and pagination metadata should accurately reflect the total count, current page, total pages, and navigation flags.
 
-**Validates: Requirements 1.2**
+**Validates: Requirements 1.2, 1.4**
 
-### Property 3: Pagination Metadata Accuracy
+### Property 3: Relationship Loading Completeness
 
-*For any* paginated response, the pagination metadata (total, page, limit, totalPages, hasNext, hasPrev) SHALL accurately reflect the current page position and total dataset size.
+*For any* client company with associated contacts, deals, and engagements, retrieving that client by ID should return all related entities without omission.
 
-**Validates: Requirements 1.4**
+**Validates: Requirements 1.5**
 
-### Property 4: Client Retrieval with Relations
+### Property 4: Creation Preserves Organization
 
-*For any* client company that exists in an organization, retrieving it by ID SHALL return the client along with all its related contacts and deals that belong to the same organization.
+*For any* valid client company data and any authenticated user, creating a client should always assign the client to the user's organization, regardless of any organizationId value in the request body.
 
-**Validates: Requirements 2.1, 2.2, 2.3**
+**Validates: Requirements 1.6**
 
-### Property 5: Cross-Organization Access Prevention
+### Property 5: Update Preserves Organization
 
-*For any* client company ID that does not exist or belongs to a different organization, GET, PUT, and DELETE requests SHALL return a 404 error, preventing cross-organization data access.
+*For any* existing client company and any valid update data, updating the client should never change its organizationId, even if organizationId is included in the request body.
 
-**Validates: Requirements 2.4, 4.4, 5.4**
+**Validates: Requirements 1.7**
 
-### Property 6: Create with Organization Assignment
+### Property 6: Deletion Respects Dependencies
 
-*For any* valid client company data in a POST request, the created client company SHALL have its organizationId set to the authenticated user's organization, regardless of any organizationId value in the request body.
+*For any* client company, deletion should succeed if and only if the client has no dependencies (contacts, deals, engagements, contracts, proposals, invoices). If dependencies exist, deletion should fail with a 409 status and detailed dependency counts.
 
-**Validates: Requirements 3.1, 3.4**
+**Validates: Requirements 1.8**
 
-### Property 7: Input Validation
+### Property 7: Search Coverage
 
-*For any* API endpoint that accepts input, invalid data SHALL be rejected with a 400 error containing specific field-level validation error messages from the Zod schema.
+*For any* search query string, all returned results should contain the search term (case-insensitive) in at least one of these fields: name, website, industry, city, or country.
 
-**Validates: Requirements 3.2, 3.3, 4.2, 4.3, 8.1, 8.2**
+**Validates: Requirements 1.9**
 
-### Property 8: Automatic Timestamp Management
+### Property 8: Filter Conjunction
 
-*For any* client company creation or update operation, the system SHALL automatically set createdAt on creation and update updatedAt on both creation and modification, without requiring these fields in the request.
+*For any* combination of filter parameters (industry, city, state, country), all returned results should match ALL specified filters (AND logic, not OR).
 
-**Validates: Requirements 3.6, 4.5**
+**Validates: Requirements 1.10**
 
-### Property 9: Update Preserves Organization
+### Property 9: Statistics Accuracy
 
-*For any* valid update to an existing client company, the organizationId SHALL remain unchanged, preventing clients from being moved between organizations.
+*For any* set of client companies in an organization, the statistics endpoint should return counts that exactly match the actual data: total count, recently added count (last 30 days), counts by industry, counts by country, clients with active engagements, and clients without contacts.
 
-**Validates: Requirements 4.1**
+**Validates: Requirements 1.11**
 
-### Property 10: Cascade Check Before Delete
+### Property 10: Input Validation Rejection
 
-*For any* client company, a DELETE request SHALL first check for related entities (contacts, deals, engagements, contracts, proposals, invoices), and if any exist, SHALL return a 409 error with details about the dependencies.
+*For any* invalid input data (missing required fields, exceeding length limits, wrong types), the API should reject the request with a 400 status and include field-level error details from Zod validation.
 
-**Validates: Requirements 5.1, 5.2**
+**Validates: Requirements 1.13**
 
-### Property 11: Successful Delete Response
+### Property 11: Response Format Consistency
 
-*For any* client company with no dependencies, a successful DELETE request SHALL return a 204 status code with no response body.
+*For any* successful API response, all field names should be in camelCase format (not snake_case), matching TypeScript conventions.
 
-**Validates: Requirements 5.3, 5.5**
-
-### Property 12: Search Across Multiple Fields
-
-*For any* search query string, the API SHALL return client companies where the search term matches (case-insensitive) any of the following fields: name, website, industry, city, or country.
-
-**Validates: Requirements 6.1, 6.6**
-
-### Property 13: Filter Combination with AND Logic
-
-*For any* combination of filter parameters (industry, city, state, country), the API SHALL return only client companies that match ALL specified filters.
-
-**Validates: Requirements 6.2, 6.3**
-
-### Property 14: Search and Filter Combination
-
-*For any* request that includes both search and filter parameters, the API SHALL return only client companies that match the search query AND all specified filters.
-
-**Validates: Requirements 6.4**
-
-### Property 15: Pagination with Search and Filters
-
-*For any* search and filter combination, the results SHALL be paginated correctly with accurate pagination metadata reflecting the filtered result set size.
-
-**Validates: Requirements 6.5**
-
-### Property 16: Statistics Completeness
-
-*For any* organization, the statistics endpoint SHALL return a response containing all required fields: total count, recently added count, breakdown by industry, breakdown by country, count with active engagements, and count without contacts.
-
-**Validates: Requirements 7.1, 7.2, 7.3, 7.4, 7.5**
-
-### Property 17: Authentication Required
-
-*For any* API endpoint, requests without valid authentication SHALL be rejected before processing, enforcing the requireAuth middleware.
-
-**Validates: Requirements 8.5**
-
-### Property 18: Error Status Codes
-
-*For any* error condition, the API SHALL return the appropriate HTTP status code: 400 for validation errors, 404 for not found, 409 for conflicts, and 500 for server errors.
-
-**Validates: Requirements 9.2**
-
-### Property 19: Error Response Format
-
-*For any* error response, the response SHALL be JSON format containing an "error" field with a descriptive message, and SHALL NOT expose sensitive information such as stack traces or database details.
-
-**Validates: Requirements 9.3, 9.4, 10.6**
-
-### Property 20: Success Response Format
-
-*For any* successful API response, the response SHALL be JSON with appropriate content-type headers, use camelCase field naming, include timestamps in ISO 8601 format, return null for missing optional fields, and return empty arrays [] for empty collections.
-
-**Validates: Requirements 10.1, 10.2, 10.3, 10.4, 10.5**
+**Validates: Requirements 1.14**
 
 ## Error Handling
 
-### Error Categories
+### Error Response Format
 
-The API implements comprehensive error handling across four categories:
+All errors return consistent JSON structure:
 
-#### 1. Validation Errors (400 Bad Request)
-
-Triggered when:
-- Required fields are missing
-- Field values don't match expected types
-- Field values violate constraints (e.g., negative numbers, invalid formats)
-- Query parameters are malformed
-
-Response format:
 ```typescript
 {
-  error: "Validation failed",
-  details: [
-    { field: "name", message: "Required" },
-    { field: "email", message: "Invalid email format" }
-  ]
+  error: string;              // Human-readable error message
+  details?: any;              // Additional context (validation errors, dependencies)
+  code?: string;              // Machine-readable error code
 }
 ```
 
-Implementation:
-- Use Zod's `.safeParse()` method to validate inputs
-- Extract and format Zod error messages for client consumption
-- Return early before database operations
+### HTTP Status Codes
 
-#### 2. Not Found Errors (404 Not Found)
+- **200 OK**: Successful GET, PUT operations
+- **201 Created**: Successful POST operation
+- **204 No Content**: Successful DELETE operation
+- **400 Bad Request**: Validation errors, malformed requests
+- **401 Unauthorized**: Missing or invalid authentication
+- **404 Not Found**: Resource not found or cross-organization access attempt
+- **409 Conflict**: Deletion blocked by dependencies
+- **429 Too Many Requests**: Rate limit exceeded
+- **500 Internal Server Error**: Unexpected server errors
 
-Triggered when:
-- Client company ID doesn't exist
-- Client company exists but belongs to different organization
-- Attempting to update/delete non-existent client
+### Validation Error Example
 
-Response format:
-```typescript
+```json
 {
-  error: "Client not found"
-}
-```
-
-Implementation:
-- Check query results for undefined/null
-- Verify organization ownership before operations
-- Return 404 for both non-existent and cross-organization access (security through obscurity)
-
-#### 3. Conflict Errors (409 Conflict)
-
-Triggered when:
-- Attempting to delete client with dependencies
-- Business rule violations
-
-Response format:
-```typescript
-{
-  error: "Cannot delete client with existing dependencies",
-  dependencies: {
-    contacts: 5,
-    deals: 3,
-    engagements: 2,
-    contracts: 1,
-    proposals: 2,
-    invoices: 4
+  "error": "Validation failed",
+  "details": {
+    "name": ["Required"],
+    "website": ["Invalid URL format"],
+    "zipCode": ["String must contain at most 20 character(s)"]
   }
 }
 ```
 
-Implementation:
-- Perform dependency checks before destructive operations
-- Return detailed information about blocking dependencies
-- Allow user to make informed decisions about cleanup
+### Dependency Error Example
 
-#### 4. Server Errors (500 Internal Server Error)
-
-Triggered when:
-- Database connection failures
-- Unexpected exceptions
-- System-level errors
-
-Response format:
-```typescript
+```json
 {
-  error: "An unexpected error occurred"
+  "error": "Cannot delete client with existing dependencies",
+  "dependencies": {
+    "contacts": 5,
+    "deals": 3,
+    "engagements": 2,
+    "contracts": 1,
+    "proposals": 2,
+    "invoices": 4
+  }
 }
 ```
 
-Implementation:
-- Catch all unhandled exceptions in route handlers
-- Log full error details server-side with context
-- Return generic message to client (don't leak internals)
-- Use structured logging for debugging
+### Security Considerations
 
-### Error Handling Pattern
-
-All route handlers follow this pattern:
-
-```typescript
-try {
-  // 1. Authenticate and get organization
-  const userId = getUserIdFromRequest(req)!;
-  const orgId = await getOrCreateOrg(userId);
-  
-  // 2. Validate input
-  const validation = schema.safeParse(req.body);
-  if (!validation.success) {
-    return res.status(400).json({
-      error: "Validation failed",
-      details: formatZodErrors(validation.error)
-    });
-  }
-  
-  // 3. Perform operation
-  const result = await storage.operation(orgId, validation.data);
-  
-  // 4. Check result
-  if (!result) {
-    return res.status(404).json({ error: "Resource not found" });
-  }
-  
-  // 5. Return success
-  res.status(200).json(result);
-  
-} catch (error) {
-  // 6. Handle unexpected errors
-  console.error("Operation error:", error);
-  res.status(500).json({ error: "An unexpected error occurred" });
-}
-```
-
-### Logging Strategy
-
-All errors are logged with structured context:
-
-```typescript
-logger.error("Client company operation failed", {
-  operation: "create",
-  userId,
-  orgId,
-  error: error.message,
-  stack: error.stack,
-  timestamp: new Date().toISOString()
-});
-```
-
-Sensitive data (passwords, tokens, PII) is redacted from logs using the existing `server/security-utils.ts` utilities.
+- Never expose internal error details to clients (stack traces, SQL queries)
+- Log full error context server-side with structured logging
+- Redact sensitive information from logs (PII, credentials)
+- Use consistent 404 responses for both "not found" and "wrong organization" to prevent information leakage
+- Rate limit all endpoints to prevent abuse
 
 ## Testing Strategy
 
 ### Dual Testing Approach
 
-The implementation requires both unit tests and property-based tests for comprehensive coverage:
+This API requires both unit tests and property-based tests for comprehensive coverage:
 
-**Unit Tests:**
-- Specific examples demonstrating correct behavior
-- Edge cases (empty strings, null values, boundary conditions)
-- Error conditions (invalid IDs, missing fields, malformed data)
-- Integration points between API layer and storage layer
-- Authentication and authorization flows
+**Unit Tests**: Verify specific examples, edge cases, and error conditions
+- Specific pagination scenarios (first page, last page, empty results)
+- Specific search queries (exact matches, partial matches, no matches)
+- Specific validation failures (missing name, invalid URL, length violations)
+- Specific dependency scenarios (client with contacts, client without dependencies)
+- Integration points between routes and storage layer
 
-**Property-Based Tests:**
-- Universal properties that hold for all inputs
-- Comprehensive input coverage through randomization
-- Minimum 100 iterations per property test
-- Each property test references its design document property
+**Property-Based Tests**: Verify universal properties across all inputs
+- Organization isolation across random organizations and operations
+- Pagination correctness across random datasets and page parameters
+- Search and filter correctness across random queries and data
+- Statistics accuracy across random datasets
+- Input validation across random invalid inputs
 
-### Property-Based Testing Library
+Together, unit tests catch concrete bugs while property tests verify general correctness.
 
-Use **fast-check** for TypeScript property-based testing:
+### Property-Based Testing Configuration
 
-```bash
-npm install --save-dev fast-check
-```
+**Library**: fast-check (TypeScript property-based testing library)
 
-fast-check provides:
-- Generators for primitive types (strings, numbers, booleans)
-- Combinators for complex types (objects, arrays)
-- Shrinking to find minimal failing examples
-- Configurable iteration counts
-- Integration with Vitest
+**Configuration**:
+- Minimum 100 iterations per property test (due to randomization)
+- Each property test must reference its design document property
+- Tag format: `// Feature: client-companies-crud-api, Property {number}: {property_text}`
 
-### Test Organization
-
-Tests are colocated with source files:
-
-```
-server/domains/crm/
-├── routes.ts
-├── routes.test.ts           # Unit tests
-├── routes.properties.test.ts # Property-based tests
-├── storage-extensions.ts
-└── storage-extensions.test.ts
-```
-
-### Property Test Configuration
-
-Each property test must:
-1. Run minimum 100 iterations (configured in fast-check)
-2. Include a comment tag referencing the design property
-3. Use appropriate generators for input data
-4. Assert the property holds for all generated inputs
-
-Example property test structure:
+**Example Property Test Structure**:
 
 ```typescript
 import fc from 'fast-check';
-import { describe, it, expect } from 'vitest';
+import { describe, it } from 'vitest';
 
 describe('Client Companies API - Property Tests', () => {
   // Feature: client-companies-crud-api, Property 1: Organization Isolation
-  it('should never return clients from other organizations', async () => {
+  it('should enforce organization isolation for all operations', async () => {
     await fc.assert(
       fc.asyncProperty(
         fc.record({
-          orgId: fc.uuid(),
-          otherOrgId: fc.uuid(),
-          clientData: fc.record({
-            name: fc.string({ minLength: 1, maxLength: 255 }),
-            industry: fc.option(fc.string({ maxLength: 100 })),
-          })
+          orgA: fc.uuid(),
+          orgB: fc.uuid(),
+          clientData: arbitraryClientCompany(),
         }),
-        async ({ orgId, otherOrgId, clientData }) => {
-          // Setup: Create client in otherOrgId
-          const client = await storage.createClientCompany({
-            ...clientData,
-            organizationId: otherOrgId
-          });
-          
-          // Test: Query from orgId should not return the client
-          const clients = await storage.getClientCompanies(orgId);
-          
-          // Assert: Client from other org is not in results
-          expect(clients.find(c => c.id === client.id)).toBeUndefined();
+        async ({ orgA, orgB, clientData }) => {
+          // Test that orgA cannot access orgB's data
+          // ... test implementation
         }
       ),
       { numRuns: 100 }
@@ -806,102 +680,142 @@ describe('Client Companies API - Property Tests', () => {
 });
 ```
 
-### Unit Test Coverage
+### Test Coverage Requirements
 
-Unit tests should cover:
+**Unit Test Coverage**:
+- All API endpoints (GET, POST, PUT, DELETE)
+- All validation scenarios (valid, invalid, edge cases)
+- All error conditions (404, 400, 409, 500)
+- All pagination scenarios (defaults, custom, boundaries)
+- All filter combinations (single, multiple, none)
+- All dependency scenarios (with/without dependencies)
 
-1. **Happy Path Examples:**
-   - Create client with minimal required fields
-   - Create client with all optional fields
-   - Update client with partial data
-   - Delete client with no dependencies
-   - List clients with default pagination
-   - Search clients by name
-   - Filter clients by industry
+**Property Test Coverage**:
+- All 11 correctness properties from design document
+- Each property implemented as a single property-based test
+- Minimum 100 iterations per property test
+- Random data generation for comprehensive input coverage
 
-2. **Edge Cases:**
-   - Empty search query
-   - Page number beyond available pages
-   - Limit of 1 and limit of 100
-   - Client with no contacts or deals
-   - Client with many related entities
-   - Special characters in search queries
-   - Unicode characters in client names
+### Integration Testing
 
-3. **Error Cases:**
-   - Create with missing required field (name)
-   - Create with invalid field types
-   - Update non-existent client
-   - Delete client with dependencies
-   - Get client from different organization
-   - Invalid pagination parameters (negative, zero)
-   - Malformed query parameters
+**Database Integration**:
+- Use test database with migrations applied
+- Clean database state between tests
+- Test actual Drizzle ORM queries
+- Verify indexes are used for performance
 
-4. **Integration Tests:**
-   - Full CRUD cycle (create, read, update, delete)
-   - Pagination across multiple pages
-   - Search with filters combined
-   - Statistics calculation accuracy
-   - Cascade check with multiple dependency types
+**API Integration**:
+- Test full request/response cycle
+- Verify middleware execution order
+- Test authentication and authorization
+- Verify CSRF protection on state-changing endpoints
 
-### Test Data Management
+### Performance Testing
 
-Use factories for generating test data:
+**Pagination Performance**:
+- Test with large datasets (1000+ clients)
+- Verify query performance with EXPLAIN ANALYZE
+- Ensure indexes are used for filtering and sorting
 
-```typescript
-// test-helpers/factories.ts
-export const createTestClient = (overrides = {}) => ({
-  name: 'Test Client Inc',
-  website: 'https://example.com',
-  industry: 'Technology',
-  city: 'San Francisco',
-  state: 'CA',
-  country: 'USA',
-  ...overrides
-});
+**Search Performance**:
+- Test search with various query lengths
+- Verify case-insensitive search performance
+- Consider full-text search for large datasets
 
-export const createTestOrganization = (overrides = {}) => ({
-  name: 'Test Organization',
-  slug: 'test-org',
-  ...overrides
-});
-```
+**Statistics Performance**:
+- Test with large datasets and many aggregations
+- Consider caching for frequently accessed stats
+- Verify query optimization for complex aggregations
 
-### Mocking Strategy
+---
 
-- Mock the storage layer for API route tests
-- Use real database for storage layer tests (with test database)
-- Mock authentication middleware for isolated route testing
-- Use MSW (Mock Service Worker) for frontend integration tests
+## Implementation Notes
 
-### Test Execution
+### Current Implementation Status
 
-```bash
-# Run all tests
-npm test
+✅ **Implemented**:
+- All 6 API endpoints (list, stats, get, create, update, delete)
+- Organization-scoped storage layer methods
+- Zod validation schemas
+- Structured error handling
+- Pagination with metadata
+- Search and filtering
+- Relationship loading
+- Dependency checking
+- Statistics aggregation
 
-# Run only backend tests
-npm run test:backend
+### Future Enhancements
 
-# Run tests in watch mode
-npm run test:watch
+**Soft Delete**:
+- Add `deletedAt` timestamp column
+- Filter out deleted records in queries
+- Add "restore" endpoint for undeleting
 
-# Run with coverage
-npm run coverage
-```
+**Audit Logging**:
+- Log all CRUD operations to `activity_events` table
+- Track who created/updated/deleted each client
+- Provide audit trail for compliance
 
-### Coverage Goals
+**Bulk Operations**:
+- Bulk create endpoint (POST /api/clients/bulk)
+- Bulk update endpoint (PUT /api/clients/bulk)
+- Bulk delete endpoint (DELETE /api/clients/bulk)
 
-- Line coverage: > 80%
-- Branch coverage: > 75%
-- Function coverage: > 90%
-- Property tests: 100% of identified properties implemented
+**Advanced Search**:
+- Full-text search with PostgreSQL tsvector
+- Fuzzy matching for typo tolerance
+- Search across related entities (contacts, deals)
 
-### Continuous Integration
+**Export/Import**:
+- CSV export endpoint
+- CSV import with validation
+- Excel export with formatting
 
-Tests run automatically on:
-- Every commit (pre-commit hook)
-- Every pull request (GitHub Actions)
-- Before deployment (CI/CD pipeline)
+**Caching**:
+- Cache statistics for performance
+- Cache frequently accessed clients
+- Invalidate cache on updates
 
-Failed tests block merging and deployment.
+### Security Hardening
+
+**Rate Limiting**:
+- Per-user rate limits (already implemented globally)
+- Per-organization rate limits for fairness
+- Stricter limits on expensive operations (stats, search)
+
+**Input Sanitization**:
+- HTML sanitization for text fields
+- URL validation for website field
+- SQL injection prevention (already handled by Drizzle ORM)
+
+**Access Control**:
+- Role-based permissions (owner, admin, member, viewer)
+- Field-level permissions (e.g., only admins can delete)
+- Audit log for sensitive operations
+
+### Performance Optimization
+
+**Database Indexes**:
+- Composite index on (organizationId, createdAt) for sorted lists
+- Full-text index on searchable fields
+- Partial index on active engagements
+
+**Query Optimization**:
+- Use `SELECT` with specific columns instead of `SELECT *`
+- Batch relationship loading to avoid N+1 queries
+- Use database-level aggregations for statistics
+
+**Caching Strategy**:
+- Cache statistics with 5-minute TTL
+- Cache client lists with pagination key
+- Invalidate cache on write operations
+
+---
+
+## Conclusion
+
+The Client Companies CRUD API provides a robust, secure, and performant foundation for the UBOS CRM domain. The design enforces multi-tenant isolation at every layer, provides comprehensive validation and error handling, and supports advanced features like pagination, search, filtering, and statistics.
+
+The dual testing approach (unit tests + property-based tests) ensures both concrete correctness and universal properties hold across all inputs. The modular architecture allows for future enhancements while maintaining backward compatibility.
+
+This API serves as a reference implementation for other CRUD APIs in the UBOS platform, demonstrating best practices for security, validation, error handling, and testing.

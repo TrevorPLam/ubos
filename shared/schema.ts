@@ -177,7 +177,11 @@ export const clientCompanies = pgTable(
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
-  (table) => [index("idx_clients_org").on(table.organizationId)],
+  (table) => [
+    index("idx_clients_org").on(table.organizationId),
+    index("idx_clients_industry").on(table.industry),
+    index("idx_clients_country").on(table.country),
+  ],
 );
 
 // ==================== CONTACTS ====================
