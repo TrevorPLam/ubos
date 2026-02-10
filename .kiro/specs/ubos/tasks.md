@@ -24,7 +24,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
 ### Domain: Security & User Management
 
 - [ ] 1. Implement Role-Based Access Control (RBAC)
-  - [ ] 1.1 Create permissions schema and database tables
+  - [x] 1.1 Create permissions schema and database tables
     - Add `permissions` table with feature areas and permission types (view, create, edit, delete, export)
     - Add `roles` table with default roles (Admin, Manager, Team Member, Client)
     - Add `rolePermissions` junction table linking roles to permissions
@@ -32,11 +32,11 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Create Zod schemas for validation
     - _Requirements: 83.1, 83.2, 83.4_
   
-  - [ ]* 1.2 Write property test for RBAC schema
+  - [x] 1.2 Write property test for RBAC schema
     - **Property 1: Role assignment preserves organization isolation**
     - **Validates: Requirements 83.7**
   
-  - [ ] 1.3 Implement permission checking middleware
+  - [x] 1.3 Implement permission checking middleware
     - Create `checkPermission(feature, action)` middleware function
     - Extract user roles from session
     - Query role permissions from database
@@ -44,26 +44,26 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - _Requirements: 83.3_
 
 
-  - [ ]* 1.4 Write unit tests for permission middleware
+  - [~] 1.4 Write unit tests for permission middleware
     - Test permission granted scenarios
     - Test permission denied scenarios
     - Test missing role scenarios
     - _Requirements: 83.3_
   
-  - [ ] 1.5 Add RBAC to all existing API routes
+  - [~] 1.5 Add RBAC to all existing API routes
     - Update routes.ts to apply permission checks
     - Add permission requirements to each endpoint
     - Test with different user roles
     - _Requirements: 83.3, 83.5_
   
-  - [ ] 1.6 Create role management API endpoints
+  - [~] 1.6 Create role management API endpoints
     - POST /api/roles - Create custom role
     - GET /api/roles - List roles
     - PUT /api/roles/:id - Update role permissions
     - POST /api/users/:id/roles - Assign role to user
     - _Requirements: 83.1, 83.4, 83.6_
   
-  - [ ]* 1.7 Write integration tests for RBAC
+  - [~] 1.7 Write integration tests for RBAC
     - Test role creation and assignment
     - Test permission enforcement across endpoints
     - Test multi-role scenarios
@@ -94,7 +94,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Set 7-day expiration on tokens
     - _Requirements: 91.1, 91.7_
   
-  - [ ]* 3.4 Write property test for invitation tokens
+  - [ ] 3.4 Write property test for invitation tokens
     - **Property 2: Invitation tokens expire after 7 days**
     - **Validates: Requirements 91.7**
   
@@ -105,7 +105,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Create user account and link to organization
     - _Requirements: 91.3_
   
-  - [ ]* 3.6 Write integration tests for invitation flow
+  - [ ] 3.6 Write integration tests for invitation flow
     - Test invitation creation and email sending
     - Test invitation acceptance and user creation
     - Test expired invitation handling
@@ -136,7 +136,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Add working hours configuration
     - _Requirements: 92.1, 92.2, 92.3, 92.4, 92.5_
   
-  - [ ]* 4.4 Write unit tests for profile validation
+  - [ ] 4.4 Write unit tests for profile validation
     - Test email validation and uniqueness
     - Test password strength requirements
     - Test profile update scenarios
@@ -163,7 +163,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Add email template customization
     - _Requirements: 94.2, 94.3, 94.4, 94.5_
   
-  - [ ]* 5.4 Write unit tests for settings validation
+  - [ ] 5.4 Write unit tests for settings validation
     - Test settings update scenarios
     - Test business hours validation
     - Test logo upload
@@ -199,7 +199,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Add custom field filtering to list views
     - _Requirements: 4.2, 4.4, 4.7_
   
-  - [ ]* 7.4 Write property test for custom field validation
+  - [ ] 7.4 Write property test for custom field validation
     - **Property 3: Custom field values match their type definitions**
     - **Validates: Requirements 4.3**
 
@@ -222,7 +222,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Add score field to contact/deal responses
     - _Requirements: 5.1, 5.3, 5.6_
   
-  - [ ]* 8.4 Write unit tests for scoring calculation
+  - [ ] 8.4 Write unit tests for scoring calculation
     - Test scoring rules evaluation
     - Test score recalculation on updates
     - Test threshold-based qualification
@@ -275,7 +275,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - GET /api/reports/assignments - Assignment analytics
     - _Requirements: 10.5, 10.7_
   
-  - [ ]* 10.4 Write property test for round-robin assignment
+  - [ ] 10.4 Write property test for round-robin assignment
     - **Property 4: Round-robin distributes leads evenly**
     - **Validates: Requirements 10.2**
 
@@ -304,7 +304,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Create branded proposal renderer
     - _Requirements: 12.6_
   
-  - [ ]* 12.4 Write unit tests for proposal builder
+  - [ ] 12.4 Write unit tests for proposal builder
     - Test block creation and ordering
     - Test template application
     - Test proposal rendering
@@ -330,7 +330,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Display pricing in configured currency
     - _Requirements: 13.2, 13.6, 13.7_
   
-  - [ ]* 13.4 Write property test for pricing calculations
+  - [ ] 13.4 Write property test for pricing calculations
     - **Property 5: Pricing calculations are accurate**
     - **Validates: Requirements 13.2**
 
@@ -354,7 +354,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Show conversion metrics (proposal to deal)
     - _Requirements: 14.4, 14.6, 14.7_
   
-  - [ ]* 14.4 Write unit tests for tracking
+  - [ ] 14.4 Write unit tests for tracking
     - Test view logging
     - Test notification sending
     - Test analytics calculations
@@ -387,7 +387,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Generate legally compliant certificates
     - _Requirements: 15.7_
   
-  - [ ]* 15.5 Write integration tests for signature flow
+  - [ ] 15.5 Write integration tests for signature flow
     - Test signature capture and storage
     - Test multi-signer workflows
     - Test certificate generation
@@ -413,7 +413,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Track signature status per signer
     - _Requirements: 16.5, 16.6_
   
-  - [ ]* 16.4 Write integration tests for DocuSign
+  - [ ] 16.4 Write integration tests for DocuSign
     - Test envelope creation
     - Test webhook handling
     - Test signature status tracking
@@ -446,7 +446,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Show approval history timeline
     - _Requirements: 18.3, 18.4, 18.5, 18.6_
   
-  - [ ]* 17.5 Write integration tests for approval workflows
+  - [ ] 17.5 Write integration tests for approval workflows
     - Test sequential approval flow
     - Test parallel approval flow
     - Test rejection handling
@@ -472,7 +472,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Implement real-time updates with WebSockets
     - _Requirements: 23.2, 23.3, 23.4, 23.5, 23.7_
   
-  - [ ]* 19.3 Write integration tests for kanban board
+  - [ ] 19.3 Write integration tests for kanban board
     - Test task movement between columns
     - Test status updates on drag-and-drop
     - Test filtering
@@ -500,7 +500,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - _Requirements: 24.1, 24.2, 24.5, 24.6, 24.7_
 
 
-  - [ ]* 20.4 Write property test for time calculations
+  - [ ] 20.4 Write property test for time calculations
     - **Property 6: Time entry durations are accurate**
     - **Validates: Requirements 24.2**
 
@@ -523,7 +523,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Send alerts when users approach overallocation
     - _Requirements: 26.7_
   
-  - [ ]* 21.4 Write unit tests for capacity calculations
+  - [ ] 21.4 Write unit tests for capacity calculations
     - Test available capacity calculation
     - Test overallocation detection
     - _Requirements: 26.2, 26.3_
@@ -550,7 +550,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - GET /api/recurring-projects/:id/history - View series history
     - _Requirements: 27.4, 27.6_
   
-  - [ ]* 22.4 Write integration tests for recurring projects
+  - [ ] 22.4 Write integration tests for recurring projects
     - Test project creation on schedule
     - Test relative date calculations
     - Test pause/resume functionality
@@ -589,7 +589,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Support folder-level permission overrides
     - _Requirements: 30.5_
   
-  - [ ]* 24.5 Write integration tests for folder operations
+  - [ ] 24.5 Write integration tests for folder operations
     - Test folder creation and nesting
     - Test file/folder movement
     - Test permission inheritance
@@ -619,7 +619,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Auto-delete old versions beyond retention limit
     - _Requirements: 31.7_
   
-  - [ ]* 25.5 Write unit tests for versioning
+  - [ ] 25.5 Write unit tests for versioning
     - Test version creation on duplicate upload
     - Test version restoration
     - Test retention policy enforcement
@@ -657,7 +657,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Allow overriding inherited permissions
     - _Requirements: 32.7_
   
-  - [ ]* 26.6 Write integration tests for file permissions
+  - [ ] 26.6 Write integration tests for file permissions
     - Test permission granting and revocation
     - Test permission enforcement
     - Test time-limited access expiration
@@ -689,7 +689,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Show access log for shared files
     - _Requirements: 33.1, 33.2, 33.3, 33.4, 33.5_
   
-  - [ ]* 27.5 Write integration tests for secure sharing
+  - [ ] 27.5 Write integration tests for secure sharing
     - Test share link creation and access
     - Test password protection
     - Test expiration enforcement
@@ -728,7 +728,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Show schedule history and next invoice date
     - _Requirements: 38.1, 38.3, 38.6_
   
-  - [ ]* 29.5 Write integration tests for automated invoicing
+  - [ ] 29.5 Write integration tests for automated invoicing
     - Test invoice generation on schedule
     - Test time-based billing calculation
     - Test milestone-based billing triggers
@@ -760,7 +760,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Support multiple currencies and formats
     - _Requirements: 39.6, 39.7_
   
-  - [ ]* 30.5 Write integration tests for bill capture
+  - [ ] 30.5 Write integration tests for bill capture
     - Test image upload and extraction
     - Test data correction flow
     - Test multi-currency handling
@@ -790,7 +790,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Escalate to backup approvers on timeout
     - _Requirements: 40.6, 40.7_
   
-  - [ ]* 31.5 Write integration tests for multi-level approvals
+  - [ ] 31.5 Write integration tests for multi-level approvals
     - Test amount-based routing
     - Test multi-level approval chains
     - Test delegation and escalation
@@ -822,7 +822,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Show payment confirmation page
     - _Requirements: 41.1, 41.3_
   
-  - [ ]* 32.5 Write integration tests for payment gateway
+  - [ ] 32.5 Write integration tests for payment gateway
     - Test payment intent creation
     - Test webhook handling
     - Test payment status updates
@@ -853,7 +853,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - _Requirements: 42.4, 42.7_
 
 
-  - [ ]* 33.5 Write property test for payment matching
+  - [ ] 33.5 Write property test for payment matching
     - **Property 7: Payment matching is accurate**
     - **Validates: Requirements 42.2**
 
@@ -881,7 +881,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Show read receipts when messages viewed
     - _Requirements: 47.3, 47.4, 47.5_
   
-  - [ ]* 35.4 Write integration tests for real-time messaging
+  - [ ] 35.4 Write integration tests for real-time messaging
     - Test message broadcasting
     - Test offline message queuing
     - Test presence tracking
@@ -910,7 +910,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Allow users to configure notification settings (immediate, digest, off)
     - _Requirements: 48.6_
   
-  - [ ]* 36.5 Write unit tests for mention parsing
+  - [ ] 36.5 Write unit tests for mention parsing
     - Test @username detection
     - Test @channel handling
     - Test notification triggering
@@ -940,7 +940,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Apply organization file size limits
     - _Requirements: 49.5_
   
-  - [ ]* 37.5 Write integration tests for file sharing
+  - [ ] 37.5 Write integration tests for file sharing
     - Test file upload in messages
     - Test multiple attachments
     - Test file size limit enforcement
@@ -970,7 +970,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Show email tracking analytics
     - _Requirements: 50.4, 50.5, 50.6_
   
-  - [ ]* 38.5 Write integration tests for email sync
+  - [ ] 38.5 Write integration tests for email sync
     - Test email import via IMAP
     - Test email sending and tracking
     - Test auto-linking to contacts
@@ -996,7 +996,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Automatically log scheduled meetings
     - _Requirements: 52.6_
   
-  - [ ]* 39.5 Write integration tests for calendar sync
+  - [ ] 39.5 Write integration tests for calendar sync
     - Test event sync
     - Test meeting creation
     - Test availability checking
@@ -1033,7 +1033,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Add meeting to both calendars
     - _Requirements: 52A.3, 52A.5, 52A.6, 52A.7_
   
-  - [ ]* 41.5 Write integration tests for scheduling
+  - [ ] 41.5 Write integration tests for scheduling
     - Test availability calculation
     - Test booking creation
     - Test double-booking prevention
@@ -1065,7 +1065,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Allow per-meeting-type availability overrides
     - _Requirements: 52B.1, 52B.2, 52B.3, 52B.7_
   
-  - [ ]* 42.5 Write unit tests for availability calculation
+  - [ ] 42.5 Write unit tests for availability calculation
     - Test working hours enforcement
     - Test minimum notice period
     - Test timezone handling
@@ -1090,7 +1090,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Log all bookings, reschedules, cancellations to activity timeline
     - _Requirements: 52C.7_
   
-  - [ ]* 43.4 Write integration tests for reminders
+  - [ ] 43.4 Write integration tests for reminders
     - Test reminder scheduling
     - Test reschedule flow
     - Test cancellation flow
@@ -1119,7 +1119,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Provide analytics on booking distribution
     - _Requirements: 52D.6, 52D.7_
   
-  - [ ]* 44.5 Write property test for round-robin distribution
+  - [ ] 44.5 Write property test for round-robin distribution
     - **Property 8: Round-robin distributes bookings evenly across team**
     - **Validates: Requirements 52D.2**
 
@@ -1161,7 +1161,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Support secret meeting types (not publicly listed)
     - _Requirements: 52F.6, 52F.7_
   
-  - [ ]* 46.4 Write unit tests for meeting type configuration
+  - [ ] 46.4 Write unit tests for meeting type configuration
     - Test buffer time application
     - Test booking limit enforcement
     - _Requirements: 52F.2, 52F.6_
@@ -1190,7 +1190,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Apply organization logo and colors to portal
     - _Requirements: 54.7_
   
-  - [ ]* 48.4 Write integration tests for portal dashboard
+  - [ ] 48.4 Write integration tests for portal dashboard
     - Test dashboard data aggregation
     - Test client-scoped data filtering
     - _Requirements: 54.1, 54.2_
@@ -1220,7 +1220,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Send email reminders for overdue client tasks
     - _Requirements: 55.4, 55.7_
   
-  - [ ]* 49.5 Write integration tests for client tasks
+  - [ ] 49.5 Write integration tests for client tasks
     - Test task visibility filtering
     - Test task completion by clients
     - Test comment notifications
@@ -1243,7 +1243,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Notify team when clients upload files
     - _Requirements: 56.7_
   
-  - [ ]* 50.4 Write integration tests for portal file access
+  - [ ] 50.4 Write integration tests for portal file access
     - Test client visibility filtering
     - Test file download tracking
     - Test client file uploads
@@ -1274,7 +1274,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Send reminders for pending requests
     - _Requirements: 57.7_
   
-  - [ ]* 51.5 Write integration tests for document requests
+  - [ ] 51.5 Write integration tests for document requests
     - Test request creation and notification
     - Test document upload by clients
     - Test status tracking
@@ -1305,7 +1305,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Send reminders for pending approvals
     - _Requirements: 58.1, 58.3, 58.4, 58.7_
   
-  - [ ]* 52.5 Write integration tests for client approvals
+  - [ ] 52.5 Write integration tests for client approvals
     - Test approval workflow
     - Test rejection with feedback
     - Test multi-step approvals
@@ -1332,7 +1332,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Send payment confirmation emails
     - _Requirements: 59.4, 59.5_
   
-  - [ ]* 53.4 Write integration tests for portal invoices
+  - [ ] 53.4 Write integration tests for portal invoices
     - Test invoice listing and filtering
     - Test payment initiation
     - Test PDF download
@@ -1358,7 +1358,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Support responding from portal or email
     - _Requirements: 60.3, 60.4, 60.7_
   
-  - [ ]* 54.4 Write integration tests for portal messaging
+  - [ ] 54.4 Write integration tests for portal messaging
     - Test message sending and receiving
     - Test file attachments
     - Test notifications
@@ -1388,7 +1388,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Support per-client branding if needed
     - _Requirements: 61.6, 61.7_
   
-  - [ ]* 55.5 Write unit tests for branding application
+  - [ ] 55.5 Write unit tests for branding application
     - Test branding configuration
     - Test branding rendering
     - _Requirements: 61.1, 61.6_
@@ -1428,7 +1428,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Configure change history retention period
     - _Requirements: 65.7_
   
-  - [ ]* 57.6 Write unit tests for change tracking
+  - [ ] 57.6 Write unit tests for change tracking
     - Test change capture on updates
     - Test diff generation
     - Test revert functionality
@@ -1468,7 +1468,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - GET /api/workflows/:id/executions - Get execution history
     - _Requirements: 67.7_
   
-  - [ ]* 58.6 Write integration tests for workflow builder
+  - [ ] 58.6 Write integration tests for workflow builder
     - Test workflow creation and validation
     - Test workflow execution
     - Test pause/resume functionality
@@ -1495,7 +1495,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Log all trigger evaluations for debugging
     - _Requirements: 68.7_
   
-  - [ ]* 59.5 Write unit tests for trigger evaluation
+  - [ ] 59.5 Write unit tests for trigger evaluation
     - Test trigger condition matching
     - Test filter evaluation
     - Test scheduled trigger execution
@@ -1517,7 +1517,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Provide templates for common condition scenarios
     - _Requirements: 69.6_
   
-  - [ ]* 60.4 Write unit tests for condition evaluation
+  - [ ] 60.4 Write unit tests for condition evaluation
     - Test condition operators
     - Test AND/OR logic
     - Test branching
@@ -1543,7 +1543,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Log all action executions with success/failure status
     - _Requirements: 70.6, 70.7_
   
-  - [ ]* 61.5 Write integration tests for workflow actions
+  - [ ] 61.5 Write integration tests for workflow actions
     - Test each action type
     - Test retry logic
     - Test delay actions
@@ -1577,7 +1577,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Provide pre-built widget templates for common metrics
     - _Requirements: 72.7_
   
-  - [ ]* 63.5 Write unit tests for widget data queries
+  - [ ] 63.5 Write unit tests for widget data queries
     - Test data aggregation
     - Test date range filtering
     - _Requirements: 72.1, 72.4_
@@ -1603,7 +1603,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Support sharing reports with team
     - _Requirements: 73.1, 73.7_
   
-  - [ ]* 64.4 Write integration tests for report builder
+  - [ ] 64.4 Write integration tests for report builder
     - Test report creation
     - Test filtering and aggregation
     - Test report execution
@@ -1622,7 +1622,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Track forecast accuracy over time
     - _Requirements: 74.4, 74.5, 74.6, 74.7_
   
-  - [ ]* 65.3 Write unit tests for forecast calculations
+  - [ ] 65.3 Write unit tests for forecast calculations
     - Test forecast calculation by stage
     - Test scenario generation
     - Test accuracy tracking
@@ -1649,7 +1649,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Show export progress for large datasets
     - _Requirements: 76.1, 76.2_
   
-  - [ ]* 66.4 Write integration tests for data export
+  - [ ] 66.4 Write integration tests for data export
     - Test export in each format
     - Test filter application
     - Test organization isolation
@@ -1679,7 +1679,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Log all sync operations
     - _Requirements: 77.4, 77.5, 77.6_
   
-  - [ ]* 68.4 Write integration tests for accounting sync
+  - [ ] 68.4 Write integration tests for accounting sync
     - Test OAuth authentication
     - Test entity mapping
     - Test bidirectional sync
@@ -1706,7 +1706,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Provide analytics: delivery rate, open rate, click rate
     - _Requirements: 78.7_
   
-  - [ ]* 69.5 Write integration tests for email service
+  - [ ] 69.5 Write integration tests for email service
     - Test email sending
     - Test tracking webhooks
     - Test bounce handling
@@ -1731,7 +1731,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Store transaction IDs for all payments
     - _Requirements: 80.6, 80.7_
   
-  - [ ]* 70.4 Write integration tests for payment gateways
+  - [ ] 70.4 Write integration tests for payment gateways
     - Test payment processing for each provider
     - Test webhook handling
     - Test refund processing
@@ -1763,7 +1763,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Add member management
     - _Requirements: 93.1, 93.2_
   
-  - [ ]* 71.5 Write integration tests for team management
+  - [ ] 71.5 Write integration tests for team management
     - Test team creation and hierarchy
     - Test member management
     - Test team-based permissions
@@ -1802,7 +1802,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Add 2FA management in user settings
     - _Requirements: 84.1, 84.2, 84.4_
   
-  - [ ]* 73.6 Write integration tests for 2FA
+  - [ ] 73.6 Write integration tests for 2FA
     - Test TOTP enrollment and verification
     - Test backup code usage
     - Test admin enforcement
@@ -1836,7 +1836,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Send alerts when blocked attempts exceed threshold
     - _Requirements: 85.7_
   
-  - [ ]* 74.6 Write integration tests for IP whitelisting
+  - [ ] 74.6 Write integration tests for IP whitelisting
     - Test IP checking
     - Test access denial
     - Test temporary exceptions
@@ -1868,7 +1868,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Use secure, httpOnly, sameSite cookies
     - _Requirements: 86.7_
   
-  - [ ]* 75.6 Write unit tests for session management
+  - [ ] 75.6 Write unit tests for session management
     - Test session timeout
     - Test session revocation
     - Test inactivity expiration
@@ -1891,7 +1891,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Log all encryption key operations
     - _Requirements: 87.7_
   
-  - [ ]* 76.4 Write integration tests for encryption
+  - [ ] 76.4 Write integration tests for encryption
     - Test data encryption/decryption
     - Test key rotation
     - _Requirements: 87.1, 87.5_
@@ -1916,7 +1916,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Appoint DPO contact
     - _Requirements: 89.6, 89.7_
   
-  - [ ]* 77.5 Write integration tests for GDPR compliance
+  - [ ] 77.5 Write integration tests for GDPR compliance
     - Test data export
     - Test data deletion
     - Test consent tracking
@@ -1962,7 +1962,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Test on iOS and Android devices
     - _Requirements: 95.6, 95.7_
   
-  - [ ]* 80.4 Write responsive design tests
+  - [ ] 80.4 Write responsive design tests
     - Test layouts at different viewport sizes
     - Test touch interactions
     - _Requirements: 95.1, 95.2_
@@ -1988,7 +1988,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Pass automated accessibility testing (axe, WAVE)
     - _Requirements: 97.7_
   
-  - [ ]* 81.5 Write accessibility tests
+  - [ ] 81.5 Write accessibility tests
     - Test keyboard navigation
     - Test screen reader compatibility
     - Test color contrast
@@ -2020,7 +2020,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Optimize database queries with proper indexing
     - _Requirements: 98.6, 98.7_
   
-  - [ ]* 83.5 Write performance tests
+  - [ ] 83.5 Write performance tests
     - Test page load times
     - Test list rendering performance
     - _Requirements: 98.1, 98.5_

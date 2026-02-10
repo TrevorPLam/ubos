@@ -122,6 +122,13 @@ export const activityTypeEnum = pgEnum("activity_type", [
   "rejected",
   "comment",
 ]);
+export const permissionTypeEnum = pgEnum("permission_type", [
+  "view",
+  "create",
+  "edit",
+  "delete",
+  "export",
+]);
 
 // ==================== ORGANIZATIONS (Multi-tenancy) ====================
 export const organizations = pgTable("organizations", {
@@ -745,6 +752,97 @@ export const clientPortalAccess = pgTable(
   ],
 );
 
+// ==================== RBAC: PERMISSIONS ====================
+export const permissions = pgTable(
+  "permissions",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    featureArea: varchar("feature_area", { length: 100 }).notNull(),
+    permissionType: permissionTypeEnum("permission_type").notNull(),
+    description: text("description"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [
+    index("idx_permissions_feature").on(table.featureArea),
+    // Ensure unique combination of feature area and permission type
+    index("idx_permissions_unique").on(table.featureArea, table.permissionType),
+  ],
+);
+
+// ==================== RBAC: ROLES ====================
+export const roles = pgTable(
+  "roles",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    organizationId: varchar("organization_id")
+      .references(() => organizations.id, { onDelete: "cascade" })
+      .notNull(),
+    name: varchar("name", { length: 100 }).notNull(),
+    description: text("description"),
+    isDefault: boolean("is_default").default(false),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => [
+    index("idx_roles_org").on(table.organizationId),
+    // Ensure unique role names per organization
+    index("idx_roles_org_name").on(table.organizationId, table.name),
+  ],
+);
+
+// ==================== RBAC: ROLE PERMISSIONS (Junction) ====================
+export const rolePermissions = pgTable(
+  "role_permissions",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    roleId: varchar("role_id")
+      .references(() => roles.id, { onDelete: "cascade" })
+      .notNull(),
+    permissionId: varchar("permission_id")
+      .references(() => permissions.id, { onDelete: "cascade" })
+      .notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [
+    index("idx_role_permissions_role").on(table.roleId),
+    index("idx_role_permissions_permission").on(table.permissionId),
+    // Ensure unique role-permission combinations
+    index("idx_role_permissions_unique").on(table.roleId, table.permissionId),
+  ],
+);
+
+// ==================== RBAC: USER ROLES (Junction) ====================
+export const userRoles = pgTable(
+  "user_roles",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    userId: varchar("user_id").notNull(),
+    roleId: varchar("role_id")
+      .references(() => roles.id, { onDelete: "cascade" })
+      .notNull(),
+    organizationId: varchar("organization_id")
+      .references(() => organizations.id, { onDelete: "cascade" })
+      .notNull(),
+    assignedById: varchar("assigned_by_id"),
+    assignedAt: timestamp("assigned_at").defaultNow().notNull(),
+  },
+  (table) => [
+    index("idx_user_roles_user").on(table.userId),
+    index("idx_user_roles_role").on(table.roleId),
+    index("idx_user_roles_org").on(table.organizationId),
+    // Ensure unique user-role-org combinations (users can have multiple roles per org)
+    index("idx_user_roles_unique").on(table.userId, table.roleId, table.organizationId),
+  ],
+);
+
 // ==================== RELATIONS ====================
 export const organizationsRelations = relations(organizations, ({ many }) => ({
   members: many(organizationMembers),
@@ -815,6 +913,37 @@ export const threadsRelations = relations(threads, ({ one, many }) => ({
     references: [engagements.id],
   }),
   messages: many(messages),
+}));
+
+export const rolesRelations = relations(roles, ({ one, many }) => ({
+  organization: one(organizations, {
+    fields: [roles.organizationId],
+    references: [organizations.id],
+  }),
+  rolePermissions: many(rolePermissions),
+  userRoles: many(userRoles),
+}));
+
+export const rolePermissionsRelations = relations(rolePermissions, ({ one }) => ({
+  role: one(roles, {
+    fields: [rolePermissions.roleId],
+    references: [roles.id],
+  }),
+  permission: one(permissions, {
+    fields: [rolePermissions.permissionId],
+    references: [permissions.id],
+  }),
+}));
+
+export const userRolesRelations = relations(userRoles, ({ one }) => ({
+  role: one(roles, {
+    fields: [userRoles.roleId],
+    references: [roles.id],
+  }),
+  organization: one(organizations, {
+    fields: [userRoles.organizationId],
+    references: [organizations.id],
+  }),
 }));
 
 // ==================== INSERT SCHEMAS ====================
@@ -908,6 +1037,23 @@ export const insertInvoiceScheduleSchema = createInsertSchema(invoiceSchedules).
   id: true,
   createdAt: true,
 });
+export const insertPermissionSchema = createInsertSchema(permissions).omit({
+  id: true,
+  createdAt: true,
+});
+export const insertRoleSchema = createInsertSchema(roles).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export const insertRolePermissionSchema = createInsertSchema(rolePermissions).omit({
+  id: true,
+  createdAt: true,
+});
+export const insertUserRoleSchema = createInsertSchema(userRoles).omit({
+  id: true,
+  assignedAt: true,
+});
 
 // ==================== TYPES ====================
 export type InsertOrganization = z.infer<typeof insertOrganizationSchema>;
@@ -952,3 +1098,11 @@ export type InsertInvoiceSchedule = z.infer<typeof insertInvoiceScheduleSchema>;
 export type InvoiceSchedule = typeof invoiceSchedules.$inferSelect;
 export type OrganizationMember = typeof organizationMembers.$inferSelect;
 export type ClientPortalAccess = typeof clientPortalAccess.$inferSelect;
+export type InsertPermission = z.infer<typeof insertPermissionSchema>;
+export type Permission = typeof permissions.$inferSelect;
+export type InsertRole = z.infer<typeof insertRoleSchema>;
+export type Role = typeof roles.$inferSelect;
+export type InsertRolePermission = z.infer<typeof insertRolePermissionSchema>;
+export type RolePermission = typeof rolePermissions.$inferSelect;
+export type InsertUserRole = z.infer<typeof insertUserRoleSchema>;
+export type UserRole = typeof userRoles.$inferSelect;
