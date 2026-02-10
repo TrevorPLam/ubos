@@ -24,7 +24,7 @@
  *   3) call those methods from `server/routes.ts`
  */
 
-import { eq, and, desc, isNull, asc, sql, or, ilike, count } from "drizzle-orm";
+import { eq, and, desc, isNull, asc, sql, or, ilike, count, inArray } from "drizzle-orm";
 import { db } from "./db";
 import {
   users,
@@ -49,6 +49,10 @@ import {
   outbox,
   projectTemplates,
   invoiceSchedules,
+  permissions,
+  roles,
+  rolePermissions,
+  userRoles,
   type User,
   type UpsertUser,
   type Organization,
@@ -85,6 +89,14 @@ import {
   type InsertOutboxEvent,
   type InsertFileObject,
   type FileObject,
+  type Permission,
+  type InsertPermission,
+  type Role,
+  type InsertRole,
+  type RolePermission,
+  type InsertRolePermission,
+  type UserRole,
+  type InsertUserRole,
 } from "@shared/schema";
 import type {
   PaginationOptions,
@@ -1089,6 +1101,192 @@ export class DatabaseStorage implements IStorage {
         retryCount: sql`${outbox.retryCount} + 1`,
       })
       .where(eq(outbox.id, id));
+  }
+
+  // ==================== RBAC METHODS ====================
+
+  /**
+   * Get all roles for an organization
+   */
+  async getRoles(orgId: string): Promise<Role[]> {
+    return db
+      .select()
+      .from(roles)
+      .where(eq(roles.organizationId, orgId))
+      .orderBy(asc(roles.name));
+  }
+
+  /**
+   * Get a single role by ID (with org scoping)
+   */
+  async getRole(roleId: string, orgId: string): Promise<Role | undefined> {
+    const [role] = await db
+      .select()
+      .from(roles)
+      .where(and(eq(roles.id, roleId), eq(roles.organizationId, orgId)));
+    return role;
+  }
+
+  /**
+   * Get a role with its permissions
+   */
+  async getRoleWithPermissions(roleId: string, orgId: string): Promise<{
+    role: Role;
+    permissions: Permission[];
+  } | undefined> {
+    const role = await this.getRole(roleId, orgId);
+    if (!role) return undefined;
+
+    const rolePerms = await db
+      .select({
+        permission: permissions,
+      })
+      .from(rolePermissions)
+      .innerJoin(permissions, eq(rolePermissions.permissionId, permissions.id))
+      .where(eq(rolePermissions.roleId, roleId));
+
+    return {
+      role,
+      permissions: rolePerms.map((rp) => rp.permission),
+    };
+  }
+
+  /**
+   * Create a new role
+   */
+  async createRole(data: InsertRole): Promise<Role> {
+    const [role] = await db.insert(roles).values(data).returning();
+    return role;
+  }
+
+  /**
+   * Update a role
+   */
+  async updateRole(
+    roleId: string,
+    orgId: string,
+    data: Partial<InsertRole>
+  ): Promise<Role | undefined> {
+    const [role] = await db
+      .update(roles)
+      .set({ ...data, updatedAt: new Date() })
+      .where(and(eq(roles.id, roleId), eq(roles.organizationId, orgId)))
+      .returning();
+    return role;
+  }
+
+  /**
+   * Delete a role (only if not assigned to any users)
+   */
+  async deleteRole(roleId: string, orgId: string): Promise<boolean> {
+    // Check if role is assigned to any users
+    const assignments = await db
+      .select()
+      .from(userRoles)
+      .where(eq(userRoles.roleId, roleId))
+      .limit(1);
+
+    if (assignments.length > 0) {
+      return false; // Cannot delete role with active assignments
+    }
+
+    const result = await db
+      .delete(roles)
+      .where(and(eq(roles.id, roleId), eq(roles.organizationId, orgId)))
+      .returning();
+
+    return result.length > 0;
+  }
+
+  /**
+   * Get all permissions (system-wide, not org-scoped)
+   */
+  async getPermissions(): Promise<Permission[]> {
+    return db.select().from(permissions).orderBy(asc(permissions.featureArea));
+  }
+
+  /**
+   * Assign permissions to a role
+   */
+  async assignPermissionsToRole(
+    roleId: string,
+    permissionIds: string[]
+  ): Promise<void> {
+    // Remove existing permissions for this role
+    await db.delete(rolePermissions).where(eq(rolePermissions.roleId, roleId));
+
+    // Add new permissions
+    if (permissionIds.length > 0) {
+      await db.insert(rolePermissions).values(
+        permissionIds.map((permissionId) => ({
+          roleId,
+          permissionId,
+        }))
+      );
+    }
+  }
+
+  /**
+   * Get user roles for a specific user in an organization
+   */
+  async getUserRoles(userId: string, orgId: string): Promise<Role[]> {
+    const userRoleRecords = await db
+      .select({
+        role: roles,
+      })
+      .from(userRoles)
+      .innerJoin(roles, eq(userRoles.roleId, roles.id))
+      .where(
+        and(eq(userRoles.userId, userId), eq(userRoles.organizationId, orgId))
+      );
+
+    return userRoleRecords.map((ur) => ur.role);
+  }
+
+  /**
+   * Assign a role to a user
+   */
+  async assignRoleToUser(data: InsertUserRole): Promise<UserRole> {
+    // Check if assignment already exists
+    const existing = await db
+      .select()
+      .from(userRoles)
+      .where(
+        and(
+          eq(userRoles.userId, data.userId),
+          eq(userRoles.roleId, data.roleId),
+          eq(userRoles.organizationId, data.organizationId)
+        )
+      );
+
+    if (existing.length > 0) {
+      return existing[0]; // Return existing assignment
+    }
+
+    const [userRole] = await db.insert(userRoles).values(data).returning();
+    return userRole;
+  }
+
+  /**
+   * Remove a role from a user
+   */
+  async removeRoleFromUser(
+    userId: string,
+    roleId: string,
+    orgId: string
+  ): Promise<boolean> {
+    const result = await db
+      .delete(userRoles)
+      .where(
+        and(
+          eq(userRoles.userId, userId),
+          eq(userRoles.roleId, roleId),
+          eq(userRoles.organizationId, orgId)
+        )
+      )
+      .returning();
+
+    return result.length > 0;
   }
 }
 

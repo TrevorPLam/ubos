@@ -17,6 +17,7 @@ import { communicationsRoutes } from "./domains/communications/routes";
 import { agreementsRoutes } from "./domains/agreements/routes";
 import { engagementsRoutes } from "./domains/engagements/routes";
 import { filesRoutes } from "./domains/files/routes";
+import { rbacRoutes } from "./domains/rbac/routes";
 
 export async function registerRoutes(server: Server, app: Express): Promise<void> {
   // `server` is reserved for real-time features (SSE/WebSocket) where we need the HTTP server.
@@ -33,6 +34,7 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
   app.use(agreementsRoutes);
   app.use(engagementsRoutes);
   app.use(filesRoutes);
+  app.use(rbacRoutes);
 
   // ==================== DASHBOARD ====================
   // Kept here for now as it aggregates across domains

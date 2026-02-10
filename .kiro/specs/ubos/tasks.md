@@ -50,20 +50,20 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Test missing role scenarios
     - _Requirements: 83.3_
   
-  - [-] 1.5 Add RBAC to all existing API routes
+  - [x] 1.5 Add RBAC to all existing API routes
     - Update routes.ts to apply permission checks
     - Add permission requirements to each endpoint
     - Test with different user roles
     - _Requirements: 83.3, 83.5_
   
-  - [~] 1.6 Create role management API endpoints
+  - [ ] 1.6 Create role management API endpoints
     - POST /api/roles - Create custom role
     - GET /api/roles - List roles
     - PUT /api/roles/:id - Update role permissions
     - POST /api/users/:id/roles - Assign role to user
     - _Requirements: 83.1, 83.4, 83.6_
   
-  - [~] 1.7 Write integration tests for RBAC
+  - [ ] 1.7 Write integration tests for RBAC
     - Test role creation and assignment
     - Test permission enforcement across endpoints
     - Test multi-role scenarios
