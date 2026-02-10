@@ -56,7 +56,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Test with different user roles
     - _Requirements: 83.3, 83.5_
   
-  - [ ] 1.6 Create role management API endpoints
+  - [-] 1.6 Create role management API endpoints
     - POST /api/roles - Create custom role
     - GET /api/roles - List roles
     - PUT /api/roles/:id - Update role permissions
