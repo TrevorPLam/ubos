@@ -6,6 +6,7 @@ import {
   getUserIdFromRequest, 
   getOrCreateOrg 
 } from "./middleware/auth";
+import { checkPermission } from "./middleware/permissions";
 
 // Domain Routes
 import { identityRoutes } from "./domains/identity/routes";
@@ -35,7 +36,7 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
 
   // ==================== DASHBOARD ====================
   // Kept here for now as it aggregates across domains
-  app.get("/api/dashboard/stats", requireAuth, async (req: Request, res: Response) => {
+  app.get("/api/dashboard/stats", requireAuth, checkPermission("dashboard", "view"), async (req: Request, res: Response) => {
     try {
       const userId = getUserIdFromRequest(req)!;
       const orgId = await getOrCreateOrg(userId);

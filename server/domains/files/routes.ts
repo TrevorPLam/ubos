@@ -4,6 +4,7 @@ import path from "path";
 import fs from "fs";
 import { storage } from "../../storage";
 import { requireAuth, getUserIdFromRequest, getOrCreateOrg } from "../../middleware/auth";
+import { checkPermission } from "../../middleware/permissions";
 
 // Ensure uploads directory exists
 const uploadDir = path.join(process.cwd(), "uploads");
@@ -18,7 +19,7 @@ const upload = multer({
 
 export const filesRoutes = Router();
 
-filesRoutes.post("/api/files/upload", requireAuth, upload.single("file"), async (req, res) => {
+filesRoutes.post("/api/files/upload", requireAuth, checkPermission("files", "create"), upload.single("file"), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "No file uploaded" });
   }
@@ -48,7 +49,7 @@ filesRoutes.post("/api/files/upload", requireAuth, upload.single("file"), async 
   }
 });
 
-filesRoutes.get("/api/files/:id/download", requireAuth, async (req, res) => {
+filesRoutes.get("/api/files/:id/download", requireAuth, checkPermission("files", "view"), async (req, res) => {
     try {
         const userId = getUserIdFromRequest(req)!;
         const orgId = await getOrCreateOrg(userId);
@@ -66,7 +67,7 @@ filesRoutes.get("/api/files/:id/download", requireAuth, async (req, res) => {
     }
 });
 
-filesRoutes.get("/api/files", requireAuth, async (req, res) => {
+filesRoutes.get("/api/files", requireAuth, checkPermission("files", "view"), async (req, res) => {
     try {
         const userId = getUserIdFromRequest(req)!;
         const orgId = await getOrCreateOrg(userId);

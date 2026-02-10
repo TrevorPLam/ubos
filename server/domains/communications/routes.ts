@@ -1,12 +1,13 @@
 import { Router, Request, Response } from "express";
 import { storage } from "../../storage";
 import { requireAuth, getUserIdFromRequest, getOrCreateOrg, AuthenticatedRequest } from "../../middleware/auth";
+import { checkPermission } from "../../middleware/permissions";
 
 export const communicationsRoutes = Router();
 
 // ==================== THREADS / MESSAGES ====================
 
-communicationsRoutes.get("/api/threads", requireAuth, async (req: Request, res: Response) => {
+communicationsRoutes.get("/api/threads", requireAuth, checkPermission("threads", "view"), async (req: Request, res: Response) => {
   try {
     const userId = (req as AuthenticatedRequest).user!.claims.sub;
     const orgId = await getOrCreateOrg(userId);
@@ -18,7 +19,7 @@ communicationsRoutes.get("/api/threads", requireAuth, async (req: Request, res: 
   }
 });
 
-communicationsRoutes.post("/api/threads", requireAuth, async (req: Request, res: Response) => {
+communicationsRoutes.post("/api/threads", requireAuth, checkPermission("threads", "create"), async (req: Request, res: Response) => {
   try {
     const userId = (req as AuthenticatedRequest).user!.claims.sub;
     const orgId = await getOrCreateOrg(userId);
@@ -37,6 +38,7 @@ communicationsRoutes.post("/api/threads", requireAuth, async (req: Request, res:
 communicationsRoutes.get(
   "/api/threads/:id/messages",
   requireAuth,
+  checkPermission("messages", "view"),
   async (req: Request, res: Response) => {
     try {
       const userId = (req as AuthenticatedRequest).user!.claims.sub;
@@ -55,6 +57,7 @@ communicationsRoutes.get(
 communicationsRoutes.post(
   "/api/threads/:id/messages",
   requireAuth,
+  checkPermission("messages", "create"),
   async (req: Request, res: Response) => {
     try {
       const userId = (req as AuthenticatedRequest).user!.claims.sub;

@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import { storage } from "../../storage";
 import { requireAuth, getUserIdFromRequest, getOrCreateOrg, AuthenticatedRequest } from "../../middleware/auth";
+import { checkPermission } from "../../middleware/permissions";
 import { clientListQuerySchema, updateClientCompanySchema } from "@shared/client-schemas";
 import { insertClientCompanySchema } from "@shared/schema";
 import {
@@ -14,7 +15,7 @@ export const crmRoutes = Router();
 
 // ==================== CLIENTS ====================
 
-crmRoutes.get("/api/clients", requireAuth, async (req: Request, res: Response) => {
+crmRoutes.get("/api/clients", requireAuth, checkPermission("clients", "view"), async (req: Request, res: Response) => {
   const userId = getUserIdFromRequest(req)!;
   let orgId: string | undefined;
   
@@ -56,7 +57,7 @@ crmRoutes.get("/api/clients", requireAuth, async (req: Request, res: Response) =
   }
 });
 
-crmRoutes.get("/api/clients/stats", requireAuth, async (req: Request, res: Response) => {
+crmRoutes.get("/api/clients/stats", requireAuth, checkPermission("clients", "view"), async (req: Request, res: Response) => {
   const userId = getUserIdFromRequest(req)!;
   let orgId: string | undefined;
   
@@ -77,7 +78,7 @@ crmRoutes.get("/api/clients/stats", requireAuth, async (req: Request, res: Respo
   }
 });
 
-crmRoutes.get("/api/clients/:id", requireAuth, async (req: Request, res: Response) => {
+crmRoutes.get("/api/clients/:id", requireAuth, checkPermission("clients", "view"), async (req: Request, res: Response) => {
   const userId = getUserIdFromRequest(req)!;
   let orgId: string | undefined;
   
@@ -115,7 +116,7 @@ crmRoutes.get("/api/clients/:id", requireAuth, async (req: Request, res: Respons
   }
 });
 
-crmRoutes.post("/api/clients", requireAuth, async (req: Request, res: Response) => {
+crmRoutes.post("/api/clients", requireAuth, checkPermission("clients", "create"), async (req: Request, res: Response) => {
   const userId = getUserIdFromRequest(req)!;
   let orgId: string | undefined;
   
@@ -152,7 +153,7 @@ crmRoutes.post("/api/clients", requireAuth, async (req: Request, res: Response) 
   }
 });
 
-crmRoutes.put("/api/clients/:id", requireAuth, async (req: Request, res: Response) => {
+crmRoutes.put("/api/clients/:id", requireAuth, checkPermission("clients", "edit"), async (req: Request, res: Response) => {
   const userId = getUserIdFromRequest(req)!;
   let orgId: string | undefined;
   
@@ -203,7 +204,7 @@ crmRoutes.put("/api/clients/:id", requireAuth, async (req: Request, res: Respons
   }
 });
 
-crmRoutes.delete("/api/clients/:id", requireAuth, async (req: Request, res: Response) => {
+crmRoutes.delete("/api/clients/:id", requireAuth, checkPermission("clients", "delete"), async (req: Request, res: Response) => {
   const userId = getUserIdFromRequest(req)!;
   let orgId: string | undefined;
   
@@ -261,7 +262,7 @@ crmRoutes.delete("/api/clients/:id", requireAuth, async (req: Request, res: Resp
 
 // ==================== CONTACTS ====================
 
-crmRoutes.get("/api/contacts", requireAuth, async (req: Request, res: Response) => {
+crmRoutes.get("/api/contacts", requireAuth, checkPermission("contacts", "view"), async (req: Request, res: Response) => {
   try {
     const userId = (req as AuthenticatedRequest).user!.claims.sub;
     const orgId = await getOrCreateOrg(userId);
@@ -273,7 +274,7 @@ crmRoutes.get("/api/contacts", requireAuth, async (req: Request, res: Response) 
   }
 });
 
-crmRoutes.post("/api/contacts", requireAuth, async (req: Request, res: Response) => {
+crmRoutes.post("/api/contacts", requireAuth, checkPermission("contacts", "create"), async (req: Request, res: Response) => {
   try {
     const userId = (req as AuthenticatedRequest).user!.claims.sub;
     const orgId = await getOrCreateOrg(userId);
@@ -288,6 +289,7 @@ crmRoutes.post("/api/contacts", requireAuth, async (req: Request, res: Response)
 crmRoutes.patch(
   "/api/contacts/:id",
   requireAuth,
+  checkPermission("contacts", "edit"),
   async (req: Request, res: Response) => {
     try {
       const userId = (req as AuthenticatedRequest).user!.claims.sub;
@@ -305,6 +307,7 @@ crmRoutes.patch(
 crmRoutes.delete(
   "/api/contacts/:id",
   requireAuth,
+  checkPermission("contacts", "delete"),
   async (req: Request, res: Response) => {
     try {
       const userId = (req as AuthenticatedRequest).user!.claims.sub;
@@ -321,7 +324,7 @@ crmRoutes.delete(
 
 // ==================== DEALS ====================
 
-crmRoutes.get("/api/deals", requireAuth, async (req: Request, res: Response) => {
+crmRoutes.get("/api/deals", requireAuth, checkPermission("deals", "view"), async (req: Request, res: Response) => {
   try {
     const userId = (req as AuthenticatedRequest).user!.claims.sub;
     const orgId = await getOrCreateOrg(userId);
@@ -333,7 +336,7 @@ crmRoutes.get("/api/deals", requireAuth, async (req: Request, res: Response) => 
   }
 });
 
-crmRoutes.post("/api/deals", requireAuth, async (req: Request, res: Response) => {
+crmRoutes.post("/api/deals", requireAuth, checkPermission("deals", "create"), async (req: Request, res: Response) => {
   try {
     const userId = (req as AuthenticatedRequest).user!.claims.sub;
     const orgId = await getOrCreateOrg(userId);
@@ -349,7 +352,7 @@ crmRoutes.post("/api/deals", requireAuth, async (req: Request, res: Response) =>
   }
 });
 
-crmRoutes.patch("/api/deals/:id", requireAuth, async (req: Request, res: Response) => {
+crmRoutes.patch("/api/deals/:id", requireAuth, checkPermission("deals", "edit"), async (req: Request, res: Response) => {
   try {
     const userId = (req as AuthenticatedRequest).user!.claims.sub;
     const orgId = await getOrCreateOrg(userId);
@@ -365,6 +368,7 @@ crmRoutes.patch("/api/deals/:id", requireAuth, async (req: Request, res: Respons
 crmRoutes.delete(
   "/api/deals/:id",
   requireAuth,
+  checkPermission("deals", "delete"),
   async (req: Request, res: Response) => {
     try {
       const userId = (req as AuthenticatedRequest).user!.claims.sub;

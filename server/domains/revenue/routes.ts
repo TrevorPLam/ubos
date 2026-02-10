@@ -1,12 +1,13 @@
 import { Router, Request, Response } from "express";
 import { storage } from "../../storage";
 import { requireAuth, getUserIdFromRequest, getOrCreateOrg, AuthenticatedRequest } from "../../middleware/auth";
+import { checkPermission } from "../../middleware/permissions";
 
 export const revenueRoutes = Router();
 
 // ==================== INVOICES ====================
 
-revenueRoutes.get("/api/invoices", requireAuth, async (req: Request, res: Response) => {
+revenueRoutes.get("/api/invoices", requireAuth, checkPermission("invoices", "view"), async (req: Request, res: Response) => {
   try {
     const userId = (req as AuthenticatedRequest).user!.claims.sub;
     const orgId = await getOrCreateOrg(userId);
@@ -18,7 +19,7 @@ revenueRoutes.get("/api/invoices", requireAuth, async (req: Request, res: Respon
   }
 });
 
-revenueRoutes.post("/api/invoices", requireAuth, async (req: Request, res: Response) => {
+revenueRoutes.post("/api/invoices", requireAuth, checkPermission("invoices", "create"), async (req: Request, res: Response) => {
   try {
     const userId = (req as AuthenticatedRequest).user!.claims.sub;
     const orgId = await getOrCreateOrg(userId);
@@ -33,6 +34,7 @@ revenueRoutes.post("/api/invoices", requireAuth, async (req: Request, res: Respo
 revenueRoutes.patch(
   "/api/invoices/:id",
   requireAuth,
+  checkPermission("invoices", "edit"),
   async (req: Request, res: Response) => {
     try {
       const userId = (req as AuthenticatedRequest).user!.claims.sub;
@@ -50,6 +52,7 @@ revenueRoutes.patch(
 revenueRoutes.post(
   "/api/invoices/:id/send",
   requireAuth,
+  checkPermission("invoices", "edit"),
   async (req: Request, res: Response) => {
     try {
       const userId = (req as AuthenticatedRequest).user!.claims.sub;
@@ -70,6 +73,7 @@ revenueRoutes.post(
 revenueRoutes.post(
   "/api/invoices/:id/mark-paid",
   requireAuth,
+  checkPermission("invoices", "edit"),
   async (req: Request, res: Response) => {
     try {
       const userId = (req as AuthenticatedRequest).user!.claims.sub;
@@ -92,6 +96,7 @@ revenueRoutes.post(
 revenueRoutes.delete(
   "/api/invoices/:id",
   requireAuth,
+  checkPermission("invoices", "delete"),
   async (req: Request, res: Response) => {
     try {
       const userId = (req as AuthenticatedRequest).user!.claims.sub;
@@ -108,7 +113,7 @@ revenueRoutes.delete(
 
 // ==================== BILLS ====================
 
-revenueRoutes.get("/api/bills", requireAuth, async (req: Request, res: Response) => {
+revenueRoutes.get("/api/bills", requireAuth, checkPermission("bills", "view"), async (req: Request, res: Response) => {
   try {
     const userId = (req as AuthenticatedRequest).user!.claims.sub;
     const orgId = await getOrCreateOrg(userId);
@@ -120,7 +125,7 @@ revenueRoutes.get("/api/bills", requireAuth, async (req: Request, res: Response)
   }
 });
 
-revenueRoutes.post("/api/bills", requireAuth, async (req: Request, res: Response) => {
+revenueRoutes.post("/api/bills", requireAuth, checkPermission("bills", "create"), async (req: Request, res: Response) => {
   try {
     const userId = (req as AuthenticatedRequest).user!.claims.sub;
     const orgId = await getOrCreateOrg(userId);
@@ -136,7 +141,7 @@ revenueRoutes.post("/api/bills", requireAuth, async (req: Request, res: Response
   }
 });
 
-revenueRoutes.patch("/api/bills/:id", requireAuth, async (req: Request, res: Response) => {
+revenueRoutes.patch("/api/bills/:id", requireAuth, checkPermission("bills", "edit"), async (req: Request, res: Response) => {
   try {
     const userId = (req as AuthenticatedRequest).user!.claims.sub;
     const orgId = await getOrCreateOrg(userId);
@@ -152,6 +157,7 @@ revenueRoutes.patch("/api/bills/:id", requireAuth, async (req: Request, res: Res
 revenueRoutes.post(
   "/api/bills/:id/approve",
   requireAuth,
+  checkPermission("bills", "edit"),
   async (req: Request, res: Response) => {
     try {
       const userId = (req as AuthenticatedRequest).user!.claims.sub;
@@ -173,6 +179,7 @@ revenueRoutes.post(
 revenueRoutes.post(
   "/api/bills/:id/reject",
   requireAuth,
+  checkPermission("bills", "edit"),
   async (req: Request, res: Response) => {
     try {
       const userId = (req as AuthenticatedRequest).user!.claims.sub;
@@ -190,6 +197,7 @@ revenueRoutes.post(
 revenueRoutes.post(
   "/api/bills/:id/mark-paid",
   requireAuth,
+  checkPermission("bills", "edit"),
   async (req: Request, res: Response) => {
     try {
       const userId = (req as AuthenticatedRequest).user!.claims.sub;
@@ -210,6 +218,7 @@ revenueRoutes.post(
 revenueRoutes.delete(
   "/api/bills/:id",
   requireAuth,
+  checkPermission("bills", "delete"),
   async (req: Request, res: Response) => {
     try {
       const userId = (req as AuthenticatedRequest).user!.claims.sub;
@@ -226,7 +235,7 @@ revenueRoutes.delete(
 
 // ==================== VENDORS ====================
 
-revenueRoutes.get("/api/vendors", requireAuth, async (req: Request, res: Response) => {
+revenueRoutes.get("/api/vendors", requireAuth, checkPermission("vendors", "view"), async (req: Request, res: Response) => {
   try {
     const userId = (req as AuthenticatedRequest).user!.claims.sub;
     const orgId = await getOrCreateOrg(userId);
@@ -238,7 +247,7 @@ revenueRoutes.get("/api/vendors", requireAuth, async (req: Request, res: Respons
   }
 });
 
-revenueRoutes.post("/api/vendors", requireAuth, async (req: Request, res: Response) => {
+revenueRoutes.post("/api/vendors", requireAuth, checkPermission("vendors", "create"), async (req: Request, res: Response) => {
   try {
     const userId = (req as AuthenticatedRequest).user!.claims.sub;
     const orgId = await getOrCreateOrg(userId);

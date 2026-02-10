@@ -44,13 +44,13 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - _Requirements: 83.3_
 
 
-  - [~] 1.4 Write unit tests for permission middleware
+  - [x] 1.4 Write unit tests for permission middleware
     - Test permission granted scenarios
     - Test permission denied scenarios
     - Test missing role scenarios
     - _Requirements: 83.3_
   
-  - [~] 1.5 Add RBAC to all existing API routes
+  - [-] 1.5 Add RBAC to all existing API routes
     - Update routes.ts to apply permission checks
     - Add permission requirements to each endpoint
     - Test with different user roles

@@ -1,12 +1,13 @@
 import { Router, Request, Response } from "express";
 import { storage } from "../../storage";
 import { requireAuth, getUserIdFromRequest, getOrCreateOrg, AuthenticatedRequest } from "../../middleware/auth";
+import { checkPermission } from "../../middleware/permissions";
 
 export const projectsRoutes = Router();
 
 // ==================== PROJECTS ====================
 
-projectsRoutes.get("/api/projects", requireAuth, async (req: Request, res: Response) => {
+projectsRoutes.get("/api/projects", requireAuth, checkPermission("projects", "view"), async (req: Request, res: Response) => {
   try {
     const userId = (req as AuthenticatedRequest).user!.claims.sub;
     const orgId = await getOrCreateOrg(userId);
@@ -18,7 +19,7 @@ projectsRoutes.get("/api/projects", requireAuth, async (req: Request, res: Respo
   }
 });
 
-projectsRoutes.post("/api/projects", requireAuth, async (req: Request, res: Response) => {
+projectsRoutes.post("/api/projects", requireAuth, checkPermission("projects", "create"), async (req: Request, res: Response) => {
   try {
     const userId = (req as AuthenticatedRequest).user!.claims.sub;
     const orgId = await getOrCreateOrg(userId);
@@ -33,6 +34,7 @@ projectsRoutes.post("/api/projects", requireAuth, async (req: Request, res: Resp
 projectsRoutes.patch(
   "/api/projects/:id",
   requireAuth,
+  checkPermission("projects", "edit"),
   async (req: Request, res: Response) => {
     try {
       const userId = (req as AuthenticatedRequest).user!.claims.sub;
@@ -50,6 +52,7 @@ projectsRoutes.patch(
 projectsRoutes.delete(
   "/api/projects/:id",
   requireAuth,
+  checkPermission("projects", "delete"),
   async (req: Request, res: Response) => {
     try {
       const userId = (req as AuthenticatedRequest).user!.claims.sub;
@@ -66,7 +69,7 @@ projectsRoutes.delete(
 
 // ==================== TASKS ====================
 
-projectsRoutes.get("/api/tasks", requireAuth, async (req: Request, res: Response) => {
+projectsRoutes.get("/api/tasks", requireAuth, checkPermission("tasks", "view"), async (req: Request, res: Response) => {
   try {
     const userId = (req as AuthenticatedRequest).user!.claims.sub;
     const orgId = await getOrCreateOrg(userId);
@@ -79,7 +82,7 @@ projectsRoutes.get("/api/tasks", requireAuth, async (req: Request, res: Response
   }
 });
 
-projectsRoutes.post("/api/tasks", requireAuth, async (req: Request, res: Response) => {
+projectsRoutes.post("/api/tasks", requireAuth, checkPermission("tasks", "create"), async (req: Request, res: Response) => {
   try {
     const userId = (req as AuthenticatedRequest).user!.claims.sub;
     const orgId = await getOrCreateOrg(userId);

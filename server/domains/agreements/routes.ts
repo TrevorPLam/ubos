@@ -1,12 +1,13 @@
 import { Router, Request, Response } from "express";
 import { storage } from "../../storage";
 import { requireAuth, getUserIdFromRequest, getOrCreateOrg, AuthenticatedRequest } from "../../middleware/auth";
+import { checkPermission } from "../../middleware/permissions";
 
 export const agreementsRoutes = Router();
 
 // ==================== PROPOSALS ====================
 
-agreementsRoutes.get("/api/proposals", requireAuth, async (req: Request, res: Response) => {
+agreementsRoutes.get("/api/proposals", requireAuth, checkPermission("proposals", "view"), async (req: Request, res: Response) => {
   try {
     const userId = (req as AuthenticatedRequest).user!.claims.sub;
     const orgId = await getOrCreateOrg(userId);
@@ -18,7 +19,7 @@ agreementsRoutes.get("/api/proposals", requireAuth, async (req: Request, res: Re
   }
 });
 
-agreementsRoutes.post("/api/proposals", requireAuth, async (req: Request, res: Response) => {
+agreementsRoutes.post("/api/proposals", requireAuth, checkPermission("proposals", "create"), async (req: Request, res: Response) => {
   try {
     const userId = (req as AuthenticatedRequest).user!.claims.sub;
     const orgId = await getOrCreateOrg(userId);
@@ -37,6 +38,7 @@ agreementsRoutes.post("/api/proposals", requireAuth, async (req: Request, res: R
 agreementsRoutes.patch(
   "/api/proposals/:id",
   requireAuth,
+  checkPermission("proposals", "edit"),
   async (req: Request, res: Response) => {
     try {
       const userId = (req as AuthenticatedRequest).user!.claims.sub;
@@ -54,6 +56,7 @@ agreementsRoutes.patch(
 agreementsRoutes.post(
   "/api/proposals/:id/send",
   requireAuth,
+  checkPermission("proposals", "edit"),
   async (req: Request, res: Response) => {
     try {
       const userId = (req as AuthenticatedRequest).user!.claims.sub;
@@ -74,6 +77,7 @@ agreementsRoutes.post(
 agreementsRoutes.delete(
   "/api/proposals/:id",
   requireAuth,
+  checkPermission("proposals", "delete"),
   async (req: Request, res: Response) => {
     try {
       const userId = (req as AuthenticatedRequest).user!.claims.sub;
@@ -90,7 +94,7 @@ agreementsRoutes.delete(
 
 // ==================== CONTRACTS ====================
 
-agreementsRoutes.get("/api/contracts", requireAuth, async (req: Request, res: Response) => {
+agreementsRoutes.get("/api/contracts", requireAuth, checkPermission("contracts", "view"), async (req: Request, res: Response) => {
   try {
     const userId = (req as AuthenticatedRequest).user!.claims.sub;
     const orgId = await getOrCreateOrg(userId);
@@ -102,7 +106,7 @@ agreementsRoutes.get("/api/contracts", requireAuth, async (req: Request, res: Re
   }
 });
 
-agreementsRoutes.post("/api/contracts", requireAuth, async (req: Request, res: Response) => {
+agreementsRoutes.post("/api/contracts", requireAuth, checkPermission("contracts", "create"), async (req: Request, res: Response) => {
   try {
     const userId = (req as AuthenticatedRequest).user!.claims.sub;
     const orgId = await getOrCreateOrg(userId);
@@ -121,6 +125,7 @@ agreementsRoutes.post("/api/contracts", requireAuth, async (req: Request, res: R
 agreementsRoutes.patch(
   "/api/contracts/:id",
   requireAuth,
+  checkPermission("contracts", "edit"),
   async (req: Request, res: Response) => {
     try {
       const userId = (req as AuthenticatedRequest).user!.claims.sub;
@@ -138,6 +143,7 @@ agreementsRoutes.patch(
 agreementsRoutes.post(
   "/api/contracts/:id/send",
   requireAuth,
+  checkPermission("contracts", "edit"),
   async (req: Request, res: Response) => {
     try {
       const userId = (req as AuthenticatedRequest).user!.claims.sub;
@@ -155,6 +161,7 @@ agreementsRoutes.post(
 agreementsRoutes.post(
   "/api/contracts/:id/sign",
   requireAuth,
+  checkPermission("contracts", "edit"),
   async (req: Request, res: Response) => {
     try {
       const userId = (req as AuthenticatedRequest).user!.claims.sub;
@@ -193,6 +200,7 @@ agreementsRoutes.post(
 agreementsRoutes.delete(
   "/api/contracts/:id",
   requireAuth,
+  checkPermission("contracts", "delete"),
   async (req: Request, res: Response) => {
     try {
       const userId = (req as AuthenticatedRequest).user!.claims.sub;

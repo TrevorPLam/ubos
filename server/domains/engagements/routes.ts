@@ -1,12 +1,13 @@
 import { Router, Request, Response } from "express";
 import { storage } from "../../storage";
 import { requireAuth, getUserIdFromRequest, getOrCreateOrg, AuthenticatedRequest } from "../../middleware/auth";
+import { checkPermission } from "../../middleware/permissions";
 
 export const engagementsRoutes = Router();
 
 // ==================== ENGAGEMENTS ====================
 
-engagementsRoutes.get("/api/engagements", requireAuth, async (req: Request, res: Response) => {
+engagementsRoutes.get("/api/engagements", requireAuth, checkPermission("engagements", "view"), async (req: Request, res: Response) => {
   try {
     const userId = (req as AuthenticatedRequest).user!.claims.sub;
     const orgId = await getOrCreateOrg(userId);
@@ -21,6 +22,7 @@ engagementsRoutes.get("/api/engagements", requireAuth, async (req: Request, res:
 engagementsRoutes.post(
   "/api/engagements",
   requireAuth,
+  checkPermission("engagements", "create"),
   async (req: Request, res: Response) => {
     try {
       const userId = (req as AuthenticatedRequest).user!.claims.sub;
@@ -41,6 +43,7 @@ engagementsRoutes.post(
 engagementsRoutes.patch(
   "/api/engagements/:id",
   requireAuth,
+  checkPermission("engagements", "edit"),
   async (req: Request, res: Response) => {
     try {
       const userId = (req as AuthenticatedRequest).user!.claims.sub;
@@ -58,6 +61,7 @@ engagementsRoutes.patch(
 engagementsRoutes.delete(
   "/api/engagements/:id",
   requireAuth,
+  checkPermission("engagements", "delete"),
   async (req: Request, res: Response) => {
     try {
       const userId = (req as AuthenticatedRequest).user!.claims.sub;
