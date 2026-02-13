@@ -37,6 +37,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 // AI-NOTE: React.lazy enables code splitting - each page is a separate bundle loaded on demand to reduce initial bundle size
 // Route-level code splitting: keep initial bundle small.
 const LandingPage = lazy(() => import("@/pages/landing"));
+const OnboardingPage = lazy(() => import("@/pages/onboarding"));
 const DashboardPage = lazy(() => import("@/pages/dashboard"));
 const ClientsPage = lazy(() => import("@/pages/clients"));
 const ContactsPage = lazy(() => import("@/pages/contacts"));
@@ -49,6 +50,7 @@ const MessagesPage = lazy(() => import("@/pages/messages"));
 const InvoicesPage = lazy(() => import("@/pages/invoices"));
 const BillsPage = lazy(() => import("@/pages/bills"));
 const SettingsPage = lazy(() => import("@/pages/settings"));
+const ProfilePage = lazy(() => import("@/pages/profile"));
 const NotFound = lazy(() => import("@/pages/not-found"));
 
 function AppLayout({ children }: { children: React.ReactNode }) {
@@ -158,6 +160,12 @@ const SettingsRoute = () => (
   </Suspense>
 );
 
+const ProfileRoute = () => (
+  <Suspense fallback={<PageLoading />}>
+    <ProfilePage />
+  </Suspense>
+);
+
 const NotFoundRoute = () => (
   <Suspense fallback={<PageLoading />}>
     <NotFound />
@@ -180,6 +188,7 @@ function AuthenticatedRouter() {
         <Route path="/invoices" component={InvoicesRoute} />
         <Route path="/bills" component={BillsRoute} />
         <Route path="/settings" component={SettingsRoute} />
+        <Route path="/profile" component={ProfileRoute} />
         <Route component={NotFoundRoute} />
       </Switch>
     </AppLayout>
@@ -204,15 +213,27 @@ function LoadingScreen() {
 
 function Router() {
   const { user, isLoading, isAuthenticated } = useAuth();
+  const [location] = useLocation();
 
   // Debug logs are intentionally noisy during early iteration; remove/quiet once stable.
-  console.log("[Router] Auth state:", { user, isLoading, isAuthenticated });
+  console.log("[Router] Auth state:", { user, isLoading, isAuthenticated, location });
 
   if (isLoading) {
     return <LoadingScreen />;
   }
 
   if (!isAuthenticated) {
+    console.log("[Router] Not authenticated, checking for onboarding");
+    
+    // Check if this is an onboarding route (should be accessible without auth)
+    if (location.startsWith("/onboarding")) {
+      return (
+        <Suspense fallback={<LoadingScreen />}>
+          <OnboardingPage />
+        </Suspense>
+      );
+    }
+    
     console.log("[Router] Not authenticated, showing landing page");
     return (
       <Suspense fallback={<LoadingScreen />}>

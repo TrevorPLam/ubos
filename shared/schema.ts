@@ -47,6 +47,46 @@ import { z } from "zod";
 // Re-export auth models
 export * from "./models/auth";
 
+// Import users for relations
+import { users } from "./models/auth";
+
+// ==================== USER PROFILE VALIDATION SCHEMAS ====================
+
+// Zod schemas for user profile management (2026 privacy-by-design)
+export const updateProfileSchema = z.object({
+  firstName: z.string().min(1, "First name is required").max(100, "First name must be 100 characters or less").optional(),
+  lastName: z.string().min(1, "Last name is required").max(100, "Last name must be 100 characters or less").optional(),
+  email: z.string().email("Invalid email format").optional(),
+  phone: z.string().regex(/^[+]?[\d\s\-()]+$/, "Invalid phone number format").max(50, "Phone number must be 50 characters or less").optional(),
+  timezone: z.string().min(1, "Timezone is required").max(50, "Timezone must be 50 characters or less").optional(),
+});
+
+export const updatePasswordSchema = z.object({
+  currentPassword: z.string().min(1, "Current password is required"),
+  newPassword: z.string()
+    .min(8, "Password must be at least 8 characters")
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/, 
+      "Password must contain at least 8 characters, one uppercase, one lowercase, one number, and one special character"),
+  confirmPassword: z.string().min(1, "Password confirmation is required"),
+}).refine((data) => data.newPassword === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+});
+
+export const updateNotificationPreferencesSchema = z.object({
+  email: z.boolean().default(true),
+  push: z.boolean().default(true),
+  sms: z.boolean().default(false),
+  projectUpdates: z.boolean().default(true),
+  taskReminders: z.boolean().default(true),
+  invoiceNotifications: z.boolean().default(true),
+});
+
+export const uploadAvatarSchema = z.object({
+  // File validation handled by multer middleware
+  // Schema exists for consistency and future validation
+});
+
 // ==================== ENUMS ====================
 export const dealStageEnum = pgEnum("deal_stage", [
   "lead",
@@ -843,12 +883,47 @@ export const userRoles = pgTable(
   ],
 );
 
+// ==================== USER INVITATIONS ====================
+export const invitations = pgTable(
+  "invitations",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    organizationId: varchar("organization_id")
+      .references(() => organizations.id, { onDelete: "cascade" })
+      .notNull(),
+    email: varchar("email", { length: 255 }).notNull(),
+    roleId: varchar("role_id")
+      .references(() => roles.id, { onDelete: "set null" }),
+    token: varchar("token", { length: 255 }).unique().notNull(),
+    status: varchar("status", { length: 20 }).default("pending").notNull(), // pending, accepted, expired, cancelled
+    invitedById: varchar("invited_by_id").notNull(),
+    acceptedById: varchar("accepted_by_id"),
+    acceptedAt: timestamp("accepted_at"),
+    expiresAt: timestamp("expires_at").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => [
+    index("idx_invitations_org").on(table.organizationId),
+    index("idx_invitations_email").on(table.email),
+    index("idx_invitations_token").on(table.token),
+    index("idx_invitations_status").on(table.status),
+    index("idx_invitations_expires").on(table.expiresAt),
+    // Ensure unique email per organization for pending invitations
+    index("idx_invitations_unique_pending").on(table.organizationId, table.email, table.status),
+  ],
+);
+
 // ==================== RELATIONS ====================
 export const organizationsRelations = relations(organizations, ({ many }) => ({
   members: many(organizationMembers),
   clientCompanies: many(clientCompanies),
   deals: many(deals),
   engagements: many(engagements),
+  roles: many(roles),
+  invitations: many(invitations),
 }));
 
 export const clientCompaniesRelations = relations(clientCompanies, ({ one, many }) => ({
@@ -936,6 +1011,10 @@ export const rolePermissionsRelations = relations(rolePermissions, ({ one }) => 
 }));
 
 export const userRolesRelations = relations(userRoles, ({ one }) => ({
+  user: one(users, {
+    fields: [userRoles.userId],
+    references: [users.id],
+  }),
   role: one(roles, {
     fields: [userRoles.roleId],
     references: [roles.id],
@@ -943,6 +1022,25 @@ export const userRolesRelations = relations(userRoles, ({ one }) => ({
   organization: one(organizations, {
     fields: [userRoles.organizationId],
     references: [organizations.id],
+  }),
+}));
+
+export const invitationsRelations = relations(invitations, ({ one }) => ({
+  organization: one(organizations, {
+    fields: [invitations.organizationId],
+    references: [organizations.id],
+  }),
+  role: one(roles, {
+    fields: [invitations.roleId],
+    references: [roles.id],
+  }),
+  invitedBy: one(users, {
+    fields: [invitations.invitedById],
+    references: [users.id],
+  }),
+  acceptedBy: one(users, {
+    fields: [invitations.acceptedById],
+    references: [users.id],
   }),
 }));
 
@@ -1054,6 +1152,18 @@ export const insertUserRoleSchema = createInsertSchema(userRoles).omit({
   id: true,
   assignedAt: true,
 });
+export const insertInvitationSchema = createInsertSchema(invitations).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+}).extend({
+  email: z.string().email("Valid email address required"),
+  expiresAt: z.string().refine((date) => {
+    const expiresAt = new Date(date);
+    const now = new Date();
+    return expiresAt > now;
+  }, "Expiration date must be in the future"),
+});
 
 // ==================== TYPES ====================
 export type InsertOrganization = z.infer<typeof insertOrganizationSchema>;
@@ -1106,3 +1216,5 @@ export type InsertRolePermission = z.infer<typeof insertRolePermissionSchema>;
 export type RolePermission = typeof rolePermissions.$inferSelect;
 export type InsertUserRole = z.infer<typeof insertUserRoleSchema>;
 export type UserRole = typeof userRoles.$inferSelect;
+export type InsertInvitation = z.infer<typeof insertInvitationSchema>;
+export type Invitation = typeof invitations.$inferSelect;

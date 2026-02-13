@@ -19,6 +19,14 @@
  */
 
 import { beforeAll, afterAll, beforeEach, afterEach, vi } from 'vitest';
+import express from 'express';
+import { identityRoutes } from '../../server/domains/identity/routes';
+
+// Create test app
+export const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use('/api', identityRoutes);
 
 // Set test environment variables
 process.env.NODE_ENV = 'test';

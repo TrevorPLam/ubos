@@ -787,3 +787,14 @@ describe('RBAC Role Management API - Integration Tests', () => {
       });
 
       // Act
+      const org1Roles = await storage.getUserRoles(userId, org1);
+      const org2Roles = await storage.getUserRoles(userId, org2);
+
+      // Assert
+      expect(org1Roles).toHaveLength(1);
+      expect(org1Roles[0].id).toBe(role1.id);
+      expect(org2Roles).toHaveLength(1);
+      expect(org2Roles[0].id).toBe(role2.id);
+    });
+  });
+});

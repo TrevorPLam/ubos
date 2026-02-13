@@ -1,0 +1,79 @@
+// AI-META-BEGIN
+// AI-META: Invitation email template with modern design
+// OWNERSHIP: server/templates
+// ENTRYPOINTS: email service invitation sending
+// DEPENDENCIES: pug template engine
+// DANGER: Email client compatibility
+// CHANGE-SAFETY: Test across email clients
+// TESTS: manual email preview testing
+// AI-META-END
+
+doctype html
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    meta(http-equiv='X-UA-Compatible', content='ie=edge')
+    title Invitation to join #{organizationName}
+    style
+      include styles/email.css
+
+  body
+    table.container(width='100%', border='0', cellpadding='0', cellspacing='0')
+      tr
+        td
+          // Header
+          table.header(width='100%', border='0', cellpadding='0', cellspacing='0')
+            tr
+              td.align-center
+                img.logo(src='cid:logo', alt='UBOS', width='120', height='40')
+          
+          // Main content
+          table.content(width='100%', border='0', cellpadding='0', cellspacing='0')
+            tr
+              td.padding-large
+                h1 You're Invited!
+                p.lead
+                  | #{inviterName} has invited you to join 
+                  strong #{organizationName} 
+                  | on UBOS.
+                
+                p
+                  | You've been invited to join as a 
+                  strong #{roleName}
+                  | . Click the button below to accept your invitation and set up your account.
+                
+                table.button-wrapper(width='100%', border='0', cellpadding='0', cellspacing='0')
+                  tr
+                    td.align-center
+                      a.button(href='#{invitationUrl}', target='_blank') 
+                        | Accept Invitation
+                
+                .notice
+                  p.small
+                    strong Important:
+                    | This invitation expires on #{expiresAt}. 
+                    | After this date, you'll need to request a new invitation.
+                
+                .security
+                  p.small
+                    | For your security, this invitation link can only be used once. 
+                    | If you didn't expect this invitation, you can safely ignore this email.
+          
+          // Footer
+          table.footer(width='100%', border='0', cellpadding='0', cellspacing='0')
+            tr
+              td.padding-large
+                p.small
+                  | © #{currentYear} UBOS Professional Services Platform. All rights reserved.
+                p.small
+                  | This email was sent to #{email}. 
+                  | If you believe this was sent in error, please contact our support team.
+                
+                .unsubscribe
+                  p.small
+                    | UBOS Professional Services Platform
+                    br
+                    | 123 Business Ave, Suite 100
+                    br
+                    | San Francisco, CA 94105

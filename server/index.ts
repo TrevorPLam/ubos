@@ -269,3 +269,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     startServer(server);
   })();
 }
+
+// Export app for testing
+export { app };

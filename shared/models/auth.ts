@@ -9,7 +9,7 @@
 // AI-META-END
 
 import { sql } from "drizzle-orm";
-import { pgTable, timestamp, varchar } from "drizzle-orm/pg-core";
+import { pgTable, timestamp, varchar, jsonb } from "drizzle-orm/pg-core";
 
 // User storage table.
 export const users = pgTable("users", {
@@ -20,6 +20,17 @@ export const users = pgTable("users", {
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
+  phone: varchar("phone", { length: 50 }),
+  timezone: varchar("timezone", { length: 50 }).default("UTC"),
+  notificationPreferences: jsonb("notification_preferences").$type<{
+    email?: boolean;
+    push?: boolean;
+    sms?: boolean;
+    projectUpdates?: boolean;
+    taskReminders?: boolean;
+    invoiceNotifications?: boolean;
+  }>(),
+  passwordHash: varchar("password_hash"), // 2026 security: Argon2id hashed passwords
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

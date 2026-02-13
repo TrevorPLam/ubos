@@ -6,7 +6,8 @@ import {
   getOrCreateOrg,
 } from "../../middleware/auth";
 import { checkPermission } from "../../middleware/permissions";
-import { insertRoleSchema, insertUserRoleSchema } from "@shared/schema";
+import { generalRateLimit, adminRateLimit } from "../../middleware/rateLimit";
+import { insertRoleSchema } from "@shared/schema";
 import { z } from "zod";
 
 export const rbacRoutes = Router();
@@ -20,6 +21,7 @@ export const rbacRoutes = Router();
 rbacRoutes.get(
   "/api/roles",
   requireAuth,
+  generalRateLimit,
   checkPermission("roles", "view"),
   async (req: Request, res: Response) => {
     try {
@@ -28,10 +30,19 @@ rbacRoutes.get(
 
       const roles = await storage.getRoles(orgId);
 
-      res.json({ data: roles });
+      res.json({ 
+        data: roles,
+        meta: {
+          count: roles.length,
+          timestamp: new Date().toISOString(),
+        }
+      });
     } catch (error) {
       console.error("Error listing roles:", error);
-      res.status(500).json({ message: "Failed to list roles" });
+      res.status(500).json({ 
+        message: "Failed to list roles",
+        code: "INTERNAL_ERROR"
+      });
     }
   }
 );
@@ -74,6 +85,7 @@ rbacRoutes.get(
 rbacRoutes.post(
   "/api/roles",
   requireAuth,
+  adminRateLimit,
   checkPermission("roles", "create"),
   async (req: Request, res: Response) => {
     try {
@@ -90,16 +102,25 @@ rbacRoutes.post(
       if (!validation.success) {
         return res.status(400).json({
           message: "Validation error",
+          code: "VALIDATION_ERROR",
           errors: validation.error.errors,
         });
       }
 
       const role = await storage.createRole(validation.data);
 
-      res.status(201).json({ data: role });
+      res.status(201).json({ 
+        data: role,
+        meta: {
+          timestamp: new Date().toISOString(),
+        }
+      });
     } catch (error) {
       console.error("Error creating role:", error);
-      res.status(500).json({ message: "Failed to create role" });
+      res.status(500).json({ 
+        message: "Failed to create role",
+        code: "INTERNAL_ERROR"
+      });
     }
   }
 );
@@ -111,6 +132,7 @@ rbacRoutes.post(
 rbacRoutes.put(
   "/api/roles/:id",
   requireAuth,
+  adminRateLimit,
   checkPermission("roles", "edit"),
   async (req: Request, res: Response) => {
     try {
@@ -121,13 +143,17 @@ rbacRoutes.put(
       // Check if role exists and belongs to org
       const existingRole = await storage.getRole(id, orgId);
       if (!existingRole) {
-        return res.status(404).json({ message: "Role not found" });
+        return res.status(404).json({ 
+          message: "Role not found",
+          code: "NOT_FOUND"
+        });
       }
 
       // Prevent editing default roles' core properties
       if (existingRole.isDefault && (req.body.name || req.body.isDefault !== undefined)) {
         return res.status(400).json({
           message: "Cannot modify name or default status of system roles",
+          code: "PROTECTED_ROLE"
         });
       }
 
@@ -142,6 +168,7 @@ rbacRoutes.put(
       if (!validation.success) {
         return res.status(400).json({
           message: "Validation error",
+          code: "VALIDATION_ERROR",
           errors: validation.error.errors,
         });
       }
@@ -149,7 +176,7 @@ rbacRoutes.put(
       const { permissionIds, ...roleData } = validation.data;
 
       // Update role basic info
-      const updatedRole = await storage.updateRole(id, orgId, roleData);
+      await storage.updateRole(id, orgId, roleData);
 
       // Update permissions if provided
       if (permissionIds) {
@@ -162,10 +189,18 @@ rbacRoutes.put(
         orgId
       );
 
-      res.json({ data: roleWithPermissions });
+      res.json({ 
+        data: roleWithPermissions,
+        meta: {
+          timestamp: new Date().toISOString(),
+        }
+      });
     } catch (error) {
       console.error("Error updating role:", error);
-      res.status(500).json({ message: "Failed to update role" });
+      res.status(500).json({ 
+        message: "Failed to update role",
+        code: "INTERNAL_ERROR"
+      });
     }
   }
 );
@@ -177,6 +212,7 @@ rbacRoutes.put(
 rbacRoutes.delete(
   "/api/roles/:id",
   requireAuth,
+  adminRateLimit,
   checkPermission("roles", "delete"),
   async (req: Request, res: Response) => {
     try {
@@ -187,13 +223,17 @@ rbacRoutes.delete(
       // Check if role exists and belongs to org
       const existingRole = await storage.getRole(id, orgId);
       if (!existingRole) {
-        return res.status(404).json({ message: "Role not found" });
+        return res.status(404).json({ 
+          message: "Role not found",
+          code: "NOT_FOUND"
+        });
       }
 
       // Prevent deleting default roles
       if (existingRole.isDefault) {
         return res.status(400).json({
           message: "Cannot delete system default roles",
+          code: "PROTECTED_ROLE"
         });
       }
 
@@ -202,13 +242,17 @@ rbacRoutes.delete(
       if (!deleted) {
         return res.status(400).json({
           message: "Cannot delete role that is assigned to users",
+          code: "ROLE_IN_USE"
         });
       }
 
       res.status(204).send();
     } catch (error) {
       console.error("Error deleting role:", error);
-      res.status(500).json({ message: "Failed to delete role" });
+      res.status(500).json({ 
+        message: "Failed to delete role",
+        code: "INTERNAL_ERROR"
+      });
     }
   }
 );
@@ -222,15 +266,25 @@ rbacRoutes.delete(
 rbacRoutes.get(
   "/api/permissions",
   requireAuth,
+  generalRateLimit,
   checkPermission("roles", "view"),
   async (req: Request, res: Response) => {
     try {
       const permissions = await storage.getPermissions();
 
-      res.json({ data: permissions });
+      res.json({ 
+        data: permissions,
+        meta: {
+          count: permissions.length,
+          timestamp: new Date().toISOString(),
+        }
+      });
     } catch (error) {
       console.error("Error listing permissions:", error);
-      res.status(500).json({ message: "Failed to list permissions" });
+      res.status(500).json({ 
+        message: "Failed to list permissions",
+        code: "INTERNAL_ERROR"
+      });
     }
   }
 );
@@ -268,6 +322,7 @@ rbacRoutes.get(
 rbacRoutes.post(
   "/api/users/:userId/roles",
   requireAuth,
+  adminRateLimit,
   checkPermission("roles", "edit"),
   async (req: Request, res: Response) => {
     try {
@@ -285,6 +340,7 @@ rbacRoutes.post(
       if (!validation.success) {
         return res.status(400).json({
           message: "Validation error",
+          code: "VALIDATION_ERROR",
           errors: validation.error.errors,
         });
       }
@@ -294,7 +350,10 @@ rbacRoutes.post(
       // Verify role exists and belongs to org
       const role = await storage.getRole(roleId, orgId);
       if (!role) {
-        return res.status(404).json({ message: "Role not found" });
+        return res.status(404).json({ 
+          message: "Role not found",
+          code: "NOT_FOUND"
+        });
       }
 
       // Assign role to user
@@ -305,10 +364,18 @@ rbacRoutes.post(
         assignedById: userId,
       });
 
-      res.status(201).json({ data: userRole });
+      res.status(201).json({ 
+        data: userRole,
+        meta: {
+          timestamp: new Date().toISOString(),
+        }
+      });
     } catch (error) {
       console.error("Error assigning role to user:", error);
-      res.status(500).json({ message: "Failed to assign role to user" });
+      res.status(500).json({ 
+        message: "Failed to assign role to user",
+        code: "INTERNAL_ERROR"
+      });
     }
   }
 );
@@ -320,6 +387,7 @@ rbacRoutes.post(
 rbacRoutes.delete(
   "/api/users/:userId/roles/:roleId",
   requireAuth,
+  adminRateLimit,
   checkPermission("roles", "edit"),
   async (req: Request, res: Response) => {
     try {
@@ -336,13 +404,17 @@ rbacRoutes.delete(
       if (!removed) {
         return res.status(404).json({
           message: "Role assignment not found",
+          code: "NOT_FOUND"
         });
       }
 
       res.status(204).send();
     } catch (error) {
       console.error("Error removing role from user:", error);
-      res.status(500).json({ message: "Failed to remove role from user" });
+      res.status(500).json({ 
+        message: "Failed to remove role from user",
+        code: "INTERNAL_ERROR"
+      });
     }
   }
 );
