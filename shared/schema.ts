@@ -87,6 +87,105 @@ export const uploadAvatarSchema = z.object({
   // Schema exists for consistency and future validation
 });
 
+// ==================== ORGANIZATION SETTINGS VALIDATION SCHEMAS ====================
+
+// Business hours configuration schema (2026 best practices)
+export const businessHoursSchema = z.object({
+  monday: z.object({
+    enabled: z.boolean(),
+    open: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format, use HH:MM"),
+    close: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format, use HH:MM"),
+  }),
+  tuesday: z.object({
+    enabled: z.boolean(),
+    open: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format, use HH:MM"),
+    close: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format, use HH:MM"),
+  }),
+  wednesday: z.object({
+    enabled: z.boolean(),
+    open: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format, use HH:MM"),
+    close: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format, use HH:MM"),
+  }),
+  thursday: z.object({
+    enabled: z.boolean(),
+    open: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format, use HH:MM"),
+    close: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format, use HH:MM"),
+  }),
+  friday: z.object({
+    enabled: z.boolean(),
+    open: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format, use HH:MM"),
+    close: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format, use HH:MM"),
+  }),
+  saturday: z.object({
+    enabled: z.boolean(),
+    open: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format, use HH:MM"),
+    close: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format, use HH:MM"),
+  }),
+  sunday: z.object({
+    enabled: z.boolean(),
+    open: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format, use HH:MM"),
+    close: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format, use HH:MM"),
+  }),
+}).refine((data) => {
+  // Validate that close time is after open time for enabled days
+  for (const day of Object.keys(data)) {
+    const dayConfig = data[day as keyof typeof data];
+    if (dayConfig.enabled) {
+      const open = dayConfig.open;
+      const close = dayConfig.close;
+      if (open >= close) {
+        return false;
+      }
+    }
+  }
+  return true;
+}, {
+  message: "Close time must be after open time for enabled days",
+  path: ["businessHours"],
+});
+
+// Organization settings update schema (Requirements 94.2, 94.3)
+export const updateOrganizationSettingsSchema = z.object({
+  timezone: z.string()
+    .min(1, "Timezone is required")
+    .max(50, "Timezone must be 50 characters or less")
+    .regex(/^[A-Za-z_/-]+$/, "Invalid timezone format")
+    .optional(),
+  currency: z.string()
+    .length(3, "Currency must be exactly 3 characters (ISO 4217)")
+    .regex(/^[A-Z]{3}$/, "Currency must be uppercase letters")
+    .optional(),
+  dateFormat: z.enum([
+    "YYYY-MM-DD",
+    "DD/MM/YYYY", 
+    "MM/DD/YYYY",
+    "DD-MM-YYYY",
+    "MM-DD-YYYY",
+    "YYYY/MM/DD",
+    "DD.MM.YYYY",
+    "MM.DD.YYYY",
+  ], {
+    errorMap: () => ({ message: "Invalid date format" }),
+  }).optional(),
+  language: z.string()
+    .min(2, "Language must be at least 2 characters")
+    .max(10, "Language must be 10 characters or less")
+    .regex(/^[a-z]{2}(-[A-Z]{2})?$/, "Invalid language format (use 'en' or 'en-US')")
+    .optional(),
+  businessHours: businessHoursSchema.optional(),
+}).refine((data) => {
+  // At least one field must be provided
+  return Object.keys(data).length > 0;
+}, {
+  message: "At least one setting field must be provided",
+});
+
+// Organization logo upload schema
+export const uploadOrganizationLogoSchema = z.object({
+  // File validation handled by multer middleware
+  // Schema exists for consistency and future validation
+});
+
 // ==================== ENUMS ====================
 export const dealStageEnum = pgEnum("deal_stage", [
   "lead",
@@ -178,6 +277,22 @@ export const organizations = pgTable("organizations", {
   name: varchar("name", { length: 255 }).notNull(),
   slug: varchar("slug", { length: 100 }).unique().notNull(),
   logo: text("logo"),
+  
+  // 2026 Organization Settings (Task 5.1)
+  timezone: varchar("timezone", { length: 50 }).default("UTC").notNull(),
+  currency: varchar("currency", { length: 3 }).default("USD").notNull(),
+  dateFormat: varchar("date_format", { length: 20 }).default("YYYY-MM-DD").notNull(),
+  language: varchar("language", { length: 10 }).default("en").notNull(),
+  businessHours: jsonb("business_hours").$default(() => ({
+    monday: { enabled: true, open: "09:00", close: "17:00" },
+    tuesday: { enabled: true, open: "09:00", close: "17:00" },
+    wednesday: { enabled: true, open: "09:00", close: "17:00" },
+    thursday: { enabled: true, open: "09:00", close: "17:00" },
+    friday: { enabled: true, open: "09:00", close: "17:00" },
+    saturday: { enabled: false, open: "09:00", close: "17:00" },
+    sunday: { enabled: false, open: "09:00", close: "17:00" },
+  })),
+  
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

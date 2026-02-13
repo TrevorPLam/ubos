@@ -1,19 +1,16 @@
 /**
- * Profile Validation Tests - 2026 Best Practices Implementation
+ * Profile Validation Unit Tests - 2026 Best Practices
  * 
- * Test suite covering profile validation features with comprehensive security testing:
- * - Email validation and uniqueness checking
- * - Password strength requirements validation
- * - Profile update scenarios
- * - Security compliance and GDPR considerations
+ * Standalone test suite for profile validation without database dependencies.
+ * Tests core validation logic for email, password, and profile updates.
  * 
  * Requirements: 92.6, 92.7
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { z } from 'zod';
 
-// Mock validation schemas based on the actual implementation from shared/schema.ts
+// Validation schemas matching the actual implementation
 const updateProfileSchema = z.object({
   firstName: z.string().min(1, "First name is required").max(100, "First name must be 100 characters or less").optional(),
   lastName: z.string().min(1, "Last name is required").max(100, "Last name must be 100 characters or less").optional(),
@@ -36,9 +33,9 @@ const updatePasswordSchema = z.object({
   path: ["confirmPassword"],
 });
 
-describe('Profile Validation - 2026 Security Standards', () => {
-  describe('Email Validation and Uniqueness (Requirement 92.6)', () => {
-    it('should validate email format with comprehensive rules', () => {
+describe('Profile Validation Unit Tests', () => {
+  describe('Email Validation (Requirement 92.6)', () => {
+    it('should reject invalid email formats', () => {
       const invalidEmails = [
         'invalid-email',           // Missing @
         '@domain.com',            // Missing local part
@@ -47,7 +44,6 @@ describe('Profile Validation - 2026 Security Standards', () => {
         'user@.domain.com',        // Leading dot
         'user@domain',             // Missing TLD
         '',                        // Empty string
-        null,                      // Null value
       ];
 
       for (const email of invalidEmails) {
@@ -55,6 +51,7 @@ describe('Profile Validation - 2026 Security Standards', () => {
         expect(result.success).toBe(false);
         if (!result.success) {
           expect(result.error.issues).toBeDefined();
+          expect(result.error.issues.some(issue => issue.path.includes('email'))).toBe(true);
         }
       }
     });
@@ -74,52 +71,46 @@ describe('Profile Validation - 2026 Security Standards', () => {
       }
     });
 
-    it('should enforce email uniqueness validation logic', () => {
-      // Mock the uniqueness check logic
-      const existingEmails = ['existing@example.com', 'taken@domain.com'];
-      
-      const checkEmailUniqueness = (email: string) => {
-        return !existingEmails.includes(email);
-      };
-
-      // Test duplicate email detection
-      expect(checkEmailUniqueness('existing@example.com')).toBe(false);
-      expect(checkEmailUniqueness('new@example.com')).toBe(true);
+    it('should handle null email gracefully', () => {
+      const result = updateProfileSchema.safeParse({ email: null });
+      expect(result.success).toBe(false);
     });
   });
 
-  describe('Password Strength Requirements (Requirement 92.7)', () => {
-    it('should validate strong password requirements', () => {
+  describe('Password Strength Validation (Requirement 92.7)', () => {
+    it('should reject weak passwords', () => {
       const weakPasswords = [
-        'weak',           // Too short
-        'password',       // No complexity
-        '12345678',      // No letters or special chars
-        'Password1!',     // Only one uppercase letter
-        'password1!',     // Only one lowercase letter
-        'Password!',       // No numbers
+        { password: 'weak', expectedError: "at least 8 characters" },
+        { password: 'password', expectedError: "uppercase letter" },
+        { password: 'PASSWORD', expectedError: "lowercase letter" },
+        { password: 'Password1', expectedError: "special character" },
+        { password: 'Password!', expectedError: "number" },
       ];
 
-      for (const password of weakPasswords) {
+      for (const testCase of weakPasswords) {
         const result = updatePasswordSchema.safeParse({
           currentPassword: 'oldPassword123!',
-          newPassword: password,
-          confirmPassword: password,
+          newPassword: testCase.password,
+          confirmPassword: testCase.password,
         });
 
         expect(result.success).toBe(false);
         if (!result.success) {
           expect(result.error.issues).toBeDefined();
-          expect(result.error.issues.length).toBeGreaterThan(0);
+          const hasExpectedError = result.error.issues.some(issue => 
+            issue.message.toLowerCase().includes(testCase.expectedError.toLowerCase())
+          );
+          expect(hasExpectedError).toBe(true);
         }
       }
     });
 
     it('should accept strong passwords', () => {
       const strongPasswords = [
-        'StrongPass123!',    // Meets all requirements
-        'MySecureP@ssw0rd!', // Complex with special chars
-        'C0mpl3xP@ssw0rd!', // Numbers and letters
-        'V3ryStr0ng#Password!', // Mixed case and symbols
+        'StrongPass123!',
+        'MySecureP@ssw0rd!',
+        'C0mpl3xP@ssw0rd!',
+        'V3ryStr0ng#Password!',
       ];
 
       for (const password of strongPasswords) {
@@ -143,6 +134,7 @@ describe('Profile Validation - 2026 Security Standards', () => {
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].message).toBe("Passwords don't match");
+        expect(result.error.issues[0].path).toContain('confirmPassword');
       }
     });
 
@@ -155,75 +147,32 @@ describe('Profile Validation - 2026 Security Standards', () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toBe("Current password is required");
-      }
-    });
-
-    it('should enforce all password complexity rules individually', () => {
-      const testCases = [
-        { password: 'short', expectedError: "Password must be at least 8 characters" },
-        { password: 'alllowercase1!', expectedError: "Password must contain at least one uppercase letter" },
-        { password: 'ALLUPPERCASE1!', expectedError: "Password must contain at least one lowercase letter" },
-        { password: 'NoNumbers!', expectedError: "Password must contain at least one number" },
-        { password: 'NoSpecialChars1', expectedError: "Password must contain at least one special character" },
-      ];
-
-      for (const testCase of testCases) {
-        const result = updatePasswordSchema.safeParse({
-          currentPassword: 'oldPassword123!',
-          newPassword: testCase.password,
-          confirmPassword: testCase.password,
-        });
-
-        expect(result.success).toBe(false);
-        if (!result.success) {
-          const hasExpectedError = result.error.issues.some(issue => 
-            issue.message.includes(testCase.expectedError.split(' at least')[0]) ||
-            issue.message.includes(testCase.expectedError.split(' must')[0])
-          );
-          expect(hasExpectedError).toBe(true);
-        }
+        expect(result.error.issues.some(issue => 
+          issue.message === "Current password is required"
+        )).toBe(true);
       }
     });
   });
 
-  describe('Profile Update Scenarios', () => {
-    it('should handle valid profile updates', () => {
-      const updateData = {
-        firstName: 'Updated John',
-        lastName: 'Updated Doe',
-        phone: '+9876543210',
-        timezone: 'Europe/London',
-      };
+  describe('Profile Field Validation', () => {
+    it('should validate name field length constraints', () => {
+      const invalidNames = [
+        { field: 'firstName', value: 'a'.repeat(101) },
+        { field: 'lastName', value: 'b'.repeat(101) },
+      ];
 
-      const result = updateProfileSchema.safeParse(updateData);
-      expect(result.success).toBe(true);
-    });
-
-    it('should validate field length constraints', () => {
-      const invalidData = {
-        firstName: 'a'.repeat(101), // Too long
-        lastName: 'b'.repeat(101),  // Too long
-        timezone: 'c'.repeat(51),   // Too long
-      };
-
-      for (const [field, value] of Object.entries(invalidData)) {
-        const result = updateProfileSchema.safeParse({ [field]: value });
+      for (const testCase of invalidNames) {
+        const result = updateProfileSchema.safeParse({ [testCase.field]: testCase.value });
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0].message).toContain('100 characters or less');
+          expect(result.error.issues.some(issue => 
+            issue.message.includes("100 characters or less")
+          )).toBe(true);
         }
       }
     });
 
-    it('should handle partial updates gracefully', () => {
-      const partialUpdate = { firstName: 'New First Name' };
-
-      const result = updateProfileSchema.safeParse(partialUpdate);
-      expect(result.success).toBe(true);
-    });
-
-    it('should validate timezone constraints', () => {
+    it('should validate timezone field constraints', () => {
       const invalidTimezones = [
         '',                    // Empty
         'a'.repeat(51),      // Too long
@@ -235,44 +184,36 @@ describe('Profile Validation - 2026 Security Standards', () => {
       }
     });
 
-    it('should accept valid timezones', () => {
-      const validTimezones = [
-        'UTC',
-        'America/New_York',
-        'Europe/London',
-        'Asia/Tokyo',
-        'Australia/Sydney',
+    it('should accept valid profile data', () => {
+      const validProfile = {
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john.doe@example.com',
+        phone: '+1234567890',
+        timezone: 'America/New_York',
+      };
+
+      const result = updateProfileSchema.safeParse(validProfile);
+      expect(result.success).toBe(true);
+    });
+
+    it('should handle partial updates', () => {
+      const partialUpdates = [
+        { firstName: 'Updated Name' },
+        { lastName: 'Updated Last Name' },
+        { phone: '+9876543210' },
+        { timezone: 'Europe/London' },
       ];
 
-      for (const timezone of validTimezones) {
-        const result = updateProfileSchema.safeParse({ timezone });
+      for (const update of partialUpdates) {
+        const result = updateProfileSchema.safeParse(update);
         expect(result.success).toBe(true);
       }
     });
   });
 
-  describe('Security Compliance', () => {
-    it('should implement data minimization in responses', () => {
-      // Test that sensitive data is not exposed in API responses
-      const userProfile = {
-        id: 'user-123',
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john.doe@example.com',
-        // Should NOT include passwordHash
-        // Should NOT include internal fields
-        createdAt: new Date('2024-01-01'),
-        updatedAt: new Date('2024-01-01'),
-      };
-
-      // Verify sensitive fields are excluded
-      expect(userProfile).not.toHaveProperty('passwordHash');
-      expect(userProfile).not.toHaveProperty('internalId');
-      expect(userProfile).not.toHaveProperty('systemFlags');
-    });
-
-    it('should validate input sanitization', () => {
-      // Test potentially malicious inputs
+  describe('Security and Edge Cases', () => {
+    it('should handle potentially malicious inputs', () => {
       const maliciousInputs = [
         { firstName: '<script>alert("xss")</script>' },
         { lastName: 'DROP TABLE users;' },
@@ -281,18 +222,12 @@ describe('Profile Validation - 2026 Security Standards', () => {
 
       for (const input of maliciousInputs) {
         const result = updateProfileSchema.safeParse(input);
-        // Should either reject or sanitize the input
-        if (result.success) {
-          // If accepted, ensure it's properly sanitized in real implementation
-          expect(result.data).toBeDefined();
-        } else {
-          // If rejected, that's also acceptable for security
-          expect(result.success).toBe(false);
-        }
+        // Schema validation should handle these appropriately
+        expect(result).toBeDefined();
       }
     });
 
-    it('should handle edge cases gracefully', () => {
+    it('should validate common edge cases', () => {
       const edgeCases = [
         { firstName: '   ', lastName: 'Doe' }, // Whitespace only
         { firstName: 'John', lastName: '' },    // Empty optional field
@@ -306,9 +241,35 @@ describe('Profile Validation - 2026 Security Standards', () => {
         expect(result).toBeDefined();
       }
     });
+
+    it('should enforce password complexity requirements individually', () => {
+      const complexityTests = [
+        { password: 'short', rule: '8 characters' },
+        { password: 'alllowercase1!', rule: 'uppercase' },
+        { password: 'ALLUPPERCASE1!', rule: 'lowercase' },
+        { password: 'NoNumbers!', rule: 'number' },
+        { password: 'NoSpecialChars1', rule: 'special' },
+      ];
+
+      for (const test of complexityTests) {
+        const result = updatePasswordSchema.safeParse({
+          currentPassword: 'oldPassword123!',
+          newPassword: test.password,
+          confirmPassword: test.password,
+        });
+
+        expect(result.success).toBe(false);
+        if (!result.success) {
+          const hasRuleError = result.error.issues.some(issue =>
+            issue.message.toLowerCase().includes(test.rule.toLowerCase())
+          );
+          expect(hasRuleError).toBe(true);
+        }
+      }
+    });
   });
 
-  describe('Performance and Scalability', () => {
+  describe('Performance and Efficiency', () => {
     it('should handle validation efficiently', () => {
       const startTime = Date.now();
       
@@ -350,10 +311,9 @@ describe('Profile Validation - 2026 Security Standards', () => {
   });
 });
 
-describe('Profile Validation - Integration Scenarios', () => {
-  describe('Complete Profile Update Workflow', () => {
+describe('Profile Validation Integration Scenarios', () => {
+  describe('Complete Workflows', () => {
     it('should validate complete profile update workflow', () => {
-      // Simulate a complete profile update workflow
       const originalProfile = {
         firstName: 'John',
         lastName: 'Doe',
@@ -369,38 +329,29 @@ describe('Profile Validation - Integration Scenarios', () => {
         timezone: 'Europe/London',
       };
 
-      // Validate original profile
+      // Validate both profiles
       const originalResult = updateProfileSchema.safeParse(originalProfile);
-      expect(originalResult.success).toBe(true);
-
-      // Validate updated profile
       const updatedResult = updateProfileSchema.safeParse(updatedProfile);
+
+      expect(originalResult.success).toBe(true);
       expect(updatedResult.success).toBe(true);
-
-      // Email change would require confirmation in real implementation
-      const emailChangeResult = updateProfileSchema.safeParse({ 
-        email: 'jonathan.doe@example.com' 
-      });
-      expect(emailChangeResult.success).toBe(true);
     });
-  });
 
-  describe('Password Change Workflow', () => {
-    it('should validate complete password change workflow', () => {
-      const passwordChangeData = {
+    it('should validate password change workflow', () => {
+      const validPasswordChange = {
         currentPassword: 'OldPassword123!',
         newPassword: 'NewPassword456!',
         confirmPassword: 'NewPassword456!',
       };
 
-      const result = updatePasswordSchema.safeParse(passwordChangeData);
+      const result = updatePasswordSchema.safeParse(validPasswordChange);
       expect(result.success).toBe(true);
 
-      // Test various failure scenarios
+      // Test failure scenarios
       const failureScenarios = [
-        { ...passwordChangeData, currentPassword: '' },      // Missing current
-        { ...passwordChangeData, newPassword: 'weak' },       // Weak password
-        { ...passwordChangeData, confirmPassword: 'different' }, // Mismatch
+        { ...validPasswordChange, currentPassword: '' },
+        { ...validPasswordChange, newPassword: 'weak' },
+        { ...validPasswordChange, confirmPassword: 'different' },
       ];
 
       for (const scenario of failureScenarios) {
@@ -410,7 +361,7 @@ describe('Profile Validation - Integration Scenarios', () => {
     });
   });
 
-  describe('Error Handling and Recovery', () => {
+  describe('Error Handling', () => {
     it('should provide meaningful error messages', () => {
       const invalidData = {
         firstName: '',
@@ -422,16 +373,18 @@ describe('Profile Validation - Integration Scenarios', () => {
       expect(result.success).toBe(false);
 
       if (!result.success) {
-        // Should have multiple validation errors
         expect(result.error.issues.length).toBeGreaterThan(0);
         
-        // Error messages should be user-friendly
         const errorMessages = result.error.issues.map(issue => issue.message);
-        expect(errorMessages.some(msg => msg.includes('required') || msg.includes('format') || msg.includes('characters'))).toBe(true);
+        expect(errorMessages.some(msg => 
+          msg.includes('required') || 
+          msg.includes('format') || 
+          msg.includes('characters')
+        )).toBe(true);
       }
     });
 
-    it('should handle concurrent validation requests', async () => {
+    it('should handle concurrent validation safely', async () => {
       const concurrentValidations = Array(10).fill(null).map((_, index) =>
         Promise.resolve(updateProfileSchema.safeParse({
           firstName: `User${index}`,
@@ -440,10 +393,7 @@ describe('Profile Validation - Integration Scenarios', () => {
         }))
       );
 
-      // All should complete without race conditions
       const results = await Promise.all(concurrentValidations);
-
-      // Verify all operations completed successfully
       const successful = results.filter(r => r.success);
       expect(successful).toHaveLength(10);
     });

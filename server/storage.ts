@@ -116,6 +116,11 @@ export interface IStorage {
   getUserOrganization(userId: string): Promise<Organization | undefined>;
   createOrganization(org: InsertOrganization, ownerId: string): Promise<Organization>;
 
+  // Organization Settings Management (Requirements 94.1, 94.2)
+  getOrganizationSettings(orgId: string): Promise<Organization>;
+  updateOrganizationSettings(orgId: string, data: Partial<Organization>): Promise<Organization>;
+  updateOrganizationLogo(orgId: string, logoUrl: string): Promise<Organization>;
+
   // User Profile Management (2026 privacy-by-design)
   updateUserProfile(userId: string, data: {
     firstName?: string;
@@ -439,13 +444,56 @@ export class DatabaseStorage implements IStorage {
   async createOrganization(org: InsertOrganization, ownerId: string): Promise<Organization> {
     const [newOrg] = await db.insert(organizations).values(org).returning();
 
-    // Ensure the creator can immediately access the org’s data.
+    // Ensure the creator can immediately access the org's data.
     await db.insert(organizationMembers).values({
       organizationId: newOrg.id,
       userId: ownerId,
       role: "owner",
     });
     return newOrg;
+  }
+
+  // Organization Settings Management (Requirements 94.1, 94.2)
+  async getOrganizationSettings(orgId: string): Promise<Organization> {
+    const [org] = await db
+      .select()
+      .from(organizations)
+      .where(eq(organizations.id, orgId))
+      .limit(1);
+    
+    if (!org) {
+      throw new Error("Organization not found");
+    }
+    
+    return org;
+  }
+
+  async updateOrganizationSettings(orgId: string, data: Partial<Organization>): Promise<Organization> {
+    const [updatedOrg] = await db
+      .update(organizations)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(organizations.id, orgId))
+      .returning();
+    
+    if (!updatedOrg) {
+      throw new Error("Organization not found");
+    }
+    
+    return updatedOrg;
+  }
+
+  async updateOrganizationLogo(orgId: string, logoUrl: string): Promise<Organization> {
+    const [updatedOrg] = await db
+      .update(organizations)
+      .set({ logo: logoUrl, updatedAt: new Date() })
+      .where(eq(organizations.id, orgId))
+      .returning();
+    
+    if (!updatedOrg) {
+      throw new Error("Organization not found");
+    }
+    
+    return updatedOrg;
   }
 
   async getClientCompanies(orgId: string): Promise<ClientCompany[]> {

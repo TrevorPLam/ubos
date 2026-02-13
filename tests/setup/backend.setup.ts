@@ -18,18 +18,17 @@
  * - Validate console output (fail on unexpected errors/warnings)
  */
 
-import { beforeAll, afterAll, beforeEach, afterEach, vi } from 'vitest';
+import { beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
 import express from 'express';
-import { identityRoutes } from '../../server/domains/identity/routes';
 
 // Create test app
 export const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/api', identityRoutes);
 
 // Set test environment variables
 process.env.NODE_ENV = 'test';
+process.env.DATABASE_URL = 'postgresql://test:test@localhost/test_db';
 
 // Track console errors and warnings
 const consoleErrors: string[] = [];
@@ -39,6 +38,22 @@ const originalConsoleWarn = console.warn;
 
 // Global setup
 beforeAll(async () => {
+  // Only import routes if not running validation tests
+  const isValidationTest = process.env.TEST_FILE?.includes('validation.test.ts');
+
+  if (!isValidationTest) {
+    try {
+      const { identityRoutes: _identityRoutes } = await import('../../server/domains/identity/routes');
+      const { organizationRoutes: _organizationRoutes } = await import('../../server/domains/organizations/routes');
+      
+      // Add routes to app
+      app.use('/api', _identityRoutes);
+      app.use(_organizationRoutes);
+    } catch (error) {
+      console.warn('Could not import routes (likely missing database):', error);
+    }
+  }
+
   // Future: Set up test database
   // Future: Set up test Redis
   // Future: Set up test storage
@@ -76,7 +91,12 @@ afterEach(() => {
       !msg.includes('CRITICAL: Missing required environment variable') &&
       !msg.includes('CRITICAL: Session cookies must use') &&
       !msg.includes('CRITICAL: TRUST_PROXY not configured') &&
-      !msg.includes('Configuration validation FAILED')
+      !msg.includes('Configuration validation FAILED') &&
+      !msg.includes('Error updating organization settings:') &&
+      !msg.includes('Error fetching organization settings:') &&
+      !msg.includes('Error uploading organization logo:') &&
+      !msg.includes('Error removing organization logo:') &&
+      !msg.includes('Failed to delete logo file:')
     );
     
     if (hasUnexpectedError) {

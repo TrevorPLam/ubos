@@ -21,7 +21,7 @@
  * - Any API call should go through React Query (`queryClient`) to centralize caching/errors.
  */
 
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { lazy, Suspense } from "react";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -49,7 +49,7 @@ const ProjectsPage = lazy(() => import("@/pages/projects"));
 const MessagesPage = lazy(() => import("@/pages/messages"));
 const InvoicesPage = lazy(() => import("@/pages/invoices"));
 const BillsPage = lazy(() => import("@/pages/bills"));
-const SettingsPage = lazy(() => import("@/pages/settings"));
+const OrganizationSettingsPage = lazy(() => import("@/pages/organization-settings"));
 const ProfilePage = lazy(() => import("@/pages/profile"));
 const NotFound = lazy(() => import("@/pages/not-found"));
 
@@ -154,9 +154,9 @@ const BillsRoute = () => (
   </Suspense>
 );
 
-const SettingsRoute = () => (
+const OrganizationSettingsRoute = () => (
   <Suspense fallback={<PageLoading />}>
-    <SettingsPage />
+    <OrganizationSettingsPage />
   </Suspense>
 );
 
@@ -187,7 +187,7 @@ function AuthenticatedRouter() {
         <Route path="/messages" component={MessagesRoute} />
         <Route path="/invoices" component={InvoicesRoute} />
         <Route path="/bills" component={BillsRoute} />
-        <Route path="/settings" component={SettingsRoute} />
+        <Route path="/settings" component={OrganizationSettingsRoute} />
         <Route path="/profile" component={ProfileRoute} />
         <Route component={NotFoundRoute} />
       </Switch>
