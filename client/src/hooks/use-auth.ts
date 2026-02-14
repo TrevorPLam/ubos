@@ -28,11 +28,17 @@ async function fetchUser(): Promise<User | null> {
     credentials: "include",
   });
 
-  console.log("[useAuth] fetchUser response status:", response.status);
+  // 2026 Best Practice: Environment-based logging to prevent production noise
+  if (import.meta.env.DEV) {
+    console.log("[useAuth] fetchUser response status:", response.status);
+  }
 
   if (response.status === 401) {
     // Expected path: user has not visited `/api/login` yet or cookie expired/was cleared.
-    console.log("[useAuth] User not authenticated (401)");
+    // 2026 Best Practice: Environment-based logging to prevent production noise
+    if (import.meta.env.DEV) {
+      console.log("[useAuth] User not authenticated (401)");
+    }
     return null;
   }
 
@@ -41,7 +47,10 @@ async function fetchUser(): Promise<User | null> {
   }
 
   const user = await response.json();
-  console.log("[useAuth] User authenticated:", user);
+  // 2026 Best Practice: Environment-based logging to prevent production noise
+  if (import.meta.env.DEV) {
+    console.log("[useAuth] User authenticated:", user);
+  }
   return user;
 }
 

@@ -27,27 +27,38 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
 
 *Quick fixes from ANALYSIS critical issues. Complete before Tier 1.*
 
-- [ ] 0.1 Remove hardcoded credentials
+- [x] 0.1 Remove hardcoded credentials
   - Remove hardcoded DATABASE_URL and password from `package.json` dev script
   - Rotate exposed credentials
   - _Source: ANALYSIS Top 5 Critical #1_
 
-- [ ] 0.2 Gate debug logging
+- [x] 0.2 Gate debug logging
   - Gate `console.log` in `App.tsx` and `use-auth.ts` behind `import.meta.env.DEV`
   - Replace `console.error` in dashboard route with structured logger
   - _Source: ANALYSIS Top 5 Critical #2, #5_
+  - **Status:** ✅ COMPLETED - 2026-02-14
+  - **Implementation:** Environment-based logging with PII-safe structured logging
+  - **Documentation:** docs/implementation/debug-logging-2026.md
 
-- [ ] 0.3 Fix deprecated API usage
+- [x] 0.3 Fix deprecated API usage
   - Replace `req.connection.remoteAddress` with `req.socket?.remoteAddress` in permissions middleware
   - _Source: ANALYSIS Top 5 Critical #3_
+  - **Status:** ✅ COMPLETED - 2026-02-14
+  - **Implementation:** Modern Node.js API with proper null safety and proxy-aware IP handling
+  - **Files Modified:** server/middleware/permissions.ts, server/middleware/rateLimit.ts
+  - **Documentation:** docs/implementation/deprecated-api-fix-2026.md
 
-- [ ] 0.4 Add missing RBAC permission seeds
+- [X] 0.4 Add missing RBAC permission seeds
   - Add seeds for: `organizations`, `dashboard`, `engagements`, `vendors`, `threads`
   - _Source: ANALYSIS Phase 3 RBAC mismatch_
 
-- [ ] 0.5 Update .env.example
+- [x] 0.5 Update .env.example
   - Add `REDIS_URL`, `ALLOWED_ORIGINS`, `TRUST_PROXY`, and other required env vars
   - Ensure new developers can run locally from docs alone
+  - **Status:** ✅ COMPLETED - 2026-02-14
+  - **Implementation:** Enhanced .env.example with comprehensive 2026 best practices
+  - **Files Modified:** .env.example (added INSTANCE_COUNT, fixed validation script reference)
+  - **Documentation:** docs/implementation/environment-variables-2026.md
 
 ---
 

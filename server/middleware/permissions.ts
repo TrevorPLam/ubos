@@ -36,7 +36,11 @@ export function checkPermission(
     try {
       const authReq = req as AuthenticatedRequest;
       const userId = authReq.user?.claims.sub;
-      const clientIp = req.ip || req.connection.remoteAddress || 'unknown';
+      // 2026 Best Practice: Use modern Node.js API with proper null safety
+      // req.connection is deprecated since Node.js v13.0.0
+      // Primary: Express req.ip (handles X-Forwarded-For when trust proxy is enabled)
+      // Fallback: req.socket?.remoteAddress (modern replacement for req.connection.remoteAddress)
+      const clientIp = req.ip || req.socket?.remoteAddress || 'unknown';
       const userAgent = (req.get && req.get('User-Agent')) || 'unknown';
 
       if (!userId) {

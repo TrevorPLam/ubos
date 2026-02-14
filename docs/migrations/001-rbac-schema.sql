@@ -137,6 +137,42 @@ INSERT INTO permissions (feature_area, permission_type, description) VALUES
   ('messages', 'delete', 'Delete messages'),
   ('messages', 'export', 'Export message data');
 
+-- Thread-based Communication permissions (2026 enhancement)
+INSERT INTO permissions (feature_area, permission_type, description) VALUES
+  ('threads', 'view', 'View communication threads'),
+  ('threads', 'create', 'Create communication threads'),
+  ('threads', 'edit', 'Edit communication threads'),
+  ('threads', 'delete', 'Delete communication threads'),
+  ('threads', 'export', 'Export thread data');
+
+-- Organization Management permissions
+INSERT INTO permissions (feature_area, permission_type, description) VALUES
+  ('organizations', 'view', 'View organization details'),
+  ('organizations', 'create', 'Create organizations'),
+  ('organizations', 'edit', 'Edit organization settings'),
+  ('organizations', 'delete', 'Delete organizations'),
+  ('organizations', 'export', 'Export organization data');
+
+-- Dashboard Analytics permissions
+INSERT INTO permissions (feature_area, permission_type, description) VALUES
+  ('dashboard', 'view', 'View dashboard analytics and stats');
+
+-- Engagement Management permissions
+INSERT INTO permissions (feature_area, permission_type, description) VALUES
+  ('engagements', 'view', 'View client engagements'),
+  ('engagements', 'create', 'Create client engagements'),
+  ('engagements', 'edit', 'Edit client engagements'),
+  ('engagements', 'delete', 'Delete client engagements'),
+  ('engagements', 'export', 'Export engagement data');
+
+-- Vendor Management permissions
+INSERT INTO permissions (feature_area, permission_type, description) VALUES
+  ('vendors', 'view', 'View vendor information'),
+  ('vendors', 'create', 'Create vendor records'),
+  ('vendors', 'edit', 'Edit vendor information'),
+  ('vendors', 'delete', 'Delete vendor records'),
+  ('vendors', 'export', 'Export vendor data');
+
 -- Settings & Admin permissions
 INSERT INTO permissions (feature_area, permission_type, description) VALUES
   ('settings', 'view', 'View organization settings'),

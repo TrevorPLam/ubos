@@ -44,7 +44,11 @@ const rateLimitStore = new Map<string, {
  * Generate client fingerprint for bot detection
  */
 function generateClientFingerprint(req: Request): string {
-  const ip = req.ip || req.connection.remoteAddress || 'unknown';
+// 2026 Best Practice: Use modern Node.js API with proper null safety
+  // req.connection is deprecated since Node.js v13.0.0
+  // Primary: Express req.ip (handles X-Forwarded-For when trust proxy is enabled)
+  // Fallback: req.socket?.remoteAddress (modern replacement for req.connection.remoteAddress)
+  const ip = req.ip || req.socket?.remoteAddress || 'unknown';
   const userAgent = req.get('User-Agent') || 'unknown';
   const acceptLanguage = req.get('Accept-Language') || 'unknown';
   const acceptEncoding = req.get('Accept-Encoding') || 'unknown';
@@ -218,7 +222,11 @@ export function createRateLimit(config: Partial<RateLimitConfig> = {}): RequestH
   
   return (req: Request, res: Response, next: NextFunction) => {
     const clientInfo: ClientInfo = {
-      ip: req.ip || req.connection.remoteAddress || 'unknown',
+      // 2026 Best Practice: Use modern Node.js API with proper null safety
+      // req.connection is deprecated since Node.js v13.0.0
+      // Primary: Express req.ip (handles X-Forwarded-For when trust proxy is enabled)
+      // Fallback: req.socket?.remoteAddress (modern replacement for req.connection.remoteAddress)
+      ip: req.ip || req.socket?.remoteAddress || 'unknown',
       userAgent: req.get('User-Agent') || 'unknown',
       fingerprint: generateClientFingerprint(req),
     };

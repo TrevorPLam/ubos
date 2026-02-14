@@ -215,15 +215,21 @@ function Router() {
   const { user, isLoading, isAuthenticated } = useAuth();
   const [location] = useLocation();
 
-  // Debug logs are intentionally noisy during early iteration; remove/quiet once stable.
-  console.log("[Router] Auth state:", { user, isLoading, isAuthenticated, location });
+  // Debug logs are intentionally noisy during early iteration; removed/quiet once stable.
+  // 2026 Best Practice: Environment-based logging to prevent production noise
+  if (import.meta.env.DEV) {
+    console.log("[Router] Auth state:", { user, isLoading, isAuthenticated, location });
+  }
 
   if (isLoading) {
     return <LoadingScreen />;
   }
 
   if (!isAuthenticated) {
-    console.log("[Router] Not authenticated, checking for onboarding");
+    // 2026 Best Practice: Environment-based logging to prevent production noise
+    if (import.meta.env.DEV) {
+      console.log("[Router] Not authenticated, checking for onboarding");
+    }
     
     // Check if this is an onboarding route (should be accessible without auth)
     if (location.startsWith("/onboarding")) {
@@ -234,7 +240,10 @@ function Router() {
       );
     }
     
-    console.log("[Router] Not authenticated, showing landing page");
+    // 2026 Best Practice: Environment-based logging to prevent production noise
+    if (import.meta.env.DEV) {
+      console.log("[Router] Not authenticated, showing landing page");
+    }
     return (
       <Suspense fallback={<LoadingScreen />}>
         <LandingPage />
@@ -242,7 +251,10 @@ function Router() {
     );
   }
 
-  console.log("[Router] Authenticated, showing app layout");
+  // 2026 Best Practice: Environment-based logging to prevent production noise
+  if (import.meta.env.DEV) {
+    console.log("[Router] Authenticated, showing app layout");
+  }
   return <AuthenticatedRouter />;
 }
 

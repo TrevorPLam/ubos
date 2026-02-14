@@ -7,6 +7,7 @@ import {
   getOrCreateOrg 
 } from "./middleware/auth";
 import { checkPermission } from "./middleware/permissions";
+import { logger } from "./logger";
 
 // Domain Routes
 import { identityRoutes } from "./domains/identity/routes";
@@ -65,7 +66,14 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
         totalRevenue: totalRevenue.toFixed(2),
       });
     } catch (error) {
-      console.error("Dashboard stats error:", error);
+      // 2026 Best Practice: Structured logging with PII redaction
+      logger.error("Dashboard stats error", {
+        source: "dashboard",
+        userId: getUserIdFromRequest(req),
+        error: error instanceof Error ? error.message : String(error),
+        path: "/api/dashboard/stats",
+        method: "GET"
+      });
       res.status(500).json({ error: "Failed to fetch dashboard stats" });
     }
   });
