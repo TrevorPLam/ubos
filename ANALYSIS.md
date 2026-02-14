@@ -653,52 +653,332 @@ try {
 
 ## Phase 5: Scalability & Extensibility
 
-### Scalability
+### Horizontal Scaling Readiness
 
-- **Horizontal scaling** – Rate limiting is in-memory; `config-validation` warns about Redis for multi-instance.
-- **State** – Sessions and rate limits not shared; multi-instance needs Redis.
-- **DB** – Standard Postgres; schema supports sharding by `organizationId` later if needed.
+**Current state:** Single-instance deployment only.
 
-### Extensibility
+| Component | Multi-Instance Ready? | Blocker |
+|-----------|----------------------|---------|
+| **Rate limiting** | No | In-memory; each instance has own limits. `RedisStore` imported but not used. |
+| **Sessions** | N/A | Simple cookie auth; no server-side session. `session.ts` exists but unused. |
+| **Outbox / Event dispatcher** | No | No row-level locking; multiple instances would process same events (double processing). |
+| **API routes** | Yes | Stateless; org from `getOrCreateOrg`, no in-process state. |
+| **Database** | Yes | Stateless; connection pool per process. |
 
-- Adding domains: new route module + storage methods.
-- Workflow engine can register new event handlers.
-- RBAC supports new feature areas and permissions.
+**Config validation:** `config-validation.ts` enforces:
+
+- If `INSTANCE_COUNT > 1` and no `REDIS_URL` → **fails startup**
+- If `INSTANCE_COUNT === 1` (default) and no `REDIS_URL` → **warning** only; risk acceptance until 2026-03-04
+
+### Outbox & Event Dispatcher Scaling
+
+**Issue:** `getUnprocessedEvents` does a plain `SELECT ... WHERE processed_at IS NULL` with no locking.
+
+- Multiple instances all see the same rows
+- All process the same events → duplicate side effects
+- No `SELECT ... FOR UPDATE SKIP LOCKED` or equivalent
+
+**GAP_ANALYSIS:** “Outbox: Cannot scale beyond 1 instance, no event replay” (Critical).
+
+**Recommendation:** Use advisory locks or `SELECT ... FOR UPDATE SKIP LOCKED` so only one consumer processes each event. Alternatively, run the event dispatcher as a single dedicated worker process.
+
+### Vertical Scaling
+
+**Database:** Single Postgres; `organizationId` on all tenant tables supports future sharding by org.
+
+**Connection pool:** Default 10 connections per process (see Phase 4). Under load, add pool tuning and consider PgBouncer.
+
+**Unpaginated lists:** 10 list endpoints return full results (Phase 4). Large orgs will hit memory and latency limits.
+
+### Domain Completeness: Planned vs. Implemented
+
+| Planned Domain | Implemented | Notes |
+|----------------|-------------|-------|
+| **identity** | Yes | Users, invitations, profile, auth |
+| **crm** | Yes | Clients, contacts, deals |
+| **projects** | Yes | Projects, tasks, milestones |
+| **agreements** | Yes | Proposals, contracts |
+| **revenue** | Yes | Invoices, bills, vendors |
+| **engagements** | Yes | Engagement hub (not in README list but implemented) |
+| **communications** | Yes | Threads, messages |
+| **files** | Yes | Upload, list, download (local disk) |
+| **workflow** | Yes | Engine + handlers for deal.created/updated (logging only) |
+| **organizations** | Yes | Settings, logo |
+| **rbac** | Yes | Roles, permissions, user roles |
+| **timeline** | Partial | `activityEvents` table; used for permission audit log, not generic timeline API |
+| **portal** | Schema only | `clientPortalAccess` table; no portal routes |
+| **scheduling** | No | No appointment/calendar table or routes |
+| **search** | No | No search domain or FTS |
+
+### Extensibility: Adding a New Domain
+
+**Steps:**
+
+1. **Schema** – Add tables in `shared/schema.ts` with `organizationId`
+2. **Storage** – Add methods to `server/storage.ts` (or new `storage/domain.ts` if split)
+3. **Routes** – Create `server/domains/domainname/routes.ts` with `requireAuth`, `checkPermission`, `getOrCreateOrg`
+4. **Permissions** – Insert into `permissions` (migration or seed) for the new feature area
+5. **Register** – Add route module in `server/routes.ts`
+6. **Client** – Add page, route, and nav entry in `App.tsx`
+
+**Tight coupling:** New domains require changes in storage (1,685-line monolith), routes registration, and schema. No plugin or dynamic loading.
+
+### Extensibility: RBAC Feature Areas
+
+**Adding a feature area:** Insert rows into `permissions` for `(feature_area, permission_type)` and create roles that reference them.
+
+**Seeded areas** (from migration): clients, contacts, deals, proposals, contracts, projects, tasks, invoices, bills, files, messages, settings, users, roles.
+
+**Missing in migration:** `organizations`, `dashboard`, `engagements`, `vendors`, `threads` (routes use `messages`). Some routes may fail permission checks until these are added.
+
+### Extensibility: Workflow Engine
+
+**Current:** `WorkflowEngine` registers handlers in code; no persisted workflow definitions.
+
+- Add handler: implement in `engine.ts` and call `eventDispatcher.register(eventType, handler)`
+- No UI, no DB schema for workflow definitions
+- No triggers, conditions, or actions config; all logic in code
+
+**README flagship workflows:** 6 described; none implemented beyond deal logging.
+
+### Extractability to Microservices
+
+**README:** “Modular monolith designed to be … extractable into microservices later.”
+
+**Supporting factors:**
+
+- Domain boundaries; no cross-domain DB reads
+- Event-based integration via outbox
+- Workflow as single cross-domain orchestrator
+- `organizationId` for tenant isolation
+
+**Gaps for extraction:**
+
+- Shared `storage.ts`; domains not separate deployable units
+- Single DB; no per-domain DB split
+- Event dispatcher in-process; would need separate worker service
+- No API versioning or domain-specific API gateways
+
+### Information Gaps Addressed
+
+| Gap | Resolution |
+|-----|------------|
+| Outbox multi-instance safe? | No; no locking; double processing risk |
+| Redis required for scale? | Yes if INSTANCE_COUNT > 1; validation enforces |
+| Domain implementation status? | 11 domains implemented; scheduling, search, full portal missing |
+| RBAC extensibility? | Insert permissions; some route areas not seeded |
+| Workflow extensibility? | Code-only handlers; no stored definitions |
+| Microservice readiness? | Bounded contexts help; storage monolith and single DB limit extraction |
 
 ---
 
 ## Phase 6: DevOps & Operations
 
-### Build & Deployment
+### Build Pipeline
 
-- Build: `script/build.ts` (Vite client + esbuild server).
-- Output: `dist/public/` (client), `dist/index.cjs` (server).
-- CI: `.github/workflows/test.yml` – tests, coverage, lint, build; `validate:security` step.
+**Build script** (`script/build.ts`):
 
-### Gaps
+1. Delete `dist/`
+2. Vite builds client → `dist/public/` (or Vite-configured output)
+3. esbuild bundles server → `dist/index.cjs` (entry: `server/index.ts`)
 
-- No DATABASE_URL in CI; tests use `postgresql://test:test@localhost/test_db` (may need Postgres service).
-- `npm run build` does not validate env; production startup does.
+**Server bundle strategy:** Most deps are external (reduced via `allowlist`); only allowlisted deps (express, pg, drizzle-orm, etc.) are bundled to reduce cold-start syscalls. Minified; `process.env.NODE_ENV` set to `"production"`.
+
+**Static serving:** Production uses `serveStatic(app)` which serves from `path.resolve(__dirname, "public")`—at runtime `dist/public/` when running `dist/index.cjs`. SPA fallback: unknown routes serve `index.html`.
+
+### CI/CD
+
+**Workflow** (`.github/workflows/test.yml`):
+
+| Step | Command | Notes |
+|------|---------|------|
+| Checkout | `actions/checkout@v4` | — |
+| Node setup | `actions/setup-node@v4` | Node 20.x, npm cache |
+| Install | `npm ci` | Lockfile |
+| Backend tests | `npm run test:backend -- --coverage` | Vitest, backend config |
+| Frontend tests | `npm run test:frontend -- --coverage` | Vitest, client config |
+| Combined coverage | `npm run test:ci` | Runs `vitest run --coverage` (may overwrite prior coverage) |
+| Enforce thresholds | `npm run enforce-coverage` | Backend 30%, frontend 8%, overall 20% |
+| Lint | `npm run lint` | `continue-on-error: true` |
+| Security validation | `npm run validate:security` | check + tests + coverage + build + no .only/.skip |
+| Codecov upload | `codecov/codecov-action@v4` | `fail_ci_if_error: false` |
+| Build job | `npm run build` | Depends on test job; `NODE_ENV=production` |
+
+**Coverage enforcement** (`script/enforce-coverage.ts`):
+
+- Reads `coverage/coverage-final.json` (single file; backend and frontend may overwrite each other)
+- Thresholds: backend 30% stmt/branch/fn/line; frontend 8%; overall 20%
+- **Gap:** Both backend and frontend configs write to the same path; last run wins. No merge of backend + frontend coverage.
+
+**Validate:security:** Runs `check` (tsc), `test:backend`, `test:frontend`, `coverage`, `build`, `security:check-tests` (fails on `.only`/`.skip` in test files).
+
+### Environment & Configuration
+
+**Required in production** (enforced by `config-validation.ts` at startup):
+
+- `NODE_ENV`
+- `DATABASE_URL`
+- `ALLOWED_ORIGINS` (non-empty, valid URLs; warns if non-HTTPS)
+
+**Recommended:** `SESSION_SECRET`, `LOG_LEVEL`
+
+**Production-only:** `TRUST_PROXY` (required for X-Forwarded-For; rate limiting and IP logging depend on it)
+
+**Multi-instance:** `INSTANCE_COUNT`, `REDIS_URL`—if `INSTANCE_COUNT > 1` without Redis, startup fails.
+
+**Documentation:** `docs/security/30-implementation-guides/CONFIGURATION_GUIDE.md` lists env vars (AWS, Stripe, SendGrid, Sentry, Datadog, etc.). No `.env.example` in repo; guide serves as reference.
+
+**Build-time validation:** `npm run build` does **not** validate env vars; validation runs only at server startup (`assertValidConfiguration()` in `createApp()`).
+
+### Database Migrations
+
+**Current approach:** Manual SQL. `docs/migrations/001-rbac-schema.sql`; no `drizzle-kit` or migration runner.
+
+**Gap (GAP_ANALYSIS):** "No database migrations system"; app assumes tables exist. No auto-migrate on startup.
+
+**Seeding:** RBAC permissions inserted via migration SQL; no separate seed script.
+
+### Health & Readiness
+
+**Health endpoints:** `/health` and `/api/health` are **skipped by rate limiting** (`server/security.ts` line 133) but **not registered** in the app. GAP_ANALYSIS and tasks.md flag "Add health check endpoints for monitoring."
+
+**Invitations API doc** (`docs/api/invitations.md`) references `GET /api/health/invitations`—not implemented.
+
+### Logging & Observability
+
+**Logger** (`server/logger.ts`):
+
+- Structured logging with PII redaction (mandatory in production)
+- Levels: ERROR, WARN, INFO, DEBUG
+- Production: JSON format, INFO min; Development: text, DEBUG min
+- Request logging: API routes log `METHOD path status duration`; dev logs sanitized response bodies; errors log sanitized request context
+
+**No metrics endpoint:** No Prometheus/OpenMetrics or `/metrics`.
+
+**External integration:** CONFIGURATION_GUIDE mentions Sentry and Datadog; no integration code found in codebase.
+
+### Deployment Artifacts
+
+**No Docker:** No `Dockerfile` or `docker-compose.yml` in repo.
+
+**Start command:** `npm start` → `cross-env NODE_ENV=production node dist/index.cjs`
+
+**Port:** `PORT` (default 5000); host `0.0.0.0`; `reusePort: true` on non-Windows.
+
+**Post-install:** `patch-package` runs on `npm install` (applies patches from `patches/`).
+
+### Test Environment
+
+**Backend setup** (`tests/setup/backend.setup.ts`):
+
+- Sets `NODE_ENV=test`, `DATABASE_URL=postgresql://test:test@localhost/test_db`
+- No Postgres service in `.github/workflows/test.yml`; tests that need a DB may fail or use mocks
+- Future placeholders: "Set up test database", "Set up test Redis"
+
+**Frontend setup:** `tests/setup/frontend.setup.ts` (implied by vitest.config.client.ts).
+
+### Gaps Summary
+
+| Gap | Impact |
+|-----|--------|
+| No DATABASE_URL / Postgres in CI | Integration tests requiring DB will fail in CI |
+| Health endpoints not implemented | Load balancers / k8s cannot probe readiness |
+| No Docker / containerization | Manual deploy; no reproducible image |
+| Coverage merge | Backend and frontend coverage overwrite; enforce-coverage may use wrong report |
+| Build does not validate env | Misconfig discovered only at runtime |
+| Lint `continue-on-error: true` | Lint failures do not fail CI |
+| No migrations runner | Schema changes require manual SQL and coordination |
+| No `.env.example` | New contributors lack a template |
 
 ---
 
 ## Phase 7: Dependencies & Technical Debt
 
-### Dependencies
+### Dependency Overview
 
-- Core deps are current (React 18, Express 4, Drizzle, Zod, etc.).
-- `npm audit` failed (registry/certificate); re-run with default registry to check advisories.
+**Production (~55 deps):** React 18, Express 4, Drizzle ORM, Zod, pg, redis, nodemailer, multer, helmet, csurf, express-rate-limit, rate-limit-redis, Radix UI (20+ packages), TanStack Query, Wouter, Recharts, Framer Motion, date-fns, etc.
 
-### Technical Debt (TODOs)
+**Dev (~35 deps):** Vitest, Vite 7, TypeScript 5.6, ESLint 9, Prettier, Testing Library, MSW, fast-check, patch-package, esbuild, etc.
 
-| File | Issue |
-|------|-------|
-| `server/storage.ts` | Password verification when `passwordHash` exists; email confirmation tokens |
-| `server/domains/identity/routes.ts` | Store password properly; file storage; org lookup |
-| `client/src/pages/organization-settings.tsx` | Email template update API |
-| `tests/backend/multi-tenant-isolation.test.ts` | Use real DB instead of mocks |
-| `client/src/lib/auth-utils.ts` | Error handling; return URL support |
-| `client/src/pages/landing.tsx` | Analytics |
+**Engines:** `node: ">=20.19.0"`
+
+**Optional:** `bufferutil` (ws performance).
+
+### Dependency Health
+
+**`npm audit`:** Fails with registry/certificate error (e.g. taobao mirror). Re-run with default registry (`registry.npmjs.org`) to check advisories. Status unknown without valid audit.
+
+**Core stack versions:** React 18.3, Express 4.21, Drizzle 0.39, Zod 3.24, Vite 7.3, TypeScript 5.6—all current as of Feb 2025.
+
+### Unused / Orphaned Dependencies
+
+| Package | Status | Notes |
+|---------|--------|-------|
+| **rate-limit-redis** | Imported, not used | `RedisStore` imported in `server/security.ts` but in-memory store used; package retained for future multi-instance |
+| **@types/memoizee**, **@types/multer** | In `dependencies` | Type-only; typically belong in `devDependencies` |
+| **jsonwebtoken**, **openai**, **stripe**, **xlsx**, **axios**, **@google/generative-ai**, **uuid** | In build allowlist only | Not in `package.json`; build script allowlists them for future bundling. No runtime impact. |
+
+**Build allowlist** (`script/build.ts`): Lists packages to bundle (not external). Allowlist includes several packages not installed—aspirational for future integrations.
+
+### Patches
+
+**postinstall:** `patch-package` runs on `npm install`. No `patches/` directory found; no patches applied. Safe to remove postinstall if no patches are ever added, or keep for future use.
+
+### TypeScript / ESLint Strictness
+
+| Rule | Status | Impact |
+|------|--------|--------|
+| `@typescript-eslint/no-explicit-any` | **Off** | `any` allowed; type safety weakened |
+| `@typescript-eslint/no-unused-vars` | Warn | Unused vars reported; `_` prefix ignored |
+| `no-console` | Not configured | Console usage not restricted (Phase 2) |
+| `react-hooks/purity` | Off | Purity enforcement disabled |
+
+### Package Metadata
+
+**Name:** `rest-express`—likely from a template; consider renaming to `ubos` for consistency.
+
+### Technical Debt: In-Code TODOs
+
+| File | TODO / FIXME | Priority |
+|------|---------------|----------|
+| `server/storage.ts` | Verify password when `passwordHash` exists; store confirmation token; send actual email (Task 4.2) | High |
+| `server/domains/identity/routes.ts` | Store password properly (Task 4.2); file storage; org lookup; get actual user/org/role names | High |
+| `client/src/pages/organization-settings.tsx` | Email template update API | Medium |
+| `tests/backend/multi-tenant-isolation.test.ts` | Use real DB instead of mocks | Medium |
+| `client/src/lib/auth-utils.ts` | Error handling; return URL support | Low |
+| `client/src/pages/landing.tsx` | Analytics tracking | Low |
+| `client/src/hooks/use-mobile.tsx` | Tablet breakpoint detection | Low |
+| `client/src/components/theme-toggle.tsx` | Three-way toggle (light/dark/system) | Low |
+| `tests/setup/backend.setup.ts` | Set up test database; set up test Redis | Medium |
+
+### Technical Debt: GAP_ANALYSIS Alignment
+
+GAP_ANALYSIS calls out:
+
+- **Soft deletes** – Hard deletes only; no `deleted_at`
+- **Activity event auto-logging** – Partial (permission audit); not full timeline
+- **Outbox** – Implemented but not multi-instance safe (Phase 5)
+- **Workflow engine** – Implemented; code-only handlers (Phase 5)
+- **Pagination** – Clients only; 10 other list endpoints unpaginated (Phase 4)
+- **File upload + presign** – Local disk only; no S3/MinIO (Phase 1)
+
+### Dependency Recommendations
+
+1. **Audit:** Run `npm audit` with default registry; fix any high/critical findings.
+2. **Types:** Move `@types/memoizee` and `@types/multer` to `devDependencies`.
+3. **RedisStore:** Use `rate-limit-redis` when `REDIS_URL` is set, or remove the package if multi-instance is not planned.
+4. **Strictness:** Enable `@typescript-eslint/no-explicit-any` as `warn`; fix over time.
+5. **Dep pruning:** Run `npx depcheck` to find unused dependencies.
+
+### Information Gaps Addressed
+
+| Gap | Resolution |
+|-----|------------|
+| npm audit status? | Fails (registry); re-run with default registry |
+| Unused deps? | rate-limit-redis imported but not used; build allowlist has uninstalled packages |
+| Type-only in prod? | @types/memoizee, @types/multer in dependencies |
+| TODO count/location? | 15+ TODOs across 9 files; storage and identity highest priority |
+| Patches? | None; postinstall runs patch-package |
 
 ---
 

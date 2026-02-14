@@ -10,12 +10,44 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
 - 📋 57 P1 requirements planned (Enhanced usability)
 - 📋 31 P2 requirements planned (Competitive differentiation)
 
-**Implementation Strategy:**
-1. Complete remaining P0 requirements for MVP launch
-2. Implement P1 requirements by domain for competitive parity
-3. Add P2 requirements for market differentiation
+**Implementation Strategy (Tier-Based):**
+1. **Tier 0** – Stop the bleeding: quick fixes from ANALYSIS (hardcoded creds, debug logging, RBAC seeds, etc.)
+2. **Tier 1** – Production foundation: security, tests, observability, deployment (tasks 6.1–6.4)
+3. **Tier 2** – Architecture solidification: migrations, storage split, Docker, soft deletes, outbox, session wiring, activity auto-logging
+4. **Tier 3** – Complete README promise: timeline, scheduling, portal, workflow engine, approvals, invoicing, custom fields, kanban, folders, search
+5. **Tier 4** – Flagship workflows: 6 cross-domain workflows from README
+6. **Tier 5** – Hardening: 2FA, sessions, encryption, GDPR, SOC2, accessibility, performance, real-time messaging
+7. **Tier 6** – P2 competitive differentiation (tasks 86–103)
 
 **Technology Stack:** TypeScript 5.6, Node.js 20.x, Express 4, React 18, PostgreSQL, Drizzle ORM, Zod validation, Vitest testing
+
+---
+
+## TIER 0: STOP THE BLEEDING (~2 hours)
+
+*Quick fixes from ANALYSIS critical issues. Complete before Tier 1.*
+
+- [ ] 0.1 Remove hardcoded credentials
+  - Remove hardcoded DATABASE_URL and password from `package.json` dev script
+  - Rotate exposed credentials
+  - _Source: ANALYSIS Top 5 Critical #1_
+
+- [ ] 0.2 Gate debug logging
+  - Gate `console.log` in `App.tsx` and `use-auth.ts` behind `import.meta.env.DEV`
+  - Replace `console.error` in dashboard route with structured logger
+  - _Source: ANALYSIS Top 5 Critical #2, #5_
+
+- [ ] 0.3 Fix deprecated API usage
+  - Replace `req.connection.remoteAddress` with `req.socket?.remoteAddress` in permissions middleware
+  - _Source: ANALYSIS Top 5 Critical #3_
+
+- [ ] 0.4 Add missing RBAC permission seeds
+  - Add seeds for: `organizations`, `dashboard`, `engagements`, `vendors`, `threads`
+  - _Source: ANALYSIS Phase 3 RBAC mismatch_
+
+- [ ] 0.5 Update .env.example
+  - Add `REDIS_URL`, `ALLOWED_ORIGINS`, `TRUST_PROXY`, and other required env vars
+  - Ensure new developers can run locally from docs alone
 
 ---
 
@@ -174,9 +206,11 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
   - **Results:** All P0 functionality operational, 85% backend tests passing, robust security framework
   - **Documentation:** docs/mvp/task-6.1-mvp-validation-report.md
 
-### Domain: Code Quality & Technical Debt Resolution
+### Domain: Code Quality & Technical Debt Resolution (Tier 1)
 
-- [ ] 6.1 Complete Critical Missing Implementations
+**Execution order:** A (security) → B (tests) → C (observability) → D (deployment)
+
+- [ ] 6.1 Complete Critical Missing Implementations *(Priority A)*
   - [ ] 6.1.1 Implement secure password storage
     - Replace placeholder password storage with Argon2id hashing (OWASP 2026 standards)
     - Update user creation flow to properly hash passwords
@@ -198,29 +232,32 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Complete email template integration with actual data
     - _Requirements: Email functionality, data consistency_
 
-- [ ] 6.2 Fix Test Environment Issues
+- [ ] 6.2 Fix Test Environment Issues *(Priority B)*
   - [ ] 6.2.1 Resolve database authentication problems
     - Fix test database credentials and connection setup
     - Ensure proper test database isolation
+    - Add Postgres service to CI workflow
     - Resolve "password authentication failed for user 'test'" errors
     - Update test configuration for proper database access
     - _Requirements: Test reliability, CI/CD readiness_
 
   - [ ] 6.2.2 Fix deprecated API usage in middleware
-    - Replace deprecated req.connection.remoteAddress with req.socket.remoteAddress
+    - Replace deprecated req.connection.remoteAddress with req.socket?.remoteAddress
     - Update permission middleware to use modern Node.js APIs
     - Fix TypeError in permission logging (db.insert not a function)
     - Ensure compatibility with Node.js 20.x
     - _Requirements: API compatibility, test stability_
 
-  - [ ] 6.2.3 Improve test coverage to 95%
+  - [ ] 6.2.3 Achieve green CI (all tests passing)
     - Address 129 failing backend tests
     - Fix frontend component integration test failures (39/133 failing)
+    - Add Postgres service to CI workflow
     - Add missing integration test environment setup
     - Implement proper test database seeding and cleanup
-    - _Requirements: Test coverage, quality assurance_
+    - Target: all tests passing; no regressions (not 95% coverage—aim for rising coverage with each tier)
+    - _Requirements: Test reliability, CI/CD readiness_
 
-- [ ] 6.3 Production Readiness & Logging
+- [ ] 6.3 Production Readiness & Logging *(Priority C)*
   - [ ] 6.3.1 Replace console.log statements with structured logging
     - Replace 19+ console.log statements in identity routes with proper logger
     - Implement structured logging with correlation IDs
@@ -236,14 +273,18 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - _Requirements: Code cleanliness, maintainability_
 
   - [ ] 6.3.3 Implement proper error handling
+    - Generalize CRM error-handlers to shared module; apply across all domains
     - Add comprehensive error handling for file upload failures
     - Implement graceful degradation for missing dependencies
     - Add proper error responses for edge cases
     - Ensure consistent error format across all endpoints
     - _Requirements: Error handling, user experience_
 
-- [ ] 6.4 Security & Performance Hardening
+- [ ] 6.4 Security & Performance Hardening *(Priority A for 6.4.1; Priority D for 6.4.2, 6.4.3)*
   - [ ] 6.4.1 Complete security audit and fixes
+    - Enforce CSRF on state-changing routes
+    - Add file upload extension allowlist; validate MIME types
+    - Add path traversal checks for file operations
     - Audit all endpoints for security vulnerabilities
     - Implement additional rate limiting where needed
     - Add request validation for all API endpoints
@@ -251,6 +292,8 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - _Requirements: Security compliance, production readiness_
 
   - [ ] 6.4.2 Performance optimization
+    - Optimize dashboard COUNT instead of full-list fetch
+    - Add pagination to unpaginated endpoints (audit and fix ~10 endpoints)
     - Optimize database queries with proper indexing
     - Implement caching for frequently accessed data
     - Add response time monitoring
@@ -258,26 +301,80 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - _Requirements: Performance, scalability_
 
   - [ ] 6.4.3 Documentation and deployment readiness
+    - Add health check endpoints: `/health`, `/api/health`
+    - Update `.env.example` with all required variables (REDIS_URL, ALLOWED_ORIGINS, TRUST_PROXY, etc.)
+    - Update README to match Express/npm reality
     - Update API documentation with latest changes
     - Create deployment runbook and environment setup guides
-    - Add health check endpoints for monitoring
     - Implement proper environment variable validation
     - _Requirements: Documentation, deployment readiness_
 
-- [ ] 6.5 Final Production Readiness Checkpoint
-  - Ensure all critical implementations are complete
-  - Verify 95%+ test coverage across backend and frontend
+- [ ] 6.5 Tier 1 Completion Checkpoint
+  - Ensure all 6.1–6.4 implementations are complete
+  - Verify all tests passing; no regressions
   - Confirm production logging and monitoring are functional
   - Validate security hardening measures are in place
-  - Ask the user if questions arise before proceeding to Phase 2
+  - Ask the user if questions arise before proceeding to Tier 2
 
 ---
 
-## PHASE 2: ENHANCED USABILITY (P1 - 57 Requirements)
+## TIER 2: ARCHITECTURE SOLIDIFICATION
+
+*Structural foundation for safe feature development. Complete before Phase 2.*
+
+- [ ] 6A. Add migration runner
+  - Integrate `drizzle-kit` or equivalent for schema migrations
+  - Enable versioned migrations instead of manual SQL
+  - _Blocks: All P1/P2 schema work_
+
+- [ ] 6B. Split storage.ts into domain modules
+  - Split monolithic `storage.ts` (~1,685 lines) into domain-scoped modules
+  - Reduce merge conflicts and cognitive load for parallel development
+  - _Blocks: Parallel domain development_
+
+- [ ] 6C. Wire Redis for rate limiting
+  - Use RedisStore for rate limiting when `REDIS_URL` is set
+  - Enable multi-instance horizontal scaling
+  - _Blocks: Horizontal scaling_
+
+- [ ] 6D. Add outbox row-level locking
+  - Implement `SELECT FOR UPDATE SKIP LOCKED` for outbox processor
+  - Prevent double processing of events
+  - _Blocks: Event-driven features_
+
+- [ ] 6E. Add Dockerfile and docker-compose
+  - Create Dockerfile for app
+  - Create docker-compose with Postgres, Redis, MinIO (or S3-compatible)
+  - _Blocks: Onboarding, CI, deployment_
+
+- [ ] 6F. Add soft deletes to org-scoped tables
+  - Add `deleted_at` column to all org-scoped tables
+  - Update queries to filter soft-deleted rows
+  - _Blocks: GDPR (task 77), portal, timeline_
+
+- [ ] 6G. Wire session.ts into auth flow
+  - Integrate existing `session.ts` (server-side sessions) into authentication
+  - Enable server-side revocation and expiry tracking
+  - _Blocks: Session management (task 75), 2FA (task 73)_
+
+- [ ] 6H. Expand outbox event coverage
+  - Emit outbox events beyond deals (e.g., contacts, projects, invoices)
+  - _Blocks: Workflow engine, flagship workflows_
+
+- [ ] 6I. Implement activity auto-logging
+  - Wire middleware to automatically log CRUD operations to activity timeline
+  - Log entity create/update/delete with user attribution and timestamps
+  - _Source: GAP_ANALYSIS HIGH priority; Blocks: Timeline (task 9), compliance_
+
+---
+
+## PHASE 2: ENHANCED USABILITY (P1 - 57 Requirements) (Tier 3)
+
+**Recommended execution order:** Batch A (core vertical slice) → Batch B (agreements + revenue) → Batch C (enhanced domains). See Notes for defer list.
 
 ### Domain 1: CRM Enhancement (4 Requirements)
 
-- [ ] 7. Implement Contact Custom Fields
+- [ ] 7. Implement Contact Custom Fields *(Tier 3 Batch C)*
   - [ ] 7.1 Create custom fields schema
     - Add `customFieldDefinitions` table (name, type, entityType, validation, required)
     - Add `customFieldValues` table (entityId, fieldId, value)
@@ -302,7 +399,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - **Property 3: Custom field values match their type definitions**
     - **Validates: Requirements 4.3**
 
-- [ ] 8. Implement Lead Scoring
+- [ ] 8. Implement Lead Scoring *(Defer: nice-to-have, not in README non-negotiables)*
   - [ ] 8.1 Create lead scoring schema
     - Add `leadScoringRules` table (attribute, operator, value, points)
     - Add `leadScores` table (contactId/dealId, score, lastCalculated)
@@ -328,7 +425,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - _Requirements: 5.2, 5.5_
 
 
-- [ ] 9. Implement 360° Customer View
+- [ ] 9. Implement 360° Customer View *(Tier 3 Batch A – README Stage 1)*
   - [ ] 9.1 Create unified timeline query
     - Build query to aggregate all entity interactions
     - Include: emails, calls, meetings, deals, proposals, contracts, invoices, tasks, files
@@ -354,7 +451,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Add interaction logging UI to client/contact pages
     - _Requirements: 9.5_
 
-- [ ] 10. Implement Automated Lead Assignment
+- [ ] 10. Implement Automated Lead Assignment *(Defer: nice-to-have)*
   - [ ] 10.1 Create assignment rules schema
     - Add `assignmentRules` table (method, conditions, assignees)
     - Support methods: round-robin, load balancing, territory-based
@@ -378,12 +475,19 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - **Property 4: Round-robin distributes leads evenly**
     - **Validates: Requirements 10.2**
 
+- [ ] 11A. Implement Basic Full-Text Search *(Tier 3 Batch C – README Stage 1)*
+  - [ ] 11A.1 Create FTS API endpoint
+    - Add `GET /api/search` with query param for entity search (contacts, companies, deals, projects)
+    - Use PostgreSQL full-text search (tsvector/tsquery) or equivalent
+    - Enforce org-scoped results
+    - _Requirements: README Stage 1 search, basic discoverability_
+
 - [ ] 11. Checkpoint - CRM Enhancement Complete
   - Ensure all CRM enhancement tests pass, verify custom fields work across entities, ask the user if questions arise.
 
 ### Domain 2: Proposals & Contracts Enhancement (5 Requirements)
 
-- [ ] 12. Implement Proposal Builder with Templates
+- [ ] 12. Implement Proposal Builder with Templates *(Defer: heavy UI; wait for workflow engine to orchestrate proposal.accepted)*
   - [ ] 12.1 Create proposal template schema
     - Add `proposalTemplates` table (name, category, contentBlocks)
     - Support block types: text, image, pricing table, terms, signature, video
@@ -409,7 +513,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Test proposal rendering
     - _Requirements: 12.1, 12.2_
 
-- [ ] 13. Implement Proposal Pricing Tables
+- [ ] 13. Implement Proposal Pricing Tables *(Defer: see Task 12)*
   - [ ] 13.1 Create pricing table schema
     - Add line items structure to proposal content
     - Support quantity, unit price, total calculations
@@ -434,7 +538,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - **Validates: Requirements 13.2**
 
 
-- [ ] 14. Implement Proposal Tracking and Analytics
+- [ ] 14. Implement Proposal Tracking and Analytics *(Defer: see Task 12)*
   - [ ] 14.1 Create proposal tracking schema
     - Add `proposalViews` table (proposalId, viewerId, viewedAt, ipAddress, userAgent)
     - Add `proposalSectionViews` table (proposalId, section, timeSpent)
@@ -459,7 +563,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Test analytics calculations
     - _Requirements: 14.2, 14.4_
 
-- [ ] 15. Implement Electronic Signatures in Proposals
+- [ ] 15. Implement Electronic Signatures in Proposals *(Defer: see Task 12)*
   - [ ] 15.1 Create signature schema
     - Add signature fields to proposal content
     - Add `proposalSignatures` table (proposalId, signerId, signatureImage, signedAt, ipAddress)
@@ -492,7 +596,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Test certificate generation
     - _Requirements: 15.1, 15.2, 15.3_
 
-- [ ] 16. Implement Contract E-Signature Integration
+- [ ] 16. Implement Contract E-Signature Integration *(Defer: DocuSign; see Task 12)*
   - [ ] 16.1 Integrate with DocuSign API
     - Set up DocuSign OAuth authentication
     - Implement envelope creation and sending
@@ -518,7 +622,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Test signature status tracking
     - _Requirements: 16.1, 16.3_
 
-- [ ] 17. Implement Contract Approval Workflows
+- [ ] 17. Implement Contract Approval Workflows *(Tier 3 Batch B)*
   - [ ] 17.1 Create approval workflow schema
     - Add `approvalWorkflows` table (entityType, steps, approvers)
     - Add `approvalRequests` table (entityId, workflowId, status, currentStep)
@@ -556,7 +660,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
 
 ### Domain 3: Project Management Enhancement (4 Requirements)
 
-- [ ] 19. Implement Kanban Boards
+- [ ] 19. Implement Kanban Boards *(Tier 3 Batch C)*
   - [ ] 19.1 Create kanban board API
     - GET /api/projects/:id/board - Get board with tasks by status
     - PUT /api/tasks/:id/move - Move task to different status/column
@@ -660,7 +764,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
 
 ### Domain 4: Document Management Enhancement (4 Requirements)
 
-- [ ] 24. Implement Hierarchical Folder Structure
+- [ ] 24. Implement Hierarchical Folder Structure *(Tier 3 Batch C)*
   - [ ] 24.1 Create folder schema
     - Add `folders` table (name, parentId, type: cabinet/drawer/folder, path)
     - Update files table to reference folderId
@@ -800,7 +904,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
 
 ### Domain 5: Revenue Management Enhancement (5 Requirements)
 
-- [ ] 29. Implement Automated Invoice Creation
+- [ ] 29. Implement Automated Invoice Creation *(Tier 3 Batch B)*
   - [ ] 29.1 Create invoice schedule schema
     - Add `invoiceSchedules` table (engagementId, frequency, nextInvoiceDate, template, active)
     - Support frequencies: weekly, monthly, quarterly, annually
@@ -833,7 +937,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Test milestone-based billing triggers
     - _Requirements: 38.2, 38.4, 38.5_
 
-- [ ] 30. Implement Bill Capture and AI Data Extraction
+- [ ] 30. Implement Bill Capture and AI Data Extraction *(Defer: integration-heavy; defer to P2)*
   - [ ] 30.1 Integrate OCR/AI service
     - Set up integration with OCR service (Textract, Google Vision, or Tesseract)
     - Implement image/PDF upload endpoint
@@ -927,7 +1031,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Test payment status updates
     - _Requirements: 41.1, 41.4_
 
-- [ ] 33. Implement Automated Reconciliation
+- [ ] 33. Implement Automated Reconciliation *(Defer: integration-heavy; defer to P2)*
   - [ ] 33.1 Create reconciliation engine
     - Match payments to invoices by amount, reference, client name
     - Support partial payments and payment plans
@@ -961,7 +1065,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
 
 ### Domain 6: Communication Enhancement (4 Requirements)
 
-- [ ] 35. Implement Real-Time Messaging
+- [ ] 35. Implement Real-Time Messaging *(Tier 3 Batch C; Tier 5 for full implementation)*
   - [ ] 35.1 Set up WebSocket infrastructure
     - Add WebSocket server (Socket.io or native WebSockets)
     - Implement connection authentication
@@ -1045,7 +1149,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Test file size limit enforcement
     - _Requirements: 49.1, 49.4, 49.5_
 
-- [ ] 38. Implement Email Integration
+- [ ] 38. Implement Email Integration *(Defer: OAuth complexity; README says stubs for MVP)*
   - [ ] 38.1 Set up email sync
     - Integrate with IMAP/OAuth for email providers
     - Sync emails bidirectionally
@@ -1075,7 +1179,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Test auto-linking to contacts
     - _Requirements: 50.1, 50.2, 50.4_
 
-- [ ] 39. Implement Calendar Integration
+- [ ] 39. Implement Calendar Integration *(Defer: OAuth complexity; README says stubs for MVP)*
   - [ ] 39.1 Integrate with calendar providers
     - Set up OAuth for Google Calendar, Outlook, iCal
     - Sync events bidirectionally
@@ -1107,7 +1211,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
 
 ### Domain 7: Scheduling & Appointments (6 Requirements)
 
-- [ ] 41. Implement Meeting Scheduling Links
+- [ ] 41. Implement Meeting Scheduling Links *(Tier 3 Batch A – README Stage 1)*
   - [ ] 41.1 Create scheduling schema
     - Add `schedulingLinks` table (userId, meetingTypeId, url, active)
     - Add `meetingTypes` table (name, duration, bufferTime, availabilityId)
@@ -1139,7 +1243,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - _Requirements: 52A.3, 52A.4_
 
 
-- [ ] 42. Implement Availability Management
+- [ ] 42. Implement Availability Management *(Tier 3 Batch A – README Stage 1)*
   - [ ] 42.1 Create availability schema
     - Add `availabilitySchedules` table (userId, name, workingHours by day)
     - Add `availabilityOverrides` table (scheduleId, date, available, reason)
@@ -1270,7 +1374,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
 
 ### Domain 8: Client Portal Enhancement (7 Requirements)
 
-- [ ] 48. Implement Client Portal Dashboard
+- [ ] 48. Implement Client Portal Dashboard *(Tier 3 Batch A – README Stage 1)*
   - [ ] 48.1 Create portal dashboard API
     - GET /api/portal/dashboard - Get dashboard data (projects, tasks, invoices, messages, files)
     - Aggregate data for client view
@@ -1535,7 +1639,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
 
 ### Domain 10: Workflow Automation Enhancement (4 Requirements)
 
-- [ ] 58. Implement Visual Workflow Builder
+- [ ] 58. Implement Visual Workflow Builder *(Tier 3 Batch B – README flagship workflows)*
   - [ ] 58.1 Create workflow builder schema
     - Add `workflows` table (name, trigger, nodes, edges, active)
     - Add `workflowExecutions` table (workflowId, status, startedAt, completedAt, error)
@@ -1573,7 +1677,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Test pause/resume functionality
     - _Requirements: 67.1, 67.3, 67.7_
 
-- [ ] 59. Implement Workflow Triggers
+- [ ] 59. Implement Workflow Triggers *(Tier 3 Batch B)*
   - [ ] 59.1 Create trigger system
     - Support trigger types: record created, record updated, field changed, time-based, webhook
     - Implement trigger evaluation engine
@@ -1600,7 +1704,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Test scheduled trigger execution
     - _Requirements: 68.1, 68.2, 68.3_
 
-- [ ] 60. Implement Workflow Conditions
+- [ ] 60. Implement Workflow Conditions *(Tier 3 Batch B)*
   - [ ] 60.1 Create condition evaluation engine
     - Support condition types: equals, contains, greater than, less than, is empty, is not empty
     - Support AND/OR logic for multiple conditions
@@ -1623,7 +1727,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - _Requirements: 69.1, 69.2, 69.4_
 
 
-- [ ] 61. Implement Workflow Actions
+- [ ] 61. Implement Workflow Actions *(Tier 3 Batch B)*
   - [ ] 61.1 Create action execution engine
     - Support action types: update field, create record, send email, create task, send notification, call webhook
     - Support dynamic values from trigger data
@@ -1871,7 +1975,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
 - [ ] 72. Checkpoint - Integrations Complete
   - Ensure all integration tests pass, verify accounting sync works, confirm payment gateways are functional, ask the user if questions arise.
 
-### Domain 13: Security & Compliance Enhancement (5 Requirements)
+### Domain 13: Security & Compliance Enhancement (5 Requirements) *(Tier 5)*
 
 - [ ] 73. Implement Two-Factor Authentication (2FA)
   - [ ] 73.1 Create 2FA schema
@@ -2042,7 +2146,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
 - [ ] 79. Checkpoint - Security & Compliance Complete
   - Ensure all security tests pass, verify 2FA works, confirm encryption is functional, ask the user if questions arise.
 
-### Domain 14: Mobile & Accessibility (2 Requirements)
+### Domain 14: Mobile & Accessibility (2 Requirements) *(Tier 5)*
 
 - [ ] 80. Implement Mobile-Responsive Design
   - [ ] 80.1 Make all pages mobile-responsive
@@ -2096,7 +2200,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
 - [ ] 82. Checkpoint - Mobile & Accessibility Complete
   - Ensure all mobile and accessibility tests pass, verify responsive design works on devices, confirm WCAG compliance, ask the user if questions arise.
 
-### Domain 15: Performance & Scalability (1 Requirement)
+### Domain 15: Performance & Scalability (1 Requirement) *(Tier 5)*
 
 - [ ] 83. Implement Performance Optimization
   - [ ] 83.1 Optimize page load performance
@@ -2150,7 +2254,34 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
 ---
 
 
-## PHASE 3: COMPETITIVE DIFFERENTIATION (P2 - 31 Requirements)
+## TIER 4: FLAGSHIP WORKFLOWS
+
+*Implement the 6 cross-domain workflows from README Deliverable E. Requires Tier 3 workflow engine (tasks 58–61).*
+
+- [ ] 85A. appointment.booked
+  - On booking: create contact, portal user, folder template, project skeleton
+- [ ] 85B. proposal.accepted
+  - On acceptance: send contract for signature; on signed → activate project + invoice plan
+- [ ] 85C. file.request.completed
+  - On completion: attach file, create review task, notify
+- [ ] 85D. milestone/task.completed
+  - On completion: draft invoice, approval, issue to ledger stub, notify portal
+- [ ] 85E. invoice.paid
+  - On payment: update CRM status/timeline, schedule follow-up
+- [ ] 85F. bill.received
+  - On receipt: approval routing, ledger stub, status/timeline update
+
+**Integration stubs (Tier 4):**
+- [ ] 85G. E-sign webhook handler
+  - Implement webhook endpoint for e-sign providers (DocuSign, etc.) to receive signature events
+- [ ] 85H. Ledger sync mapping
+  - Define mapping between UBOS entities and accounting ledger; stub sync interface
+- [ ] 85I. S3/MinIO object storage
+  - Integrate S3-compatible storage (MinIO for local) for files, avatars, logos
+
+---
+
+## PHASE 3: COMPETITIVE DIFFERENTIATION (P2 - 31 Requirements) (Tier 6)
 
 ### Advanced CRM Features (3 Requirements)
 
@@ -2491,29 +2622,25 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
 
 ## Notes
 
-### Implementation Priorities
+### Implementation Priorities (Tier-Based)
 
-**Phase 1 (P0)**: Focus on completing the 4 remaining MVP requirements to achieve a shippable product with core functionality.
+**Tier 0**: Stop the bleeding (~2h). Hardcoded creds, debug logging, req.connection, RBAC seeds, .env.example.
 
-**Phase 2 (P1)**: Implement high-value features domain by domain to achieve competitive parity with best-in-class tools. Recommended order:
-1. Security & User Management (RBAC, invitations, profiles, settings)
-2. CRM Enhancement (custom fields, lead scoring, 360° view, assignment)
-3. Proposals & Contracts (builder, pricing, tracking, e-signatures, approvals)
-4. Project Management (kanban, time tracking, capacity, recurring work)
-5. Document Management (folders, versioning, permissions, sharing)
-6. Revenue Management (automation, bill capture, approvals, payments, reconciliation)
-7. Communication (real-time, mentions, files, email, calendar)
-8. Scheduling (links, availability, round-robin, reminders, customization, templates)
-9. Client Portal (dashboard, tasks, documents, requests, approvals, invoices, messaging, branding)
-10. Activity Timeline (change history with diffs)
-11. Workflow Automation (visual builder, triggers, conditions, actions)
-12. Reporting & Analytics (widgets, custom reports, forecasting, export)
-13. Integrations (accounting, email, calendar, payments, team management)
-14. Security & Compliance (2FA, IP whitelist, sessions, encryption, GDPR, SOC2)
-15. Mobile & Accessibility (responsive design, WCAG compliance)
-16. Performance (optimization, database tuning)
+**Tier 1**: Production foundation. Execute 6.1–6.4 in order: A (security: password hashing, CSRF, file storage) → B (tests: fix middleware, CI Postgres, green tests) → C (observability: logger, error handlers) → D (deployment: health endpoints, pagination).
 
-**Phase 3 (P2)**: Add advanced features for competitive differentiation.
+**Tier 2**: Architecture solidification. Migration runner, split storage.ts, Redis rate limiting, outbox locking, Docker, soft deletes, wire session.ts, expand outbox events, activity auto-logging.
+
+**Tier 3 (Phase 2 P1)** – Recommended order:
+- **Batch A (Core vertical slice):** Task 9 (360° timeline), Tasks 41–42 (scheduling), Task 48 (portal), Basic search (11A)
+- **Batch B (Agreements + Revenue):** Tasks 58–61 (workflow engine), Task 17 (approvals), Task 29 (invoicing)
+- **Batch C (Enhanced domains):** Task 7 (custom fields), Task 19 (kanban), Task 24 (folders), Task 35 (real-time)
+- **Defer:** Tasks 8, 10 (lead scoring, assignment); 12–16 (proposal builder, DocuSign); 30, 33 (bill OCR, reconciliation); 38–39 (email/calendar OAuth)
+
+**Tier 4**: Flagship workflows. Implement 6 cross-domain workflows from README plus integration stubs (e-sign webhook, ledger sync mapping, S3/MinIO).
+
+**Tier 5**: Hardening. 2FA, sessions, encryption, GDPR, SOC2, accessibility, performance, full real-time messaging.
+
+**Tier 6 (Phase 3 P2)**: Competitive differentiation. Tasks 86–103.
 
 
 ### Task Conventions
@@ -2559,11 +2686,15 @@ Each property test must include a comment tag referencing the design document:
 
 ## Summary
 
-This implementation plan covers all 111 requirements across 16 domains for the UBOS platform:
+This implementation plan covers all 111 requirements across 16 domains for the UBOS platform, ordered by tier:
 
-- **Phase 1 (P0)**: 4 remaining MVP requirements
-- **Phase 2 (P1)**: 57 high-value requirements for competitive parity
-- **Phase 3 (P2)**: 31 advanced requirements for market differentiation
+- **Tier 0**: Stop the bleeding (~2h) — quick fixes from ANALYSIS
+- **Tier 1 (Phase 1)**: Production foundation — security, tests, observability, deployment
+- **Tier 2**: Architecture solidification — migrations, storage split, Docker, soft deletes, outbox, session wiring
+- **Tier 3 (Phase 2 P1)**: Complete README promise — timeline, scheduling, portal, workflow engine, approvals, invoicing, custom fields, kanban, folders, search
+- **Tier 4**: Flagship workflows — 6 cross-domain workflows plus integration stubs (e-sign webhook, ledger sync, S3/MinIO)
+- **Tier 5**: Hardening — 2FA, sessions, encryption, GDPR, SOC2, accessibility, performance, real-time
+- **Tier 6 (Phase 3 P2)**: Competitive differentiation — 31 advanced requirements
 
 The plan is organized to enable incremental delivery with frequent checkpoints, comprehensive testing, and clear traceability to requirements.
 
