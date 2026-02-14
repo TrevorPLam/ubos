@@ -1,6 +1,9 @@
+# Dependencies
 node_modules
 dist
 .DS_Store
+
+# Build artifacts
 server/public
 vite.config.ts.*
 *.tar.gz
@@ -10,7 +13,118 @@ coverage
 .vitest
 *.lcov
 
-# Local state / secrets
+# Local state / secrets (CRITICAL: Never commit these)
 .local/
 .env
 .env.*
+.envrc
+*.env.local
+*.env.development
+*.env.production
+*.env.test
+
+# Security: Secret files and credentials
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+secrets/
+credentials/
+.creds/
+
+# Security: Database and backup files
+*.sql
+*.db
+*.sqlite
+*.sqlite3
+backups/
+dumps/
+
+# Security: Log files that might contain sensitive data
+*.log
+logs/
+debug.log
+error.log
+access.log
+
+# Security: Temporary files that might contain secrets
+tmp/
+temp/
+.tmp/
+*.tmp
+*.temp
+
+# IDE and editor files (might contain local paths or secrets)
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+Thumbs.db
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# Package manager lock files (keep these, but exclude any with embedded secrets)
+# package-lock.json (keep - needed for reproducible builds)
+# yarn.lock (keep - needed for reproducible builds)
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# next.js build output
+.next
+
+# nuxt.js build output
+.nuxt
+
+# vuepress build output
+.vuepress/dist
+
+# Serverless directories
+.serverless
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test

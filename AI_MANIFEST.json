@@ -1,0 +1,98 @@
+{
+  "performance": {
+    "lighthouseMobile": 95,
+    "lighthouseDesktop": 95,
+    "maxBundleKB": 150,
+    "maxCSSKB": 50,
+    "maxImageMB": 1,
+    "maxFontKB": 200,
+    "coreWebVitals": {
+      "largestContentfulPaint": 2500,
+      "firstInputDelay": 100,
+      "cumulativeLayoutShift": 0.1,
+      "firstContentfulPaint": 1800,
+      "speedIndex": 3400,
+      "timeToInteractive": 3800
+    }
+  },
+  "security": {
+    "cspRequired": true,
+    "rateLimitingRequired": true,
+    "inputValidationRequired": true,
+    "outputEncodingRequired": true,
+    "securityHeadersRequired": true,
+    "secretsManagementRequired": true,
+    "dependencyScanningRequired": true,
+    "penetrationTestingRequired": true
+  },
+  "testing": {
+    "coverageTarget": 100,
+    "unitTestCoverage": 95,
+    "integrationTestCoverage": 80,
+    "e2eTestCoverage": 70,
+    "securityTestCoverage": 100,
+    "performanceTestCoverage": 90,
+    "accessibilityTestCoverage": 95
+  },
+  "accessibility": {
+    "wcagLevel": "2.2 AA",
+    "contrastRatio": 4.5,
+    "touchTargetSize": 44,
+    "keyboardNavigation": true,
+    "screenReaderSupport": true,
+    "semanticHtml": true,
+    "focusIndicators": true
+  },
+  "architecture": {
+    "adapterPatternRequired": true,
+    "middlewarePatternRequired": true,
+    "zodValidationRequired": true,
+    "environmentSchemaRequired": true,
+    "noInlineStyles": true,
+    "noDirectEnvAccess": true,
+    "serverComponentsPreferred": true,
+    "codeSplittingRequired": true
+  },
+  "marketing": {
+    "conversionOptimization": true,
+    "seoOptimization": true,
+    "socialProofRequired": true,
+    "trustSignalsRequired": true,
+    "heroFrameworkRequired": true,
+    "landingPageStructure": true,
+    "performanceImpact": "high"
+  },
+  "documentation": {
+    "apiDocumentationRequired": true,
+    "patternDocumentationRequired": true,
+    "securityDocumentationRequired": true,
+    "performanceDocumentationRequired": true,
+    "testingDocumentationRequired": true,
+    "deploymentDocumentationRequired": true
+  },
+  "monitoring": {
+    "realUserMonitoring": true,
+    "syntheticMonitoring": true,
+    "errorTracking": true,
+    "performanceMonitoring": true,
+    "securityMonitoring": true,
+    "uptimeMonitoring": true,
+    "alertingRequired": true
+  },
+  "compliance": {
+    "gdprCompliance": true,
+    "ccpaCompliance": true,
+    "accessibilityCompliance": true,
+    "securityCompliance": true,
+    "performanceCompliance": true,
+    "privacyByDesign": true
+  },
+  "quality": {
+    "codeReviewRequired": true,
+    "automatedTestingRequired": true,
+    "securityScanningRequired": true,
+    "performanceTestingRequired": true,
+    "accessibilityTestingRequired": true,
+    "documentationRequired": true
+  }
+}
