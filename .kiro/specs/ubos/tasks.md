@@ -174,6 +174,103 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
   - **Results:** All P0 functionality operational, 85% backend tests passing, robust security framework
   - **Documentation:** docs/mvp/task-6.1-mvp-validation-report.md
 
+### Domain: Code Quality & Technical Debt Resolution
+
+- [ ] 6.1 Complete Critical Missing Implementations
+  - [ ] 6.1.1 Implement secure password storage
+    - Replace placeholder password storage with Argon2id hashing (OWASP 2026 standards)
+    - Update user creation flow to properly hash passwords
+    - Add password verification during authentication
+    - Remove console.log placeholder for password storage
+    - _Requirements: Security compliance, production readiness_
+
+  - [ ] 6.1.2 Implement proper file storage system
+    - Replace placeholder avatar/logo URLs with actual file storage
+    - Implement secure file upload with proper directory structure
+    - Add file cleanup and management utilities
+    - Integrate with cloud storage or local filesystem properly
+    - _Requirements: File management, production readiness_
+
+  - [ ] 6.1.3 Complete email service integration
+    - Replace TODO comments with actual user/organization name retrieval
+    - Implement getOrganization method or use existing organization methods
+    - Remove placeholder data in invitation validation endpoint
+    - Complete email template integration with actual data
+    - _Requirements: Email functionality, data consistency_
+
+- [ ] 6.2 Fix Test Environment Issues
+  - [ ] 6.2.1 Resolve database authentication problems
+    - Fix test database credentials and connection setup
+    - Ensure proper test database isolation
+    - Resolve "password authentication failed for user 'test'" errors
+    - Update test configuration for proper database access
+    - _Requirements: Test reliability, CI/CD readiness_
+
+  - [ ] 6.2.2 Fix deprecated API usage in middleware
+    - Replace deprecated req.connection.remoteAddress with req.socket.remoteAddress
+    - Update permission middleware to use modern Node.js APIs
+    - Fix TypeError in permission logging (db.insert not a function)
+    - Ensure compatibility with Node.js 20.x
+    - _Requirements: API compatibility, test stability_
+
+  - [ ] 6.2.3 Improve test coverage to 95%
+    - Address 129 failing backend tests
+    - Fix frontend component integration test failures (39/133 failing)
+    - Add missing integration test environment setup
+    - Implement proper test database seeding and cleanup
+    - _Requirements: Test coverage, quality assurance_
+
+- [ ] 6.3 Production Readiness & Logging
+  - [ ] 6.3.1 Replace console.log statements with structured logging
+    - Replace 19+ console.log statements in identity routes with proper logger
+    - Implement structured logging with correlation IDs
+    - Add log levels (debug, info, warn, error) appropriately
+    - Ensure sensitive data is not logged
+    - _Requirements: Production logging, observability_
+
+  - [ ] 6.3.2 Remove dead code and placeholders
+    - Remove commented email service code blocks
+    - Clean up TODO comments that have been addressed
+    - Remove placeholder data structures
+    - Clean up unused imports and variables
+    - _Requirements: Code cleanliness, maintainability_
+
+  - [ ] 6.3.3 Implement proper error handling
+    - Add comprehensive error handling for file upload failures
+    - Implement graceful degradation for missing dependencies
+    - Add proper error responses for edge cases
+    - Ensure consistent error format across all endpoints
+    - _Requirements: Error handling, user experience_
+
+- [ ] 6.4 Security & Performance Hardening
+  - [ ] 6.4.1 Complete security audit and fixes
+    - Audit all endpoints for security vulnerabilities
+    - Implement additional rate limiting where needed
+    - Add request validation for all API endpoints
+    - Ensure proper CORS configuration
+    - _Requirements: Security compliance, production readiness_
+
+  - [ ] 6.4.2 Performance optimization
+    - Optimize database queries with proper indexing
+    - Implement caching for frequently accessed data
+    - Add response time monitoring
+    - Optimize frontend bundle size and loading
+    - _Requirements: Performance, scalability_
+
+  - [ ] 6.4.3 Documentation and deployment readiness
+    - Update API documentation with latest changes
+    - Create deployment runbook and environment setup guides
+    - Add health check endpoints for monitoring
+    - Implement proper environment variable validation
+    - _Requirements: Documentation, deployment readiness_
+
+- [ ] 6.5 Final Production Readiness Checkpoint
+  - Ensure all critical implementations are complete
+  - Verify 95%+ test coverage across backend and frontend
+  - Confirm production logging and monitoring are functional
+  - Validate security hardening measures are in place
+  - Ask the user if questions arise before proceeding to Phase 2
+
 ---
 
 ## PHASE 2: ENHANCED USABILITY (P1 - 57 Requirements)
