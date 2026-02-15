@@ -442,11 +442,9 @@ try {
 
 **RBAC flow:** `checkPermission(featureArea, action)` → queries `permissions`, `role_permissions`, `user_roles` → 403 if missing.
 
-**Permission seeding:** `docs/migrations/001-rbac-schema.sql` inserts permissions for: clients, contacts, deals, proposals, contracts, projects, tasks, invoices, bills, files, messages, settings, users, roles. No `dashboard` or `organizations` in the migration.
+**Permission seeding:** `docs/migrations/001-rbac-schema.sql` inserts permissions for: clients, contacts, deals, proposals, contracts, projects, tasks, invoices, bills, files, messages, settings, users, roles, **organizations**, **dashboard**, **engagements**, **vendors**, **threads**. All required permissions are present.
 
-**Mismatch:** Organization routes use `checkPermission("organizations", "view")` and `checkPermission("organizations", "edit")`, but the permissions table has `settings` (view/edit), not `organizations`. Organization routes may be effectively blocked for users with only seeded permissions unless `organizations` is added elsewhere.
-
-**Dashboard:** Uses `checkPermission("dashboard", "view")`; `dashboard` is not in the migration. Same risk.
+**Status:** ✅ RESOLVED - All missing permissions have been added to the migration file (lines 140-174). Organization routes use `checkPermission("organizations", "view")` and `checkPermission("organizations", "edit")`, which match the seeded permissions. Dashboard uses `checkPermission("dashboard", "view")` which is also properly seeded.
 
 ### Rate Limiting
 

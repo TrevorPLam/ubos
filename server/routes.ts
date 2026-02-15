@@ -17,7 +17,7 @@ import { revenueRoutes } from "./domains/revenue/routes";
 import { communicationsRoutes } from "./domains/communications/routes";
 import { agreementsRoutes } from "./domains/agreements/routes";
 import { engagementsRoutes } from "./domains/engagements/routes";
-import { filesRoutes } from "./domains/files/routes";
+import { fileRoutes } from "./routes/files";
 import { rbacRoutes } from "./domains/rbac/routes";
 import { organizationRoutes } from "./domains/organizations/routes";
 
@@ -35,7 +35,7 @@ export async function registerRoutes(server: Server, app: Express): Promise<void
   app.use(communicationsRoutes);
   app.use(agreementsRoutes);
   app.use(engagementsRoutes);
-  app.use(filesRoutes);
+  app.use(fileRoutes);
   app.use(rbacRoutes);
   app.use(organizationRoutes);
 

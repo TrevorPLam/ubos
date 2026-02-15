@@ -13,7 +13,8 @@ import {
 } from "../../middleware/auth";
 import { checkPermission } from "../../middleware/permissions";
 import { insertInvitationSchema, invitations, updateProfileSchema, updatePasswordSchema, updateNotificationPreferencesSchema } from "@shared/schema";
-// import { emailService } from "../../services/email";
+import { requireCsrf } from "../../csrf"; // 2026 security: CSRF protection
+import { fileStorageService } from "../../services/file-storage";
 
 // Configure multer for file uploads
 const upload = multer({
@@ -33,12 +34,84 @@ const upload = multer({
 export const identityRoutes = Router();
 
 // ==================== AUTH ====================
-// Minimal local auth endpoints (no external provider)
-identityRoutes.get("/api/login", async (_req, res) => {
+// 2026 Security: Implement proper password-based authentication
+// OWASP standards: Argon2id hashing, rate limiting, CSRF protection
+
+// Login validation schema
+const loginSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(1, "Password is required"),
+});
+
+identityRoutes.post("/api/login", requireCsrf, async (req, res) => {
+  try {
+    // Validate input
+    const validatedData = loginSchema.parse(req.body);
+    
+    // Find user by email
+    const user = await storage.getUserByEmail(validatedData.email);
+    if (!user || !user.passwordHash) {
+      // Security: Don't reveal if email exists
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Prevent timing attacks
+      return res.status(401).json({ 
+        error: "Invalid credentials",
+        message: "Email or password is incorrect"
+      });
+    }
+
+    // Verify password using Argon2id (2026 OWASP standards)
+    const isValidPassword = await storage.verifyPassword(user.id, validatedData.password);
+    if (!isValidPassword) {
+      return res.status(401).json({ 
+        error: "Invalid credentials",
+        message: "Email or password is incorrect"
+      });
+    }
+
+    // Set secure authentication cookie
+    const isProduction = process.env.NODE_ENV === "production";
+    const secureCookie = isProduction ? "; Secure" : "";
+    
+    res.setHeader(
+      "Set-Cookie",
+      `${USER_ID_COOKIE_NAME}=${encodeURIComponent(user.id)}; Path=/; HttpOnly; SameSite=Lax${secureCookie}`,
+    );
+
+    // Return user data (excluding sensitive fields)
+    const { passwordHash: _passwordHash, ...userResponse } = user;
+    res.json({
+      success: true,
+      user: userResponse
+    });
+
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ 
+        error: "Validation error",
+        details: error.errors
+      });
+    }
+    
+    console.error("Login error:", error);
+    res.status(500).json({ 
+      error: "Internal server error",
+      message: "Failed to process login"
+    });
+  }
+});
+
+// Development-only login (for testing)
+identityRoutes.get("/api/login", async (req, res) => {
+  // Only allow in development environment
+  if (process.env.NODE_ENV === "production") {
+    return res.status(403).json({ 
+      error: "Development endpoint not available in production"
+    });
+  }
+
   const userId = randomUUID();
   res.setHeader(
     "Set-Cookie",
-    // `Secure` is intentionally omitted for local HTTP dev; add it when you enforce HTTPS.
     `${USER_ID_COOKIE_NAME}=${encodeURIComponent(userId)}; Path=/; HttpOnly; SameSite=Lax`,
   );
   res.redirect("/");
@@ -420,14 +493,34 @@ identityRoutes.post("/api/invitations/:token/accept", upload.single('profilePhot
       email: invitation.email,
     });
 
-    // TODO: Store password properly (Task 4.2 - User Profile Management)
-    // For now, we'll skip password storage as it's outside the scope of this task
-    console.log(`User ${userId} created with password (to be properly hashed)`);
+    // Store password with Argon2id hashing (2026 OWASP standards)
+    await storage.updateUserPassword(userId, null, validatedData.password);
 
-    // TODO: Handle profile photo upload (Task 4.1 - User Profile Management)
-    // For now, we'll skip photo storage as it's outside the scope of this task
+    // Handle profile photo upload using FileStorageService (2026 best practices)
     if (req.file) {
-      console.log(`Profile photo uploaded for user ${userId}: ${req.file.originalname}`);
+      try {
+        const { fileStorageService } = await import('../../services/file-storage');
+        
+        const uploadedFile = await fileStorageService.uploadFile(
+          req.file.buffer,
+          req.file.originalname,
+          req.file.mimetype,
+          {
+            category: 'image',
+            organizationId: invitation.organizationId,
+            userId: userId,
+            optimize: true
+          }
+        );
+
+        // Update user avatar with secure file URL
+        await storage.updateUserAvatar(userId, uploadedFile.url);
+        
+        console.log(`Profile photo uploaded for user ${userId}: ${uploadedFile.originalName} -> ${uploadedFile.url}`);
+      } catch (error) {
+        console.error('Failed to upload profile photo:', error);
+        // Continue with user creation even if photo upload fails
+      }
     }
 
     // Update invitation status
@@ -748,6 +841,7 @@ identityRoutes.put("/api/users/me", requireAuth, async (req: AuthenticatedReques
 identityRoutes.post("/api/users/me/avatar", requireAuth, upload.single('avatar'), async (req: AuthenticatedRequest, res) => {
   try {
     const userId = getUserIdFromRequest(req)!;
+    const orgId = await getOrCreateOrg(userId);
     
     if (!req.file) {
       return res.status(400).json({ 
@@ -756,13 +850,21 @@ identityRoutes.post("/api/users/me/avatar", requireAuth, upload.single('avatar')
       });
     }
 
-    // TODO: Implement proper file storage (Task 4.2)
-    // For now, we'll simulate avatar upload with a placeholder URL
-    const avatarUrl = `/uploads/avatars/${userId}/${req.file.originalname}`;
-    console.log(`Avatar uploaded for user ${userId}: ${req.file.originalname} (storage to be implemented in Task 4.2)`);
+    // 2026 security: Use secure file storage service
+    const uploadedFile = await fileStorageService.uploadFile(
+      req.file.buffer,
+      req.file.originalname,
+      req.file.mimetype,
+      {
+        category: 'image',
+        organizationId: orgId,
+        userId,
+        optimize: true
+      }
+    );
 
     // Update user avatar URL
-    const updatedUser = await storage.updateUserAvatar(userId, avatarUrl);
+    const updatedUser = await storage.updateUserAvatar(userId, uploadedFile.url);
     
     if (!updatedUser) {
       return res.status(404).json({ 
@@ -773,10 +875,30 @@ identityRoutes.post("/api/users/me/avatar", requireAuth, upload.single('avatar')
 
     res.json({
       message: "Profile photo uploaded successfully",
-      profileImageUrl: avatarUrl,
+      profileImageUrl: uploadedFile.url,
+      file: {
+        id: uploadedFile.id,
+        originalName: uploadedFile.originalName,
+        size: uploadedFile.size,
+        mimeType: uploadedFile.mimeType
+      }
     });
   } catch (error) {
     console.error("Error uploading avatar:", error);
+    if (error instanceof Error) {
+      if (error.message.includes('Invalid file')) {
+        return res.status(400).json({ 
+          error: "Invalid file",
+          message: error.message 
+        });
+      }
+      if (error.message.includes('too large')) {
+        return res.status(413).json({ 
+          error: "File too large",
+          message: error.message 
+        });
+      }
+    }
     res.status(500).json({ error: "Failed to upload profile photo" });
   }
 });

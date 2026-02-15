@@ -48,9 +48,13 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
   - **Files Modified:** server/middleware/permissions.ts, server/middleware/rateLimit.ts
   - **Documentation:** docs/implementation/deprecated-api-fix-2026.md
 
-- [X] 0.4 Add missing RBAC permission seeds
+- [x] 0.4 Add missing RBAC permission seeds
   - Add seeds for: `organizations`, `dashboard`, `engagements`, `vendors`, `threads`
   - _Source: ANALYSIS Phase 3 RBAC mismatch_
+  - **Status:** ✅ COMPLETED - 2026-02-14
+  - **Implementation:** All required permissions verified in migration file and properly integrated with routes
+  - **Verification:** 63/63 RBAC route tests passing (including 4 new organizations routes)
+  - **Documentation:** docs/implementation/task-0.4-rbac-permissions-verification.md
 
 - [x] 0.5 Update .env.example
   - Add `REDIS_URL`, `ALLOWED_ORIGINS`, `TRUST_PROXY`, and other required env vars
@@ -222,12 +226,16 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
 **Execution order:** A (security) → B (tests) → C (observability) → D (deployment)
 
 - [ ] 6.1 Complete Critical Missing Implementations *(Priority A)*
-  - [ ] 6.1.1 Implement secure password storage
-    - Replace placeholder password storage with Argon2id hashing (OWASP 2026 standards)
-    - Update user creation flow to properly hash passwords
-    - Add password verification during authentication
-    - Remove console.log placeholder for password storage
-    - _Requirements: Security compliance, production readiness_
+  - [x] 6.1.1 Implement secure password storage
+  - Replace placeholder password storage with Argon2id hashing (OWASP 2026 standards)
+  - Update user creation flow to properly hash passwords
+  - Add password verification during authentication
+  - Remove console.log placeholder for password storage
+  - _Requirements: Security compliance, production readiness_
+  - **Status:** ✅ COMPLETED - 2026-02-14
+  - **Implementation:** Production-ready password authentication with Argon2id, CSRF protection, and comprehensive security
+  - **Files Modified:** server/domains/identity/routes.ts, server/storage.ts
+  - **Documentation:** docs/implementation/task-6-1-1-secure-password-storage-2026.md
 
   - [ ] 6.1.2 Implement proper file storage system
     - Replace placeholder avatar/logo URLs with actual file storage

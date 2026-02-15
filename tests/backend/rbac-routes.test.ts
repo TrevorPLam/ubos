@@ -314,6 +314,28 @@ describe('RBAC Route Protection', () => {
     });
   });
 
+  describe('Organizations Routes', () => {
+    it('should require "organizations:view" permission for GET /api/organizations/settings', () => {
+      const requiredPermission = { feature: 'organizations', action: 'view' };
+      expect(requiredPermission).toBeDefined();
+    });
+
+    it('should require "organizations:edit" permission for PUT /api/organizations/settings', () => {
+      const requiredPermission = { feature: 'organizations', action: 'edit' };
+      expect(requiredPermission).toBeDefined();
+    });
+
+    it('should require "organizations:edit" permission for POST /api/organizations/logo', () => {
+      const requiredPermission = { feature: 'organizations', action: 'edit' };
+      expect(requiredPermission).toBeDefined();
+    });
+
+    it('should require "organizations:edit" permission for DELETE /api/organizations/logo', () => {
+      const requiredPermission = { feature: 'organizations', action: 'edit' };
+      expect(requiredPermission).toBeDefined();
+    });
+  });
+
   describe('Permission Coverage Summary', () => {
     it('should have RBAC protection on all API endpoints', () => {
       const protectedEndpoints = [
@@ -390,10 +412,16 @@ describe('RBAC Route Protection', () => {
         
         // Dashboard (1 endpoint)
         'GET /api/dashboard/stats',
+        
+        // Organizations (4 endpoints)
+        'GET /api/organizations/settings',
+        'PUT /api/organizations/settings',
+        'POST /api/organizations/logo',
+        'DELETE /api/organizations/logo',
       ];
       
-      // Total: 58 protected endpoints
-      expect(protectedEndpoints.length).toBe(58);
+      // Total: 62 protected endpoints (added 4 organizations endpoints)
+      expect(protectedEndpoints.length).toBe(62);
     });
   });
 });

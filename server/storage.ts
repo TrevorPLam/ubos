@@ -26,34 +26,12 @@
 
 import { eq, and, desc, isNull, asc, sql, or, ilike, count, inArray } from "drizzle-orm";
 import { db } from "./db";
-import {
-  users,
-  organizations,
-  organizationMembers,
-  clientCompanies,
-  contacts,
-  deals,
-  proposals,
-  contracts,
-  engagements,
-  projects,
-  tasks,
-  milestones,
-  threads,
-  messages,
-  invoices,
-  bills,
-  vendors,
-  fileObjects,
-  activityEvents,
-  outbox,
-  projectTemplates,
-  invoiceSchedules,
-  permissions,
-  roles,
-  rolePermissions,
-  userRoles,
-  invitations,
+import { randomUUID } from "crypto";
+import { 
+  users, organizations, organizationMembers, clientCompanies, contacts, deals, proposals,
+  contracts, engagements, projects, tasks, milestones, threads, messages, invoices,
+  bills, vendors, fileObjects, activityEvents, outbox, projectTemplates, invoiceSchedules,
+  permissions, roles, rolePermissions, userRoles, invitations,
   type User,
   type UpsertUser,
   type Organization,
@@ -112,6 +90,7 @@ import type {
 
 export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>; // 2026 security: Email-based authentication
   upsertUser(user: UpsertUser): Promise<User>;
   getUserOrganization(userId: string): Promise<Organization | undefined>;
   createOrganization(org: InsertOrganization, ownerId: string): Promise<Organization>;
@@ -129,7 +108,7 @@ export interface IStorage {
     phone?: string;
     timezone?: string;
   }): Promise<User | undefined>;
-  updateUserPassword(userId: string, currentPassword: string, newPassword: string): Promise<boolean>;
+  updateUserPassword(userId: string, currentPassword: string | null, newPassword: string): Promise<boolean>;
   updateUserNotificationPreferences(userId: string, preferences: {
     email?: boolean;
     push?: boolean;
@@ -267,6 +246,12 @@ export class DatabaseStorage implements IStorage {
     return user || undefined;
   }
 
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    // 2026 security: Get user by email for authentication
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user || undefined;
+  }
+
   async upsertUser(userData: UpsertUser): Promise<User> {
     const [user] = await db
       .insert(users)
@@ -321,24 +306,76 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  async updateUserPassword(userId: string, currentPassword: string, newPassword: string): Promise<boolean> {
+  async checkEmailExists(email: string, excludeUserId?: string): Promise<boolean> {
+    let query = db.select().from(users).where(eq(users.email, email));
+    
+    if (excludeUserId) {
+      query = db.select().from(users).where(and(eq(users.email, email), sql`${users.id} != ${excludeUserId}`));
+    }
+    
+    const existingUser = await query.limit(1);
+    return existingUser.length > 0;
+  }
+
+  async sendEmailChangeConfirmation(userId: string, newEmail: string): Promise<void> {
+    // Generate confirmation token
+    const token = randomUUID();
+    const _expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+    
+    // Store token (would need emailVerificationTokens table)
+    // For now, just log - implementation would depend on email service
+    console.log(`Email change confirmation token for user ${userId}: ${token} -> ${newEmail}`);
+  }
+
+  async verifyPassword(userId: string, password: string): Promise<boolean> {
+    try {
+      const argon2 = await import('argon2');
+      
+      // Get user with password hash
+      const user = await db
+        .select({
+          id: users.id,
+          passwordHash: users.passwordHash,
+        })
+        .from(users)
+        .where(eq(users.id, userId))
+        .limit(1);
+
+      if (!user.length || !user[0].passwordHash) {
+        return false;
+      }
+
+      // Verify password using Argon2id
+      return await argon2.verify(user[0].passwordHash, password);
+    } catch (error) {
+      console.error('Password verification error:', error);
+      return false;
+    }
+  }
+
+  async updateUserPassword(userId: string, currentPassword: string | null, newPassword: string): Promise<boolean> {
     // 2026 security best practice: Implement proper password hashing with Argon2id
     // OWASP recommended configuration: m=19456 (19 MiB), t=2, p=1
     try {
-      const { argon2id } = await import('argon2');
+      const argon2 = await import('argon2');
       
-      // Get current user to verify existing password
+      // Get current user to verify existing password (if provided)
       const currentUser = await this.getUser(userId);
       if (!currentUser) {
         return false;
       }
       
-      // TODO: Verify current password hash when passwordHash field is added
-      // For now, we'll skip current password verification
+      // For existing users with current password, verify it first
+      if (currentPassword && currentUser.passwordHash) {
+        const isValidPassword = await argon2.verify(currentUser.passwordHash, currentPassword);
+        if (!isValidPassword) {
+          return false; // Current password is incorrect
+        }
+      }
       
       // Hash new password with 2026 OWASP standards
-      const passwordHash = await argon2id.hash(newPassword, {
-        type: argon2id.Argon2Type.Argon2id,
+      const passwordHash = await argon2.hash(newPassword, {
+        type: argon2.argon2id,
         memoryCost: 19456, // 19 MiB
         timeCost: 2, // iterations
         parallelism: 1, // threads
@@ -405,30 +442,7 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  async sendEmailChangeConfirmation(userId: string, newEmail: string): Promise<void> {
-    // 2026 best practice: Send confirmation email for email changes
-    // Generate secure confirmation token
-    const confirmationToken = randomUUID();
-    const expiresAt = new Date(Date.now() + (24 * 60 * 60 * 1000)); // 24 hours
-    
-    try {
-      // TODO: Store confirmation token in database (Task 4.2 enhancement)
-      console.log(`Email change confirmation for user ${userId}: ${newEmail} (token storage to be implemented in Task 4.2)`);
-      
-      // TODO: Send actual email using email service (Task 4.2 enhancement)
-      // await emailService.sendEmailChangeConfirmation({
-      //   to: newEmail,
-      //   confirmationLink: `${process.env.APP_URL}/confirm-email?token=${confirmationToken}`,
-      //   expiresAt
-      // });
-      
-      console.log(`Email change confirmation sent to ${newEmail} with token ${confirmationToken}`);
-    } catch (error) {
-      console.error('Failed to send email change confirmation:', error);
-      throw new Error('Failed to send email change confirmation');
-    }
-  }
-
+  
   async getUserOrganization(userId: string): Promise<Organization | undefined> {
     // Membership drives tenancy: a user can belong to 0..n organizations.
     // Today we pick the first match; upgrade later if you add org switching.
@@ -1233,13 +1247,49 @@ export class DatabaseStorage implements IStorage {
     return vendor;
   }
 
+  async getFileObject(id: string): Promise<FileObject | undefined> {
+    const [file] = await db.select().from(fileObjects).where(eq(fileObjects.id, id));
+    return file;
+  }
+
+  async getFileObject(id: string, orgId: string): Promise<FileObject | undefined> {
+    const [file] = await db
+      .select()
+      .from(fileObjects)
+      .where(and(eq(fileObjects.id, id), eq(fileObjects.organizationId, orgId)));
+    return file;
+  }
+
   async createFileObject(data: InsertFileObject): Promise<FileObject> {
     const [file] = await db.insert(fileObjects).values(data).returning();
     return file;
   }
 
-  async getFileObject(id: string): Promise<FileObject | undefined> {
-    const [file] = await db.select().from(fileObjects).where(eq(fileObjects.id, id));
+  async getFileObjectByPath(path: string, orgId: string): Promise<FileObject | undefined> {
+    const [file] = await db
+      .select()
+      .from(fileObjects)
+      .where(and(eq(fileObjects.path, path), eq(fileObjects.organizationId, orgId)));
+    return file;
+  }
+
+  async deleteFileObject(id: string, orgId: string): Promise<boolean> {
+    const result = await db
+      .delete(fileObjects)
+      .where(and(eq(fileObjects.id, id), eq(fileObjects.organizationId, orgId)));
+    return (result.rowCount ?? 0) > 0;
+  }
+
+  async updateFileObject(
+    id: string,
+    orgId: string,
+    data: Partial<InsertFileObject>,
+  ): Promise<FileObject | undefined> {
+    const [file] = await db
+      .update(fileObjects)
+      .set(data)
+      .where(and(eq(fileObjects.id, id), eq(fileObjects.organizationId, orgId)))
+      .returning();
     return file;
   }
 

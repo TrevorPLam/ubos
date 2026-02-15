@@ -34,21 +34,11 @@ import { checkPermission } from "../../middleware/permissions";
 import { 
   updateOrganizationSettingsSchema
 } from "@shared/schema";
+import { fileStorageService } from "../../services/file-storage";
 
 // Configure multer for file uploads
 const upload = multer({
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, path.join(process.cwd(), 'uploads', 'logos'));
-    },
-    filename: (req, file, cb) => {
-      // Generate unique filename with timestamp
-      const timestamp = Date.now();
-      const ext = path.extname(file.originalname);
-      const filename = `org-logo-${timestamp}${ext}`;
-      cb(null, filename);
-    },
-  }),
+  storage: multer.memoryStorage(),
   limits: {
     fileSize: 5 * 1024 * 1024, // 5MB limit
   },
@@ -228,11 +218,21 @@ organizationRoutes.post("/api/organizations/logo", requireAuth, checkPermission(
       });
     }
 
-    // Generate public URL for the uploaded logo
-    const logoUrl = `/uploads/logos/${req.file.filename}`;
+    // 2026 security: Use secure file storage service
+    const uploadedFile = await fileStorageService.uploadFile(
+      req.file.buffer,
+      req.file.originalname,
+      req.file.mimetype,
+      {
+        category: 'image',
+        organizationId: orgId,
+        userId,
+        optimize: true
+      }
+    );
 
     // Update organization with new logo URL
-    const updatedOrg = await storage.updateOrganizationLogo(orgId, logoUrl);
+    const updatedOrg = await storage.updateOrganizationLogo(orgId, uploadedFile.url);
 
     // Log activity event for audit trail
     await storage.createActivityEvent({
@@ -243,42 +243,45 @@ organizationRoutes.post("/api/organizations/logo", requireAuth, checkPermission(
       type: "updated",
       description: "Organization logo updated",
       metadata: {
-        logoUrl,
-        originalFilename: req.file.originalname,
-        fileSize: req.file.size,
+        logoUrl: uploadedFile.url,
+        originalFilename: uploadedFile.originalName,
+        fileSize: uploadedFile.size,
         timestamp: new Date().toISOString(),
       },
     });
 
     res.json({
       message: "Logo uploaded successfully",
-      logoUrl,
+      logoUrl: uploadedFile.url,
       organization: {
         id: updatedOrg.id,
         name: updatedOrg.name,
         logo: updatedOrg.logo,
         updatedAt: updatedOrg.updatedAt,
       },
+      file: {
+        id: uploadedFile.id,
+        originalName: uploadedFile.originalName,
+        size: uploadedFile.size,
+        mimeType: uploadedFile.mimeType
+      }
     });
   } catch (error) {
     // Safely log error without causing circular reference issues
     const errorMessage = error instanceof Error ? error.message : String(error);
     console.error("Error uploading organization logo:", errorMessage);
     
-    // Clean up uploaded file if there was an error
-    if (req.file) {
-      const fs = await import('fs/promises');
-      try {
-        await fs.unlink(req.file.path);
-      } catch (unlinkError) {
-        console.error("Failed to clean up uploaded file:", unlinkError instanceof Error ? unlinkError.message : String(unlinkError));
+    if (error instanceof Error) {
+      if (error.message.includes('Invalid file')) {
+        return res.status(400).json({ 
+          error: "Invalid file type. Only image files are allowed." 
+        });
       }
-    }
-
-    if (error instanceof Error && error.message.includes('Only image files are allowed')) {
-      return res.status(400).json({ 
-        error: "Invalid file type. Only image files are allowed." 
-      });
+      if (error.message.includes('too large')) {
+        return res.status(413).json({ 
+          error: "File too large. Maximum size is 5MB." 
+        });
+      }
     }
 
     res.status(500).json({ 
