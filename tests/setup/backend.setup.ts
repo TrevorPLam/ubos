@@ -18,7 +18,7 @@
  * - Validate console output (fail on unexpected errors/warnings)
  */
 
-import { beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
+import { beforeAll, afterAll, beforeEach, afterEach, vi } from 'vitest';
 import express from 'express';
 
 // Create test app
@@ -42,6 +42,17 @@ if (!process.env.TEST_DB_DRIVER) {
   process.env.TEST_DB_DRIVER = 'pg-mem';
 }
 
+// Set test environment variables for email service
+if (!process.env.MAILTRAP_HOST) {
+  process.env.MAILTRAP_HOST = 'localhost';
+}
+if (!process.env.MAILTRAP_USER) {
+  process.env.MAILTRAP_USER = 'test';
+}
+if (!process.env.MAILTRAP_PASS) {
+  process.env.MAILTRAP_PASS = 'test';
+}
+
 // Track console errors and warnings
 const consoleErrors: string[] = [];
 const consoleWarnings: string[] = [];
@@ -55,12 +66,21 @@ beforeAll(async () => {
 
   if (!isValidationTest) {
     try {
+      // Mock email service to avoid transporter issues in tests
+      vi.doMock('../../server/services/email', () => ({
+        emailService: {
+          sendInvitationEmail: vi.fn().mockResolvedValue(undefined),
+          sendBulkInvitationEmails: vi.fn().mockResolvedValue(undefined),
+          resendInvitationEmail: vi.fn().mockResolvedValue(undefined),
+        },
+      }));
+      
       const { identityRoutes: _identityRoutes } = await import('../../server/domains/identity/routes');
       const { organizationRoutes: _organizationRoutes } = await import('../../server/domains/organizations/routes');
       
       // Add routes to app
       app.use('/api', _identityRoutes);
-      app.use(_organizationRoutes);
+      app.use('/api', _organizationRoutes);
     } catch (error) {
       console.warn('Could not import routes (likely missing database):', error);
     }
