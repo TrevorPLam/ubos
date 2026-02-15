@@ -33,17 +33,40 @@ describe('Database', () => {
   });
 
   describe('Database URL validation', () => {
-    it('should throw error when DATABASE_URL is not set', async () => {
+    it('falls back to pg-mem in test env when DATABASE_URL is not set', async () => {
       delete process.env.DATABASE_URL;
-      
-      // Import should throw error
+      delete process.env.TEST_DB_DRIVER;
+
+      const dbModule = await import('../../server/db');
+
+      expect(dbModule.db).toBeDefined();
+      expect(dbModule.pool).toBeDefined();
+    });
+
+    it('falls back to pg-mem when TEST_DB_DRIVER=postgres but DATABASE_URL is placeholder', async () => {
+      process.env.TEST_DB_DRIVER = 'postgres';
+      process.env.DATABASE_URL = 'postgresql://test:test@localhost/test_db';
+
+      const dbModule = await import('../../server/db');
+
+      expect(dbModule.db).toBeDefined();
+      expect(dbModule.pool).toBeDefined();
+    });
+
+    it('throws outside test env when DATABASE_URL is not set', async () => {
+      process.env.NODE_ENV = 'production';
+      delete process.env.DATABASE_URL;
+      delete process.env.TEST_DB_DRIVER;
+
       await expect(async () => {
         await import('../../server/db');
       }).rejects.toThrow('DATABASE_URL must be set');
     });
 
     it('should not throw error when DATABASE_URL is set', async () => {
+      process.env.NODE_ENV = 'test';
       process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test';
+      delete process.env.TEST_DB_DRIVER;
       
       // Import should succeed
       const dbModule = await import('../../server/db');

@@ -2,7 +2,7 @@ import { Request, Response, NextFunction, RequestHandler } from "express";
 import { AuthenticatedRequest } from "./auth";
 import { db } from "../db";
 import { userRoles, rolePermissions, permissions, activityEvents } from "@shared/schema";
-import { eq, and, desc, sql } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
 
 /**
  * Permission checking middleware for RBAC enforcement with 2026 security standards
@@ -195,6 +195,11 @@ async function logPermissionCheck(data: {
   error?: string;
 }): Promise<void> {
   try {
+    if (typeof (db as any)?.insert !== "function") {
+      console.warn("Permission log skipped: db.insert unavailable (test/mock mode)");
+      return;
+    }
+
     await db.insert(activityEvents).values({
       organizationId: data.organizationId || 'system',
       entityType: 'permission_check',

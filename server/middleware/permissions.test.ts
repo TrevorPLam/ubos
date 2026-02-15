@@ -5,9 +5,12 @@ import { AuthenticatedRequest } from "./auth";
 import { db } from "../db";
 
 // Mock the database
+const mockInsertValues = vi.fn().mockResolvedValue(undefined);
+
 vi.mock("../db", () => ({
   db: {
     select: vi.fn(),
+    insert: vi.fn(() => ({ values: mockInsertValues })),
   },
 }));
 
@@ -15,16 +18,23 @@ describe("Permission Middleware", () => {
   let mockRequest: Partial<AuthenticatedRequest>;
   let mockResponse: Partial<Response>;
   let mockNext: NextFunction;
-  let statusMock: ReturnType<typeof vi.fn>;
-  let jsonMock: ReturnType<typeof vi.fn>;
+  let statusMock: Response['status'];
+  let jsonMock: Response['json'];
+
+  const createResponseMocks = () => {
+    const json = vi.fn() as unknown as Response['json'];
+    const status = vi.fn().mockReturnValue({ json }) as unknown as Response['status'];
+    return { status, json };
+  };
 
   beforeEach(() => {
     // Reset mocks before each test
     vi.clearAllMocks();
 
     // Setup mock response
-    jsonMock = vi.fn();
-    statusMock = vi.fn().mockReturnValue({ json: jsonMock });
+    const resp = createResponseMocks();
+    statusMock = resp.status;
+    jsonMock = resp.json;
 
     mockRequest = {
       user: {
@@ -40,6 +50,9 @@ describe("Permission Middleware", () => {
     };
 
     mockNext = vi.fn();
+
+    // Ensure db.insert is always available after clears
+    (db as any).insert = vi.fn(() => ({ values: mockInsertValues }));
   });
 
   afterEach(() => {
@@ -50,35 +63,15 @@ describe("Permission Middleware", () => {
     describe("Permission Granted Scenarios", () => {
       it("should call next() when user has the required permission", async () => {
         // Mock database responses for a user with permission
-        const mockSelect = vi.fn();
-        const mockFrom = vi.fn();
-        const mockWhere = vi.fn();
-        const mockInnerJoin = vi.fn();
-
-        // First query: get user roles
-        mockWhere.mockResolvedValueOnce([
-          { roleId: "role-admin", organizationId: "org-123" },
-        ]);
-
-        // Second query: get permissions
-        mockWhere.mockResolvedValueOnce([
-          {
-            permissionId: "perm-123",
-            featureArea: "clients",
-            permissionType: "view",
-          },
-        ]);
-
-        // Third query: get role permissions
-        mockWhere.mockResolvedValueOnce([
-          { roleId: "role-admin", permissionId: "perm-123" },
-        ]);
-
-        mockFrom.mockReturnValue({ where: mockWhere, innerJoin: mockInnerJoin });
-        mockInnerJoin.mockReturnValue({ where: mockWhere });
-        mockSelect.mockReturnValue({ from: mockFrom });
-
-        (db.select as any) = mockSelect;
+        (db.select as any) = vi.fn().mockReturnValue({
+          from: vi.fn().mockReturnValue({
+            where: vi.fn().mockReturnValue({
+              limit: vi.fn().mockResolvedValue([
+                { hasPermission: true, organizationId: "org-123" },
+              ]),
+            }),
+          }),
+        });
 
         const middleware = checkPermission("clients", "view");
         await middleware(
@@ -92,36 +85,15 @@ describe("Permission Middleware", () => {
       });
 
       it("should grant access when user has multiple roles with the permission", async () => {
-        const mockSelect = vi.fn();
-        const mockFrom = vi.fn();
-        const mockWhere = vi.fn();
-        const mockInnerJoin = vi.fn();
-
-        // User has multiple roles
-        mockWhere.mockResolvedValueOnce([
-          { roleId: "role-admin", organizationId: "org-123" },
-          { roleId: "role-manager", organizationId: "org-123" },
-        ]);
-
-        // Permission exists
-        mockWhere.mockResolvedValueOnce([
-          {
-            permissionId: "perm-123",
-            featureArea: "projects",
-            permissionType: "edit",
-          },
-        ]);
-
-        // One of the roles has the permission
-        mockWhere.mockResolvedValueOnce([
-          { roleId: "role-manager", permissionId: "perm-123" },
-        ]);
-
-        mockFrom.mockReturnValue({ where: mockWhere, innerJoin: mockInnerJoin });
-        mockInnerJoin.mockReturnValue({ where: mockWhere });
-        mockSelect.mockReturnValue({ from: mockFrom });
-
-        (db.select as any) = mockSelect;
+        (db.select as any) = vi.fn().mockReturnValue({
+          from: vi.fn().mockReturnValue({
+            where: vi.fn().mockReturnValue({
+              limit: vi.fn().mockResolvedValue([
+                { hasPermission: true, organizationId: "org-123" },
+              ]),
+            }),
+          }),
+        });
 
         const middleware = checkPermission("projects", "edit");
         await middleware(
@@ -135,32 +107,15 @@ describe("Permission Middleware", () => {
       });
 
       it("should grant access for different permission types on same feature", async () => {
-        const mockSelect = vi.fn();
-        const mockFrom = vi.fn();
-        const mockWhere = vi.fn();
-        const mockInnerJoin = vi.fn();
-
-        mockWhere.mockResolvedValueOnce([
-          { roleId: "role-admin", organizationId: "org-123" },
-        ]);
-
-        mockWhere.mockResolvedValueOnce([
-          {
-            permissionId: "perm-delete",
-            featureArea: "invoices",
-            permissionType: "delete",
-          },
-        ]);
-
-        mockWhere.mockResolvedValueOnce([
-          { roleId: "role-admin", permissionId: "perm-delete" },
-        ]);
-
-        mockFrom.mockReturnValue({ where: mockWhere, innerJoin: mockInnerJoin });
-        mockInnerJoin.mockReturnValue({ where: mockWhere });
-        mockSelect.mockReturnValue({ from: mockFrom });
-
-        (db.select as any) = mockSelect;
+        (db.select as any) = vi.fn().mockReturnValue({
+          from: vi.fn().mockReturnValue({
+            where: vi.fn().mockReturnValue({
+              limit: vi.fn().mockResolvedValue([
+                { hasPermission: true, organizationId: "org-123" },
+              ]),
+            }),
+          }),
+        });
 
         const middleware = checkPermission("invoices", "delete");
         await middleware(
@@ -175,33 +130,15 @@ describe("Permission Middleware", () => {
 
     describe("Permission Denied Scenarios", () => {
       it("should return 403 when user lacks the required permission", async () => {
-        const mockSelect = vi.fn();
-        const mockFrom = vi.fn();
-        const mockWhere = vi.fn();
-        const mockInnerJoin = vi.fn();
-
-        // User has a role
-        mockWhere.mockResolvedValueOnce([
-          { roleId: "role-viewer", organizationId: "org-123" },
-        ]);
-
-        // Permission exists
-        mockWhere.mockResolvedValueOnce([
-          {
-            permissionId: "perm-delete",
-            featureArea: "clients",
-            permissionType: "delete",
-          },
-        ]);
-
-        // But user's role doesn't have this permission
-        mockWhere.mockResolvedValueOnce([]);
-
-        mockFrom.mockReturnValue({ where: mockWhere, innerJoin: mockInnerJoin });
-        mockInnerJoin.mockReturnValue({ where: mockWhere });
-        mockSelect.mockReturnValue({ from: mockFrom });
-
-        (db.select as any) = mockSelect;
+        (db.select as any) = vi.fn().mockReturnValue({
+          from: vi.fn().mockReturnValue({
+            where: vi.fn().mockReturnValue({
+              limit: vi.fn().mockResolvedValue([
+                { hasPermission: false, organizationId: "org-123" },
+              ]),
+            }),
+          }),
+        });
 
         const middleware = checkPermission("clients", "delete");
         await middleware(
@@ -212,33 +149,22 @@ describe("Permission Middleware", () => {
 
         expect(statusMock).toHaveBeenCalledWith(403);
         expect(jsonMock).toHaveBeenCalledWith({
-          message: "Forbidden: Insufficient permissions",
-          details: "User does not have 'delete' permission for 'clients'",
+          code: "PERMISSION_DENIED",
+          message: "Access denied",
         });
         expect(mockNext).not.toHaveBeenCalled();
       });
 
       it("should return 403 when user has role but permission doesn't exist", async () => {
-        const mockSelect = vi.fn();
-        const mockFrom = vi.fn();
-        const mockWhere = vi.fn();
-        const mockInnerJoin = vi.fn();
-
-        mockWhere.mockResolvedValueOnce([
-          { roleId: "role-admin", organizationId: "org-123" },
-        ]);
-
-        // Permission doesn't exist in the system
-        mockWhere.mockResolvedValueOnce([]);
-
-        // No role permissions to check
-        mockWhere.mockResolvedValueOnce([]);
-
-        mockFrom.mockReturnValue({ where: mockWhere, innerJoin: mockInnerJoin });
-        mockInnerJoin.mockReturnValue({ where: mockWhere });
-        mockSelect.mockReturnValue({ from: mockFrom });
-
-        (db.select as any) = mockSelect;
+        (db.select as any) = vi.fn().mockReturnValue({
+          from: vi.fn().mockReturnValue({
+            where: vi.fn().mockReturnValue({
+              limit: vi.fn().mockResolvedValue([
+                { hasPermission: false, organizationId: "org-123" },
+              ]),
+            }),
+          }),
+        });
 
         const middleware = checkPermission("nonexistent", "view");
         await middleware(
@@ -248,35 +174,23 @@ describe("Permission Middleware", () => {
         );
 
         expect(statusMock).toHaveBeenCalledWith(403);
+        expect(jsonMock).toHaveBeenCalledWith({
+          code: "PERMISSION_DENIED",
+          message: "Access denied",
+        });
         expect(mockNext).not.toHaveBeenCalled();
       });
 
       it("should return 403 when user has wrong permission type for feature", async () => {
-        const mockSelect = vi.fn();
-        const mockFrom = vi.fn();
-        const mockWhere = vi.fn();
-        const mockInnerJoin = vi.fn();
-
-        mockWhere.mockResolvedValueOnce([
-          { roleId: "role-viewer", organizationId: "org-123" },
-        ]);
-
-        // User has 'view' permission but trying to 'edit'
-        mockWhere.mockResolvedValueOnce([
-          {
-            permissionId: "perm-edit",
-            featureArea: "projects",
-            permissionType: "edit",
-          },
-        ]);
-
-        mockWhere.mockResolvedValueOnce([]);
-
-        mockFrom.mockReturnValue({ where: mockWhere, innerJoin: mockInnerJoin });
-        mockInnerJoin.mockReturnValue({ where: mockWhere });
-        mockSelect.mockReturnValue({ from: mockFrom });
-
-        (db.select as any) = mockSelect;
+        (db.select as any) = vi.fn().mockReturnValue({
+          from: vi.fn().mockReturnValue({
+            where: vi.fn().mockReturnValue({
+              limit: vi.fn().mockResolvedValue([
+                { hasPermission: false, organizationId: "org-123" },
+              ]),
+            }),
+          }),
+        });
 
         const middleware = checkPermission("projects", "edit");
         await middleware(
@@ -286,26 +200,23 @@ describe("Permission Middleware", () => {
         );
 
         expect(statusMock).toHaveBeenCalledWith(403);
-        expect(jsonMock).toHaveBeenCalledWith(
-          expect.objectContaining({
-            message: "Forbidden: Insufficient permissions",
-          })
-        );
+        expect(jsonMock).toHaveBeenCalledWith({
+          code: "PERMISSION_DENIED",
+          message: "Access denied",
+        });
         expect(mockNext).not.toHaveBeenCalled();
       });
     });
 
     describe("Missing Role Scenarios", () => {
       it("should return 403 when user has no roles assigned", async () => {
-        const mockSelect = vi.fn();
-        const mockFrom = vi.fn();
-        const mockWhere = vi.fn();
-
-        // User has no roles
-        mockWhere.mockResolvedValueOnce([]);
-
-        mockFrom.mockReturnValue({ where: mockWhere });
-        mockSelect.mockReturnValue({ from: mockFrom });
+        const mockSelect = vi.fn().mockReturnValue({
+          from: vi.fn().mockReturnValue({
+            where: vi.fn().mockReturnValue({
+              limit: vi.fn().mockResolvedValue([]),
+            }),
+          }),
+        });
 
         (db.select as any) = mockSelect;
 
@@ -318,8 +229,8 @@ describe("Permission Middleware", () => {
 
         expect(statusMock).toHaveBeenCalledWith(403);
         expect(jsonMock).toHaveBeenCalledWith({
-          message: "Forbidden: No roles assigned",
-          details: "User has no roles assigned in any organization",
+          code: "INSUFFICIENT_PERMISSIONS",
+          message: "Access denied",
         });
         expect(mockNext).not.toHaveBeenCalled();
       });
@@ -336,7 +247,8 @@ describe("Permission Middleware", () => {
 
         expect(statusMock).toHaveBeenCalledWith(401);
         expect(jsonMock).toHaveBeenCalledWith({
-          message: "Unauthorized",
+          code: "AUTH_REQUIRED",
+          message: "Authentication required",
         });
         expect(mockNext).not.toHaveBeenCalled();
       });
@@ -353,7 +265,8 @@ describe("Permission Middleware", () => {
 
         expect(statusMock).toHaveBeenCalledWith(401);
         expect(jsonMock).toHaveBeenCalledWith({
-          message: "Unauthorized",
+          code: "AUTH_REQUIRED",
+          message: "Authentication required",
         });
         expect(mockNext).not.toHaveBeenCalled();
       });
@@ -383,7 +296,8 @@ describe("Permission Middleware", () => {
 
         expect(statusMock).toHaveBeenCalledWith(500);
         expect(jsonMock).toHaveBeenCalledWith({
-          message: "Internal server error while checking permissions",
+          code: "INTERNAL_ERROR",
+          message: "Internal server error",
         });
         expect(mockNext).not.toHaveBeenCalled();
         expect(consoleErrorSpy).toHaveBeenCalled();
@@ -536,31 +450,14 @@ describe("Permission Middleware", () => {
 
   describe("Integration scenarios", () => {
     it("should handle multiple permission checks for same user", async () => {
-      const mockSelect = vi.fn();
-      const mockFrom = vi.fn();
-      const mockWhere = vi.fn();
-      const mockInnerJoin = vi.fn();
-
-      // Setup for first permission check (view)
-      mockWhere.mockResolvedValueOnce([
-        { roleId: "role-admin", organizationId: "org-123" },
+      const firstLimit = vi.fn().mockResolvedValue([
+        { hasPermission: true, organizationId: "org-123" },
       ]);
-      mockWhere.mockResolvedValueOnce([
-        {
-          permissionId: "perm-view",
-          featureArea: "clients",
-          permissionType: "view",
-        },
-      ]);
-      mockWhere.mockResolvedValueOnce([
-        { roleId: "role-admin", permissionId: "perm-view" },
-      ]);
-
-      mockFrom.mockReturnValue({ where: mockWhere, innerJoin: mockInnerJoin });
-      mockInnerJoin.mockReturnValue({ where: mockWhere });
-      mockSelect.mockReturnValue({ from: mockFrom });
-
-      (db.select as any) = mockSelect;
+      (db.select as any) = vi.fn().mockReturnValue({
+        from: vi.fn().mockReturnValue({
+          where: vi.fn().mockReturnValue({ limit: firstLimit }),
+        }),
+      });
 
       const viewMiddleware = checkPermission("clients", "view");
       await viewMiddleware(
@@ -571,27 +468,25 @@ describe("Permission Middleware", () => {
 
       expect(mockNext).toHaveBeenCalledTimes(1);
 
-      // Reset for second check
-      vi.clearAllMocks();
+      // Reset for second check: recreate mocks so we keep expectations isolated
+      (db as any).insert = vi.fn(() => ({ values: mockInsertValues }));
+      jsonMock = vi.fn() as unknown as Response['json'];
+      statusMock = vi.fn().mockReturnValue({ json: jsonMock }) as unknown as Response['status'];
+      mockResponse = {
+        status: statusMock as any,
+        json: jsonMock as any,
+      } as unknown as Response;
+      mockNext = vi.fn();
 
-      // Setup for second permission check (edit) - should fail
-      mockWhere.mockResolvedValueOnce([
-        { roleId: "role-admin", organizationId: "org-123" },
+      // Second check: no permission
+      const secondLimit = vi.fn().mockResolvedValue([
+        { hasPermission: false, organizationId: "org-123" },
       ]);
-      mockWhere.mockResolvedValueOnce([
-        {
-          permissionId: "perm-edit",
-          featureArea: "clients",
-          permissionType: "edit",
-        },
-      ]);
-      mockWhere.mockResolvedValueOnce([]);
-
-      mockFrom.mockReturnValue({ where: mockWhere, innerJoin: mockInnerJoin });
-      mockInnerJoin.mockReturnValue({ where: mockWhere });
-      mockSelect.mockReturnValue({ from: mockFrom });
-
-      (db.select as any) = mockSelect;
+      (db.select as any) = vi.fn().mockReturnValue({
+        from: vi.fn().mockReturnValue({
+          where: vi.fn().mockReturnValue({ limit: secondLimit }),
+        }),
+      });
 
       const editMiddleware = checkPermission("clients", "edit");
       await editMiddleware(

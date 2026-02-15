@@ -15,6 +15,7 @@ import { checkPermission } from "../../middleware/permissions";
 import { insertInvitationSchema, invitations, updateProfileSchema, updatePasswordSchema, updateNotificationPreferencesSchema } from "@shared/schema";
 import { requireCsrf } from "../../csrf"; // 2026 security: CSRF protection
 import { fileStorageService } from "../../services/file-storage";
+import { emailService } from "../../services/email";
 
 // Configure multer for file uploads
 const upload = multer({
@@ -166,6 +167,8 @@ identityRoutes.post("/api/invitations", requireAuth, checkPermission("users", "c
   try {
     const userId = getUserIdFromRequest(req)!;
     const orgId = await getOrCreateOrg(userId);
+    const inviter = await storage.getUser(userId);
+    const organization = await storage.getOrganization(orgId);
     
     // Validate request body
     const validatedData = createInvitationSchema.parse(req.body);
@@ -204,17 +207,23 @@ identityRoutes.post("/api/invitations", requireAuth, checkPermission("users", "c
       expiresAt: expiresAt.toISOString(),
     });
 
-    // Send invitation email
-    // await emailService.sendInvitationEmail({
-    //   email: validatedData.email,
-    //   inviterName: testUser?.firstName || 'Team Member', // TODO: Get actual user name
-    //   organizationName: 'Test Organization', // TODO: Get actual org name
-    //   roleName: role.name,
-    //   invitationToken: token,
-    //   expiresAt: expiresAt
-    // });
-    
-    console.log(`Invitation created (email service disabled): ${validatedData.email}`);
+    // Send invitation email with real user/org data (2026 zero-trust: no placeholders)
+    try {
+      const inviterName = `${inviter?.firstName ?? ""} ${inviter?.lastName ?? ""}`.trim() || "Team Member";
+      const organizationName = organization?.name || "Your organization";
+
+      await emailService.sendInvitationEmail({
+        email: validatedData.email,
+        inviterName,
+        organizationName,
+        roleName: role.name,
+        invitationToken: token,
+        expiresAt,
+      });
+    } catch (emailError) {
+      console.error("Failed to send invitation email:", emailError);
+      return res.status(502).json({ error: "Failed to send invitation email" });
+    }
 
     res.status(201).json({
       id: invitation.id,
@@ -298,17 +307,26 @@ identityRoutes.post("/api/invitations/bulk", requireAuth, checkPermission("users
           expiresAt: expiresAt.toISOString(),
         });
 
-        // Send invitation email
-        // await emailService.sendInvitationEmail({
-        //   email: invitationData.email,
-        //   inviterName: 'Team Member', // TODO: Get actual user name
-        //   organizationName: 'Test Organization', // TODO: Get actual org name
-        //   roleName: role.name,
-        //   invitationToken: token,
-        //   expiresAt: expiresAt
-        // });
+        // Send invitation email with real user/org data
+        try {
+          const inviterName = `${inviter?.firstName ?? ""} ${inviter?.lastName ?? ""}`.trim() || "Team Member";
+          const organizationName = organization?.name || "Your organization";
 
-        console.log(`Bulk invitation created (email service disabled): ${invitationData.email}`);
+          await emailService.sendInvitationEmail({
+            email: invitationData.email,
+            inviterName,
+            organizationName,
+            roleName: role.name,
+            invitationToken: token,
+            expiresAt,
+          });
+        } catch (_emailError) {
+          errors.push({
+            email: invitationData.email,
+            error: "Failed to send invitation email",
+          });
+          continue;
+        }
 
         results.push({
           id: invitation.id,
@@ -417,9 +435,7 @@ identityRoutes.get("/api/invitations/:token/validate", async (req, res) => {
     }
 
     // Get organization and inviter details
-    // Note: getOrganization method doesn't exist, using a placeholder
-    // TODO: Implement getOrganization method or use existing organization methods
-    const organization = { name: "Test Organization" }; // Placeholder
+    const organization = await storage.getOrganization(invitation.organizationId);
     const inviter = await storage.getUser(invitation.invitedById);
     
     // Get role name if role exists

@@ -26,9 +26,21 @@ export const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Set test environment variables
-process.env.NODE_ENV = 'test';
-process.env.DATABASE_URL = 'postgresql://test:test@localhost/test_db';
+// Set test environment variables (respect overrides from CI/local)
+if (!process.env.NODE_ENV) {
+  process.env.NODE_ENV = 'test';
+}
+
+// Prefer caller-provided DATABASE_URL (e.g., CI Postgres service) and only
+// fall back to the local placeholder when none is supplied.
+if (!process.env.DATABASE_URL) {
+  process.env.DATABASE_URL = 'postgresql://test:test@localhost/test_db';
+}
+
+// Default to pg-mem for hermetic tests unless explicitly opting into Postgres.
+if (!process.env.TEST_DB_DRIVER) {
+  process.env.TEST_DB_DRIVER = 'pg-mem';
+}
 
 // Track console errors and warnings
 const consoleErrors: string[] = [];

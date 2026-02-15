@@ -27,7 +27,7 @@
 
 import fs from 'fs/promises';
 import path from 'path';
-import { fileStorageService } from '../services/file-storage';
+import { ALLOWED_FILE_TYPES, fileStorageService } from '../services/file-storage';
 import { storage } from '../storage';
 
 export interface StorageMetrics {
@@ -72,7 +72,7 @@ export async function getStorageMetrics(organizationIds?: string[]): Promise<Sto
   for (const orgId of orgIds) {
     try {
       const orgStats = await fileStorageService.getFileStatistics(orgId);
-      const org = await storage.getUserOrganization(orgId);
+      const org = await storage.getOrganizationSettings(orgId);
       
       metrics.organizationMetrics.push({
         organizationId: orgId,
@@ -114,17 +114,26 @@ export async function getStorageMetrics(organizationIds?: string[]): Promise<Sto
  * Helper function to get all organization IDs from file objects
  */
 async function getOrganizationIdsFromFiles(): Promise<string[]> {
-  try {
-    // Since getFileObjects requires orgId, we'll get org IDs from user organizations
-    // This is a limitation we'll work around by using a different approach
-    // For now, return empty array - this needs to be implemented differently
-    // or we need to add a method to get all organizations with files
-    console.warn('getOrganizationIdsFromFiles: Implementation needs storage method to get all organizations');
-    return [];
-  } catch (error) {
-    console.error('Failed to get organization IDs from files:', error);
-    return [];
+  const uploadsRoot = path.join(process.cwd(), 'uploads');
+  const categories = Object.keys(ALLOWED_FILE_TYPES);
+  const orgIds = new Set<string>();
+
+  for (const category of categories) {
+    const categoryDir = path.join(uploadsRoot, category);
+    try {
+      const entries = await fs.readdir(categoryDir, { withFileTypes: true });
+      entries
+        .filter((entry) => entry.isDirectory())
+        .forEach((entry) => orgIds.add(entry.name));
+    } catch (error) {
+      // Ignore missing directories; log unexpected errors for observability
+      if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
+        console.error(`Failed to read category directory ${categoryDir}:`, error);
+      }
+    }
   }
+
+  return Array.from(orgIds);
 }
 
 /**
@@ -144,6 +153,11 @@ export async function cleanupOrphanedFiles(options: CleanupOptions = {}): Promis
   try {
     // Get organization IDs to process
     const orgIds = organizationId ? [organizationId] : await getOrganizationIdsFromFiles();
+
+    // If no organizations found, return empty results
+    if (orgIds.length === 0) {
+      return { deletedFiles: [], errors: [], totalSpaceFreed: 0 };
+    }
 
     for (const orgId of orgIds) {
       try {
@@ -273,6 +287,11 @@ export async function checkStorageQuotas(quotaPerOrganizationMB: number = 100): 
 }> {
   const orgIds = await getOrganizationIdsFromFiles();
   const results = [];
+
+  // If no organizations found, return empty results
+  if (orgIds.length === 0) {
+    return { organizations: [] };
+  }
 
   for (const orgId of orgIds) {
     try {

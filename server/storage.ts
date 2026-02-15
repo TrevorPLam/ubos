@@ -95,6 +95,9 @@ export interface IStorage {
   getUserOrganization(userId: string): Promise<Organization | undefined>;
   createOrganization(org: InsertOrganization, ownerId: string): Promise<Organization>;
 
+  // Organization lookup
+  getOrganization(orgId: string): Promise<Organization | undefined>;
+
   // Organization Settings Management (Requirements 94.1, 94.2)
   getOrganizationSettings(orgId: string): Promise<Organization>;
   updateOrganizationSettings(orgId: string, data: Partial<Organization>): Promise<Organization>;
@@ -442,29 +445,46 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  
   async getUserOrganization(userId: string): Promise<Organization | undefined> {
     // Membership drives tenancy: a user can belong to 0..n organizations.
     // Today we pick the first match; upgrade later if you add org switching.
-    const result = await db
-      .select({ organization: organizations })
+    const [membership] = await db
+      .select({ org: organizations })
       .from(organizationMembers)
       .innerJoin(organizations, eq(organizationMembers.organizationId, organizations.id))
       .where(eq(organizationMembers.userId, userId))
       .limit(1);
-    return result[0]?.organization;
+    return membership?.org;
   }
 
   async createOrganization(org: InsertOrganization, ownerId: string): Promise<Organization> {
-    const [newOrg] = await db.insert(organizations).values(org).returning();
+    const [newOrg] = await db.insert(organizations).values({
+      ...org,
+      id: org.id || randomUUID(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }).returning();
 
-    // Ensure the creator can immediately access the org's data.
+    // Add owner as organization member
     await db.insert(organizationMembers).values({
       organizationId: newOrg.id,
       userId: ownerId,
       role: "owner",
+      createdAt: new Date(),
     });
+
     return newOrg;
+  }
+
+  // Organization lookup
+  async getOrganization(orgId: string): Promise<Organization | undefined> {
+    const [org] = await db
+      .select()
+      .from(organizations)
+      .where(eq(organizations.id, orgId))
+      .limit(1);
+
+    return org;
   }
 
   // Organization Settings Management (Requirements 94.1, 94.2)

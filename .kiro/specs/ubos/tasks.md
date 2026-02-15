@@ -70,7 +70,7 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
 
 ### Domain: Security & User Management
 
-- [ ] 1. Implement Role-Based Access Control (RBAC)
+- [x] 1. Implement Role-Based Access Control (RBAC)
   - [x] 1.1 Create permissions schema and database tables
     - Add `permissions` table with feature areas and permission types (view, create, edit, delete, export)
     - Add `roles` table with default roles (Admin, Manager, Team Member, Client)
@@ -78,6 +78,8 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Add `userRoles` junction table linking users to roles
     - Create Zod schemas for validation
     - _Requirements: 83.1, 83.2, 83.4_
+  - **Status:** ✅ COMPLETED - 2026-02-14
+  - **Documentation & Evidence:** docs/rbac-api-2026.md, docs/implementation/rbac-permission-seeds-2026.md, tests/backend/rbac-routes.test.ts
   
   - [x] 1.2 Write property test for RBAC schema
     - **Property 1: Role assignment preserves organization isolation**
@@ -237,12 +239,15 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
   - **Files Modified:** server/domains/identity/routes.ts, server/storage.ts
   - **Documentation:** docs/implementation/task-6-1-1-secure-password-storage-2026.md
 
-  - [ ] 6.1.2 Implement proper file storage system
+  - [x] 6.1.2 Implement proper file storage system
     - Replace placeholder avatar/logo URLs with actual file storage
     - Implement secure file upload with proper directory structure
     - Add file cleanup and management utilities
     - Integrate with cloud storage or local filesystem properly
     - _Requirements: File management, production readiness_
+    - **Status:** ✅ COMPLETED - 2026-02-14
+    - **Implementation:** Secure file storage service with authenticated serving routes; removed duplicate unauthenticated static handler
+    - **Documentation:** docs/implementation/task-6-1-2-file-storage-2026.md
 
   - [ ] 6.1.3 Complete email service integration
     - Replace TODO comments with actual user/organization name retrieval
@@ -250,6 +255,8 @@ This implementation plan covers the complete UBOS platform roadmap, organized by
     - Remove placeholder data in invitation validation endpoint
     - Complete email template integration with actual data
     - _Requirements: Email functionality, data consistency_
+    - **Status:** ✅ COMPLETED - 2026-02-14
+    - **Documentation:** docs/implementation/task-6-1-3-email-service-integration-2026.md
 
 - [ ] 6.2 Fix Test Environment Issues *(Priority B)*
   - [ ] 6.2.1 Resolve database authentication problems
