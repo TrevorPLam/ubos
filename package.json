@@ -2,18 +2,31 @@
   "name": "ubos",
   "version": "0.0.0",
   "private": true,
-  "packageManager": "pnpm@10.19.0",
+  "packageManager": "pnpm@10.33.3",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=10.29.1 <11"
+  },
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
-    "lint": "turbo run lint",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "test:e2e": "turbo run test:e2e"
   },
   "devDependencies": {
+    "@eslint/js": "catalog:",
     "@playwright/test": "catalog:",
+    "@typescript-eslint/eslint-plugin": "catalog:",
+    "@typescript-eslint/parser": "catalog:",
+    "eslint": "catalog:",
+    "eslint-config-prettier": "catalog:",
     "pnpm": "catalog:",
+    "prettier": "catalog:",
     "turbo": "catalog:",
     "typescript": "^5.9.3"
   }

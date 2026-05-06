@@ -1,0 +1,6 @@
+{
+  "name": "temp-install",
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "^7.0.0"
+  }
+}

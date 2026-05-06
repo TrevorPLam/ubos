@@ -10,10 +10,10 @@ const { Pool } = pg
 
 const connectionString = process.env.DATABASE_URL
 
-export const pool = connectionString ? new Pool({ connectionString }) : null
-export const db = pool ? drizzle(pool, { schema }) : null
+export const pool: pg.Pool | null = connectionString ? new Pool({ connectionString }) : null
+export const db: ReturnType<typeof drizzle> | null = pool ? drizzle(pool, { schema }) : null
 
-export const tenant = db
+export const tenant: ReturnType<typeof betterTenant> | null = db
   ? betterTenant({
       database: drizzleDatabase(db, {
         table: organizationsTable as never,
@@ -25,11 +25,11 @@ export const tenant = db
     })
   : null
 
-export function isDatabaseConfigured() {
+export function isDatabaseConfigured(): boolean {
   return db !== null
 }
 
-export function getDb() {
+export function getDb(): NonNullable<typeof db> {
   if (!db) {
     throw new Error('DATABASE_URL is not configured.')
   }
@@ -41,7 +41,7 @@ export function getScopedDb() {
   if (tenant) {
     const tenantDb = tenant.getDatabase()
     if (tenantDb) {
-      return tenantDb
+      return tenantDb as ReturnType<typeof getDb>
     }
   }
 
@@ -59,7 +59,7 @@ export async function withTenantDatabase<T>(
 
     const tenantDb = tenant.getDatabase()
     if (tenantDb) {
-      return callback(tenantDb)
+      return callback(tenantDb as ReturnType<typeof getDb>)
     }
 
     throw new Error('Tenant context is required for tenant-scoped database access.')

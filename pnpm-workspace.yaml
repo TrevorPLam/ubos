@@ -4,7 +4,10 @@ packages:
 
 catalog:
   '@better-auth/drizzle-adapter': ^1.6.9
+  'eslint-config-prettier': ^9.1.0
   '@eslint/js': ^10.0.1
+  '@typescript-eslint/eslint-plugin': ^8.0.0
+  '@typescript-eslint/parser': ^8.0.0
   '@hono/trpc-server': ^0.4.2
   '@hookform/resolvers': ^3.10.0
   '@playwright/test': ^1.59.1
@@ -36,6 +39,7 @@ catalog:
   '@radix-ui/react-toggle-group': ^1.1.3
   '@radix-ui/react-tooltip': ^1.2.0
   '@sentry/node': ^10.51.0
+  '@cloudflare/vite-plugin': ^1.36.0
   '@sentry/react': ^10.51.0
   '@tailwindcss/typography': ^0.5.16
   '@tailwindcss/upgrade': ^4.2.4
@@ -101,9 +105,12 @@ catalog:
   vaul: ^1.1.2
   vite: ^8.0.10
   vitest: ^4.1.5
+  wrangler: ^4.80.0
   zod: ^4.1.12
 
 catalogMode: strict
+ignoredBuiltDependencies:
+  - workerd
 
 onlyBuiltDependencies:
   - lightningcss

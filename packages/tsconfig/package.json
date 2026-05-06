@@ -1,0 +1,7 @@
+{
+  "name": "@ubos/tsconfig",
+  "version": "0.0.0",
+  "private": true,
+  "files": ["*.json"],
+  "description": "Shared TypeScript configuration presets for UBOS monorepo"
+}

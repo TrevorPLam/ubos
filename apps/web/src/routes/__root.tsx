@@ -8,7 +8,6 @@ import {
   useRouterState,
 } from '@tanstack/react-router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 
 import { MainLayout } from '@/components/layout/MainLayout'
@@ -59,6 +58,11 @@ export const Route = createRootRoute({
       {
         rel: 'stylesheet',
         href: appCss,
+      },
+    ],
+    scripts: [
+      {
+        children: typeof THEME_INIT_SCRIPT !== 'undefined' ? THEME_INIT_SCRIPT : '',
       },
     ],
   }),
@@ -130,12 +134,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           config={{
             position: 'bottom-right',
           }}
-          plugins={[
-            {
-              name: 'Tanstack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-          ]}
         />
         <Scripts />
       </body>
