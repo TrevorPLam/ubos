@@ -1,219 +1,163 @@
 # UBOS - Unified Business Operating System
 
-A comprehensive business SaaS platform built with modern web technologies, featuring a production-ready CRM module and extensible architecture for multi-domain business operations.
+A modern, full-stack business SaaS platform built with React 19, featuring a comprehensive CRM system and multi-tenant architecture.
+
+## 🚀 Features
+
+### Core Platform
+- **Multi-tenant SaaS architecture** with organization isolation
+- **Modern dark-themed UI** with glassmorphism effects
+- **Real-time updates** with optimistic UI changes
+- **Type-safe API** with tRPC and OpenAPI documentation
+
+### Functional Modules
+- **🏢 CRM** - Fully functional lead management with kanban board, CRUD operations, and real-time updates
+- **🔐 Authentication** - Complete auth system with Better Auth, organization management, and tenant switching
+- **📊 Analytics** - Interactive charts and dashboards (Overview functional, others coming soon)
+- **📁 Projects** - Task management and project tracking (partially implemented)
+- **💼 Documents** - Document repository and e-signature management (UI complete)
+- **💰 Finance** - Financial operations and reporting (UI complete)
+- **📦 Assets** - Asset inventory and management (UI complete)
+- **🌐 Portal** - Client portal management (UI complete)
+- **⚙️ Settings** - System configuration and user management (UI complete)
+
+## 🛠 Tech Stack
+
+### Frontend
+- **React 19** with TypeScript
+- **TanStack Router** for file-based routing
+- **TanStack Query** for server state management
+- **tRPC** for type-safe API calls
+- **Tailwind CSS v4** with dark theme
+- **Framer Motion** for animations
+- **shadcn/ui** component library
+
+### Backend
+- **Hono** API server
+- **tRPC** for API procedures
+- **Better Auth** with organization plugin
+- **Drizzle ORM** with PostgreSQL
+- **Row Level Security** for tenant isolation
+
+### Development
+- **pnpm** workspace with supply-chain controls
+- **Turbo** monorepo orchestration
+- **Playwright** for E2E testing
+- **Vitest** for unit testing
+- **ESLint** and TypeScript strict mode
+
+## 📦 Project Structure
+
+```
+ubos/
+├── apps/
+│   └── web/                 # Main React application
+├── packages/
+│   ├── auth/               # Authentication package
+│   └── db/                 # Database layer and migrations
+├── docs/                   # Architecture decisions
+├── tests/                  # E2E tests
+└── tasks/                  # Infrastructure tasks
+```
 
 ## 🚀 Quick Start
 
+### Prerequisites
+- Node.js 18+
+- pnpm 10.19.0+
+- PostgreSQL (optional - app works with in-memory fallback)
+
+### Installation
+
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/ubos.git
+git clone https://github.com/thetrevorlam/ubos.git
 cd ubos
 
 # Install dependencies
 pnpm install
 
-# Start development server
-pnpm dev
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your configuration
 ```
 
-## 📋 Overview
-
-UBOS is a React 19 monorepo application that presents as a unified business platform across nine domains:
-
-- **CRM** - Fully functional customer relationship management
-- **Projects** - Project management and task tracking
-- **Documents** - Document repository and e-signature management
-- **Finance** - Financial operations and expense management
-- **Assets** - Asset tracking and inventory management
-- **Portal** - Client portal and external access management
-- **Analytics** - Business intelligence and reporting
-- **Settings** - System configuration and user management
-- **Dashboard** - Centralized business overview
-
-## 🏗️ Architecture
-
-### Tech Stack
-
-- **Frontend**: React 19, TanStack Router, TanStack Query, Tailwind CSS v4
-- **Backend**: Hono, tRPC, Better Auth, Drizzle ORM
-- **Database**: PostgreSQL with Row Level Security
-- **Tooling**: pnpm workspace, Turbo monorepo, TypeScript
-- **Testing**: Playwright E2E, Vitest unit tests
-- **UI**: shadcn/ui components with dark theme
-
-### Monorepo Structure
-
-```
-ubos/
-├── apps/
-│   └── web/           # Main React application
-├── packages/
-│   ├── auth/          # Authentication package
-│   └── db/            # Database layer and migrations
-├── docs/              # Architecture decisions
-├── tests/             # E2E tests
-└── tasks/             # Infrastructure planning
-```
-
-## ✨ Features
-
-### Production-Ready CRM
-
-The CRM module demonstrates the full capability of the platform:
-
-- **Full CRUD Operations** - Create, read, update, delete leads and contacts
-- **Kanban Board** - Drag-and-drop lead management through stages
-- **Real-time Updates** - Optimistic updates with toast notifications
-- **Data Persistence** - PostgreSQL with in-memory fallback for development
-- **Multi-tenant Support** - Organization isolation with Row Level Security
-- **Form Validation** - Comprehensive Zod schema validation
-- **Error Handling** - Graceful degradation and user feedback
-
-### Authentication & Security
-
-- **Better Auth Integration** - Modern authentication with organization plugin
-- **Multi-organization Support** - Switch between organizations seamlessly
-- **Tenant Isolation** - Row Level Security for data separation
-- **Session Management** - Secure session handling with cookies
-- **Role-based Access** - Scaffolding for permissions and roles
-
-### Developer Experience
-
-- **Type Safety** - End-to-end TypeScript with strict mode
-- **Hot Reloading** - Fast development with Vite and TanStack Start
-- **API Documentation** - Auto-generated OpenAPI from tRPC
-- **Testing Infrastructure** - E2E and unit test setup
-- **Code Quality** - ESLint, Prettier, and comprehensive linting
-
-## 🛠️ Development
-
-### Prerequisites
-
-- Node.js 18+
-- pnpm 10.19.0+
-- PostgreSQL (optional - app graceful degrades without DATABASE_URL)
-
-### Environment Setup
-
-1. **Clone and install**:
-   ```bash
-   git clone https://github.com/your-username/ubos.git
-   cd ubos
-   pnpm install
-   ```
-
-2. **Environment variables**:
-   ```bash
-   # Optional: For full functionality
-   DATABASE_URL=postgresql://user:password@localhost:5432/ubos
-   
-   # Auth configuration (production)
-   AUTH_SECRET=your-secret-key
-   ```
-
-3. **Database setup** (if using PostgreSQL):
-   ```bash
-   # Apply migrations
-   pnpm db:migrate
-   ```
-
-4. **Start development**:
-   ```bash
-   pnpm dev
-   ```
-
-### Available Scripts
+### Development
 
 ```bash
-pnpm dev          # Start all services in development
-pnpm build        # Build for production
-pnpm test         # Run unit tests
-pnpm test:e2e     # Run E2E tests
-pnpm lint         # Run linting
-pnpm typecheck    # Run TypeScript checks
+# Start development server
+pnpm dev
+
+# Run tests
+pnpm test
+
+# Build for production
+pnpm build
 ```
 
-## 📊 Current Status
+### Environment Variables
 
-| Domain | Status | Description |
-|--------|--------|-------------|
-| **CRM** | ✅ Production Ready | Full CRUD, real-time updates, persistence |
-| **Authentication** | ✅ Complete | Better Auth, organizations, tenant isolation |
-| **Database** | ✅ Complete | Schema, migrations, multi-tenant support |
-| **API** | ✅ Functional | tRPC server with REST compatibility |
-| **Projects** | 🔄 Partial | Mixed implementation, some functionality |
-| **Documents** | 🎨 Mock Only | Visual UI, no real functionality |
-| **Finance** | 🎨 Mock Only | Visual UI, no real functionality |
-| **Assets** | 🎨 Mock Only | Table view, no interactions |
-| **Portal** | 🎨 Mock Only | Visual UI, no real functionality |
-| **Analytics** | 📊 Partial | One functional chart view |
-| **Settings** | 📊 Partial | One functional tab, others placeholder |
+```env
+# Database (optional - app works without it)
+DATABASE_URL=postgresql://user:password@localhost:ubos
+
+# Auth (auto-generated if not provided)
+BETTER_AUTH_SECRET=your-secret-key
+BETTER_AUTH_URL=http://localhost:5173
+```
+
+## 🏗 Architecture
+
+### Multi-Tenant Design
+- **Organization isolation** via Row Level Security
+- **Tenant-aware API** with automatic header injection
+- **Graceful degradation** when database unavailable
+
+### CRM Module (Production Ready)
+- **Kanban board** with drag-and-drop stages
+- **Real-time CRUD** with optimistic updates
+- **Toast notifications** for user feedback
+- **Form validation** with Zod schemas
+- **Database persistence** with in-memory fallback
+
+### Authentication System
+- **Sign up/Sign in** flows
+- **Organization management** with member invitations
+- **Role-based access** control scaffolding
+- **Session management** with secure cookies
 
 ## 🧪 Testing
-
-### E2E Tests
-
-Playwright tests cover critical user flows:
 
 ```bash
 # Run E2E tests
 pnpm test:e2e
 
-# Run with UI
-pnpm test:e2e --ui
-```
-
-Current test coverage:
-- Authentication flow (signup → signin)
-- CRM lead creation and management
-- Organization switching
-
-### Unit Tests
-
-Vitest tests for backend logic:
-
-```bash
 # Run unit tests
 pnpm test
+
+# Test specific module
+pnpm test --filter=crm
 ```
 
-## 🚀 Deployment
+## 📊 Current Status
 
-### Environment Variables
-
-Required for production:
-
-```bash
-DATABASE_URL=postgresql://user:password@host:5432/ubos
-AUTH_SECRET=your-production-secret
-NODE_ENV=production
-```
-
-### Build Process
-
-```bash
-# Build for production
-pnpm build
-
-# Start production server
-pnpm start
-```
+| Module | Status | Notes |
+|--------|--------|-------|
+| CRM | ✅ Production Ready | Full CRUD, real-time updates |
+| Authentication | ✅ Production Ready | Better Auth with organizations |
+| Database | ✅ Production Ready | Complete schema with RLS |
+| API | ✅ Production Ready | tRPC with REST compatibility |
+| Analytics | 🟡 Partial | Overview charts functional |
+| Projects | 🟡 Partial | Task management functional |
+| Other Modules | 🟡 UI Complete | Visual implementation, backend pending |
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch: `git checkout -b feature-name`
-3. Commit changes: `git commit -m 'Add feature description'`
-4. Push to branch: `git push origin feature-name`
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
-
-### Development Guidelines
-
-- Follow existing code patterns and conventions
-- Add tests for new functionality
-- Update documentation for API changes
-- Ensure TypeScript strict compliance
-- Use existing UI components from shadcn/ui
 
 ## 📄 License
 
@@ -221,10 +165,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🔗 Links
 
-- [Live Demo](https://ubos-demo.vercel.app) (coming soon)
-- [API Documentation](https://github.com/your-username/ubos/blob/main/docs/api.md)
-- [Architecture Decisions](https://github.com/your-username/ubos/blob/main/docs/adr/)
+- **Live Demo**: (Coming soon)
+- **Documentation**: [docs/](./docs/)
+- **API Documentation**: Available at `/api/openapi.json` when running
+- **Issues**: [GitHub Issues](https://github.com/thetrevorlam/ubos/issues)
 
-## 🙏 Acknowledgments
+---
 
-Built with modern open-source technologies and community-driven tools.
+**UBOS** - Building the future of business operations software.
